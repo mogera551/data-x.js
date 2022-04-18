@@ -8,7 +8,7 @@ class ViewModelClass {
   "@tickets.*.id";
   "@tickets.*.name";
 
-  "@@chosenTicketId";
+  "@@chosenTicketId" = "";
 
   get "chosenTicket"() {
     return this["tickets"].find(ticket => ticket.id == this["chosenTicketId"]);
@@ -21,7 +21,7 @@ class ViewModelClass {
   }
 
   onClickClear() {
-    this["selectTicketId"] = "";
+    this["chosenTicketId"] = "";
   }
 }
 

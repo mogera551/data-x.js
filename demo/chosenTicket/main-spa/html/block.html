@@ -1,5 +1,6 @@
 Choose a ticket class:
 <select name="chosenTicketId">
+  <option value="">Choose...</option>
   <template data-x:loop="tickets">
     <option data-x:bind="value=tickets.*.id,textContent=tickets.*.name"></option>
   </template>
