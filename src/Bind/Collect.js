@@ -2,17 +2,17 @@ import Bind from "./Bind.js"
 import Loop from "./Loop.js"
 import Event from "./Event.js"
 
-const NOT_PROCESSING = ":not([data-processing]):not([data-processed])";
+const NOT_PROCESSING = ":not([data-x\\:processing]):not([data-x\\:processed])";
 const DATA_PROCESSING = "processing";
 const DATA_PROCESSED = "processed";
-const DATA_IGNORE = "ignore";
-const DATA_BIND = "bind";
-const DATA_LOOP = "loop";
-const DATA_EVENTS = "events";
+const DATA_IGNORE = "x:ignore";
+const DATA_BIND = "x:bind";
+const DATA_LOOP = "x:loop";
+const DATA_EVENTS = "x:events";
 
-const SELECTOR_BIND = "[data-bind]";
-const SELECTOR_LOOP = "[data-loop]";
-const SELECTOR_EVENTS = "[data-events]";
+const SELECTOR_BIND = "[data-x\\:bind]";
+const SELECTOR_LOOP = "[data-x\\:loop]";
+const SELECTOR_EVENTS = "[data-x\\:events]";
 const SELECTOR_ATTRIBUTE 
   = [SELECTOR_BIND, SELECTOR_LOOP, SELECTOR_EVENTS].map(selector => `${selector}${NOT_PROCESSING}`).join(",");
 const SELECTOR_IMPLICIT

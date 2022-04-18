@@ -1,7 +1,7 @@
 import Block from "./Block.js"
 
-const QUERY_BLOCK = "[data-block]";
-const DATASET_BLOCK = "block";
+const QUERY_BLOCK = "[data-x\\:block]";
+const DATASET_BLOCK = "x:block";
 
 export default class BlockBuilder {
   static collect(rootElement) {
