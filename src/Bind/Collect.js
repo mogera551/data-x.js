@@ -2,9 +2,9 @@ import Bind from "./Bind.js"
 import Loop from "./Loop.js"
 import Event from "./Event.js"
 
-const NOT_PROCESSING = ":not([data-x\\:processing]):not([data-x\\:processed])";
-const DATA_PROCESSING = "processing";
-const DATA_PROCESSED = "processed";
+const NOT_PROCESSING = ":not([data-x\\:processed])";
+const DATA_PROCESSING = "x:processing";
+const DATA_PROCESSED = "x:processed";
 const DATA_IGNORE = "x:ignore";
 const DATA_BIND = "x:bind";
 const DATA_LOOP = "x:loop";
@@ -13,6 +13,7 @@ const DATA_EVENTS = "x:events";
 const SELECTOR_BIND = "[data-x\\:bind]";
 const SELECTOR_LOOP = "[data-x\\:loop]";
 const SELECTOR_EVENTS = "[data-x\\:events]";
+const SELECTOR_PROCESSING = "[data-x\\:processing]";
 const SELECTOR_ATTRIBUTE 
   = [SELECTOR_BIND, SELECTOR_LOOP, SELECTOR_EVENTS].map(selector => `${selector}${NOT_PROCESSING}`).join(",");
 const SELECTOR_IMPLICIT
@@ -62,23 +63,34 @@ export default class Collect {
   static collectByAttribute(context, rootElement, binds = [], loops = [], events = []) {
     Array.from(rootElement.querySelectorAll(SELECTOR_ATTRIBUTE)).forEach(element => {
       if (DATA_IGNORE in element.dataset) return;
-      if (DATA_BIND in element.dataset) {
-        binds.push(...this.parseDataBind(element, element.dataset[DATA_BIND]).map(rule => new Bind(element, rule, context)));
-      } else if (DATA_LOOP in element.dataset) {
+      const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
+      if (DATA_LOOP in element.dataset) {
         // <template data-loop="viewModelProperty">
         // template tag only
         if (element.tagName !== "TEMPLATE") return;
+        if (processings.includes("loop")) return;
         const property = element.dataset[DATA_LOOP];
         const rule = {dom:{}, viewModel:{ property }};
         loops.push(new Loop(element, rule, context));
-      } else if (DATA_EVENTS in element.dataset) {
-        // <div data-events="click,dblclick">
-        element.dataset[DATA_EVENTS].split(",").forEach(event => {
-          const rule = {dom:{ event }, viewModel:{}};
-          events.push(new Event(element, rule, context));
-        });
-      }
-      element.dataset[DATA_PROCESSING] = "";
+        processings.push("loop");
+      } else {
+        if (DATA_BIND in element.dataset) {
+          if (processings.includes("bind")) return;
+          binds.push(...this.parseDataBind(element, element.dataset[DATA_BIND]).map(rule => new Bind(element, rule, context)));
+          processings.push("bind");
+        } 
+        if (DATA_EVENTS in element.dataset) {
+          if (processings.includes("events")) return;
+          // <div data-events="click,dblclick">
+          element.dataset[DATA_EVENTS].split(",").forEach(event => {
+            const rule = {dom:{ event }, viewModel:{}};
+            events.push(new Event(element, rule, context));
+          });
+          processings.push("events");
+        }
+  
+      } 
+      element.dataset[DATA_PROCESSING] = processings.join(",");
     });
     return { binds, loops, events };
   }
@@ -86,19 +98,24 @@ export default class Collect {
   static collectByImplicit(context, rootElement, binds = [], loops = [], events = []) {
     Array.from(rootElement.querySelectorAll(SELECTOR_IMPLICIT)).forEach(element => {
       if (DATA_IGNORE in element.dataset) return;
+      const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
       const isRadio = this.testRadio(element);
       const isCheckbox = this.testCheckbox(element);
       const rule = {dom:{}, viewModel:{}};
       if (element.tagName === "BUTTON" || (element.tagName === "INPUT" && element.type === "button")) {
+        if (processings.includes("events")) return;
         rule.dom.event = "click";
         events.push(new Event(element, rule, context));
+        processings.push("events");
       } else {
+        if (processings.includes("bind")) return;
         rule.dom.property = isRadio ? "radio" : isCheckbox ? "checkbox" : "value";
         rule.viewModel.property = element.name;
         rule.inputable = true;
         binds.push(new Bind(element, rule, context))
+        processings.push("bind");
       }
-      element.dataset[DATA_PROCESSING] = "";
+      element.dataset[DATA_PROCESSING] = processings.join(",");
     });
     return { binds, loops, events };
   }
@@ -110,10 +127,22 @@ export default class Collect {
     bindRules.forEach(bindRule => {
       const elements = rootElement.querySelectorAll(`${bindRule.dom.selector}${NOT_PROCESSING}`);
       elements.forEach(element => {
+        const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
         if (DATA_IGNORE in element.dataset) return;
-        (element.tagName === "TEMPLATE") ? createLoop(bindRule, element)
-          : ("event" in bindRule.dom) ? createEvent(bindRule, element)
-          : createBind(bindRule, element);
+        if (element.tagName === "TEMPLATE") {
+          if (processings.includes("loop")) return;
+          createLoop(bindRule, element);
+          processings.push("loop");
+        } else if ("event" in bindRule.dom) {
+          if (processings.includes("events")) return;
+          createEvent(bindRule, element);
+          processings.push("events");
+        } else {
+          if (processings.includes("bind")) return;
+          createBind(bindRule, element);
+          processings.push("bind");
+        }
+        element.dataset[DATA_PROCESSING] = processings.join(",");
       });
     });
     return { loops, binds, events };
@@ -127,6 +156,9 @@ export default class Collect {
     binds.forEach(bind => bind.dom.dataset[DATA_PROCESSED] = "");
     loops.forEach(loop => loop.dom.dataset[DATA_PROCESSED] = "");
     events.forEach(event => event.dom.dataset[DATA_PROCESSED] = "");
+    Array.from(rootElement.querySelectorAll(SELECTOR_PROCESSING)).forEach(element => {
+      element.removeAttribute(`data-${DATA_PROCESSING}`);
+    })
     return { loops, binds, events };
   }
 }
