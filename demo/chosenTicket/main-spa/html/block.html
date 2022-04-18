@@ -1,0 +1,12 @@
+Choose a ticket class:
+<select name="chosenTicketId">
+  <option value="">Choose...</option>
+  <template data-x:loop="tickets">
+    <option data-x:bind="value=tickets.*.id,textContent=tickets.*.name"></option>
+  </template>
+</select>
+<button name="clear" data-x:bind="disabled=disableButton">Clear</button>
+<p data-x:bind="style.display=dispTicket">
+  You have chosen <b data-x:bind="chosenTicket.name"></b>
+  ($<span data-x:bind="chosenTicket.price"></span>)
+</p>
