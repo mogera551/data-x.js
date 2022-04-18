@@ -8,10 +8,10 @@ class ViewModelClass {
   "@tickets.*.id";
   "@tickets.*.name";
 
-  "@@selectTicketId";
+  "@@chosenTicketId";
 
   get "chosenTicket"() {
-    return this["tickets"].find(ticket => ticket.id == this["selectTicketId"]);
+    return this["tickets"].find(ticket => ticket.id == this["chosenTicketId"]);
   }
   "@chosenTicket.name";
   "@chosenTicket.price";
@@ -26,7 +26,7 @@ class ViewModelClass {
 }
 
 const dependencyRules = [
-  ["chosenTicket", ["selectTicketId"]],
+  ["chosenTicket", ["chosenTicketId"]],
   ["chosenTicket.name", ["chosenTicket"]],
   ["chosenTicket.price", ["chosenTicket"]],
   ["dispChosenTicket", ["chosenTicket"]],
