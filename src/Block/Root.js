@@ -7,7 +7,7 @@ export default class Root {
   #app;
   constructor(app) {
     this.#app = app;
-    Container.regist(container, "option", this.#app.option);
+    Container.regist(container, "options", this.#app.options);
   }
   
   async build() {

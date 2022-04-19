@@ -1,8 +1,8 @@
 export default class BlockLoader {
-  #option;
+  #options;
 
-  constructor(option) {
-    this.#option = option;
+  constructor(options) {
+    this.#options = options;
   }
 
   async load(name) {
@@ -48,7 +48,7 @@ export default class BlockLoader {
     return { template, module};
   }
 
-  #loadScript(name, spaPath = this.#option?.spaPath) {
+  #loadScript(name, spaPath = this.#options?.spaPath) {
     const index = document.baseURI.lastIndexOf("/");
     if (index >= 0) {
       const base = document.baseURI.slice(0, index + 1);
@@ -57,11 +57,11 @@ export default class BlockLoader {
     return import(`${spaPath}/module/${name}.js`);
   }
 
-  #loadParts(name, spaPath = this.#option?.spaPath) {
+  #loadParts(name, spaPath = this.#options?.spaPath) {
     return fetch(`${spaPath}/html/${name}.html`);
   }
 
-  #loadCss(name, spaPath = this.#option?.spaPath) {
+  #loadCss(name, spaPath = this.#options?.spaPath) {
     return fetch(`${spaPath}/css/${name}.css`);
   }
 
