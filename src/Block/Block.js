@@ -38,9 +38,9 @@ export default class Block {
 
   async build(context = this.#context) {
     context.properties.build();
+    context.dependencies.build();
     ("onInit" in context.viewModel) && await context.viewModel.onInit();
     context.properties.expandAll();
-    context.dependencies.setup();
     context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));
     context.view.appear();

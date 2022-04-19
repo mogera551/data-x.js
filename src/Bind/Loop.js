@@ -78,10 +78,8 @@ export default class Loop {
 
   removeChild(child) {
     const loopContractor = loop => loop.contract();
-    const bindRemover = bind => bind.remove();
     const nodeRemover = node => node.parentNode.removeChild(node);
     child.loops.forEach(loopContractor);
-    child.binds.forEach(bindRemover)
     child.nodes.forEach(nodeRemover);
   }
 

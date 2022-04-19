@@ -118,9 +118,6 @@ export default class Bind {
     const { path, pattern } = context.getPathInfo(this.#viewModelProperty);
     this.#path = path;
     this.#pattern = pattern; 
-    if (this.#path !== this.#pattern) {
-      context.dependencies.expandDependency(this.#path, this.#pattern, this.#indexes);
-    }
   }
 
   get dom() { return this.#dom; }
@@ -148,12 +145,5 @@ export default class Bind {
   attachEvent(dom = this.#dom, viewUpdator = this.#context.viewUpdator) {
     const handler = e => viewUpdator.updateProcess(() => this.updateViewModel());
     dom.addEventListener("input", handler);
-  }
-
-  remove(context = this.#context, path = this.#path, pattern = this.#pattern) {
-    if (path !== pattern) {
-      // 
-      context.dependencies.removeDependency(path);
-    }
   }
 }

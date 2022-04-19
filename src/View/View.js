@@ -8,7 +8,6 @@ export default class View {
     const info = builder.build(rootElement);
     context.setBindTree(info);
     context.buildBinds();
-    context.dependencies.build();
   }
 
   appear(context = this.#context) {

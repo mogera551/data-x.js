@@ -6,8 +6,8 @@ export default class Notifier {
   }
   get queue() { return this.#queue; }
   
-  notify(...args) {
-    this.#queue.push(...args);
+  notify(name, indexes = []) {
+    this.#queue.push({name, indexes});
   }
 
   clear() {

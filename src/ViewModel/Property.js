@@ -240,7 +240,7 @@ export class ExpandedProperty extends Property {
       desc.set = function(v) {
         context.pushIndexes(patternIndexes, () => {
           this[patternProperty.pattern] = v;
-          notifier.notify(name);
+          notifier.notify(patternProperty.pattern, patternIndexes);
           properties.update2(name);
         });
       };
@@ -406,8 +406,8 @@ export default class Properties {
     const property = this.getProperty(name);
     this.#update(property);
 
-    const setOfUpdateProperties = this.#context.dependencies.getReferedProperties(name);
-    Array.from(setOfUpdateProperties).forEach(updateProperty => this.#update(this.getProperty(updateProperty)));
+    const updateInfos = this.#context.dependencies.getReferedProperties(name);
+    updateInfos.forEach(info => (name != info.name) && this.#update(this.getProperty(info.name)));
   }
 
   expandAll(propertyByName = this.#propertyByName) {

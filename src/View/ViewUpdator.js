@@ -24,11 +24,9 @@ export default class ViewUpdator {
     dependencies = this.#context.dependencies
   ) {
     const updatePaths = [];
-    const getUpdatePaths = path => updatePaths.push(...dependencies.getReferedProperties(path));
+    const getUpdatePaths = ({name, indexes}) => updatePaths.push(...dependencies.getReferedProperties(name, indexes));
     notifier.queue.forEach(getUpdatePaths);
-    const setOfUpdatePaths = new Set(updatePaths);
-    console.log("notifier queue", notifier.queue);
-    console.log("update paths", setOfUpdatePaths);
+    const setOfUpdatePaths = new Set(updatePaths.map(info => info.name));
 
     const updateLoop = loop => loop.update();
     allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).forEach(updateLoop);
@@ -41,18 +39,15 @@ export default class ViewUpdator {
     updateCallback, 
     context = this.#context, 
     notifier = this.#context.notifier, 
-    properties = this.#context.properties,
-    dependencies = this.#context.dependencies
+    properties = this.#context.properties
   ) {
     this.clearPostProcess();
     notifier.clear();
-    dependencies.clearUpdate();
     properties.clearStatus();
 
     await updateCallback();
 
     this.updateDom();
-    dependencies.isUpdate && dependencies.build();
     properties.isUpdate && context.buildBinds();
 
     this.postProcess();
