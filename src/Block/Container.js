@@ -3,7 +3,7 @@ import BlockLoader from "../Block/BlockLoader.js";
 
 class BlockContainer extends Container {
   registData = [
-    ["blockLoader", BlockLoader, "option"],
+    ["blockLoader", BlockLoader, "options"],
   ];
 }
 
