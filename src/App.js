@@ -17,7 +17,7 @@ export default class App {
       names.pop();
       return names.join(".");
     } else {
-      return location.href;
+      return scriptName;
     }
   }
 
