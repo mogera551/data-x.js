@@ -18,6 +18,7 @@ export default class Context {
   #indexesStack = [];
   #properties;
   #notifier;
+  #cache;
   #template;
   #module;
   constructor(parentElement) { 
@@ -32,6 +33,7 @@ export default class Context {
     this.#dependencies = this.#container.dependencies;
     this.#properties = this.#container.properties;
     this.#notifier = this.#container.notifier;
+    this.#cache = this.#container.cache;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -61,6 +63,7 @@ export default class Context {
   get currentLoop() { return this.#loopStack[this.#loopStack.length - 1]; }
   get properties() { return this.#properties; }
   get notifier() { return this.#notifier; }
+  get cache() { return this.#cache; }
   get context() { return this; }
   get template() { return this.#template; }
   get module() { return this.#module; }

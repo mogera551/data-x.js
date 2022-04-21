@@ -111,16 +111,22 @@ export class PlainProperty extends Property {
   }
   #buildDesc(requireSetter) {
     const viewModel = this.context.viewModel;
+    const cache = this.context.cache;
     const pathParent = this.pathParent;
     const pathLastElement = this.pathLastElement;
     const hasParent = this.name.includes(".");
     const privateName = `$$${this.name}`;
+    const name = this.name;
     const getter = hasParent 
-      ? function() { return this[pathParent]?.[pathLastElement]; } 
-      : function() { return this[privateName]; };
+      ? function() { 
+        return cache.has(name) ? cache.get(name) : cache.set(name, this[pathParent]?.[pathLastElement]);
+      } 
+      : function() { 
+        return cache.has(name) ? cache.get(name) : cache.set(name, this[privateName]);
+      };
     const setter = hasParent 
-      ? function(v) { this[pathParent][pathLastElement] = v; } 
-      : function(v) { this[privateName] = v; this.isUpdate = true; };
+      ? function(v) { this[pathParent][pathLastElement] = v; cache.delete(name); } 
+      : function(v) { this[privateName] = v; this.isUpdate = true; cache.delete(name); };
     const desc = this.desc;
     const defaultDesc = {
       configurable: true,
@@ -218,30 +224,35 @@ export class ExpandedProperty extends Property {
     return this.#patternProperty;
   }
   get patternIndexes() {
-    return this.#patternIndexes;
+    return this.#patternIndexes.slice(0);
   }
   #buildDesc() {
+    
     const context = this.context;
+    const cache = this.context.cache;
     const viewModel = this.context.viewModel;
     const notifier = this.context.notifier;
     const properties = this.context.properties;
-    const patternProperty = this.#patternProperty;
-    const patternIndexes = this.#patternIndexes;
+    const patternProperty = this.patternProperty;
+    const patternIndexes = this.patternIndexes;
     const name = this.name;
     const desc = {};
     desc.configurable = true;
     desc.enumerable = true;
     desc.get = function() {
+      const patternIndexes = context.properties.getProperty(name).patternIndexes;
       return context.pushIndexes(patternIndexes, () => {
-        return this[patternProperty.pattern];
+        return cache.has(name) ? cache.get(name) : cache.set(name, this[patternProperty.pattern]);
       });
     };
     if (patternProperty.desc.set != null) {
       desc.set = function(v) {
+        const patternIndexes = context.properties.getProperty(name).patternIndexes;
         context.pushIndexes(patternIndexes, () => {
           this[patternProperty.pattern] = v;
           notifier.notify(patternProperty.pattern, patternIndexes);
           properties.update2(name);
+          cache.delete(name);
         });
       };
     }
@@ -376,7 +387,7 @@ export default class Properties {
   }
 
   #contract(property) {
-    const indexesKey = (property.type === PropertyType.EXPANDED) ? property.patternIndexes : [];
+    const indexesKey = ((property.type === PropertyType.EXPANDED) ? property.patternIndexes : []).join("\t");
     const filterIndexes = property => property.patternIndexes.join("\t").startsWith(indexesKey);
     property.referedPatternProperties.forEach(patternProperty => {
       this.getExpandedPropertiesByPatternProperty(patternProperty).filter(filterIndexes).forEach(removeProperty => {

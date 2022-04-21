@@ -43,7 +43,7 @@ export default class Dependencies {
     const walk = (node, list) => {
       if (node == null) return list;
       const isExpand = node.name.includes("*");
-      const expandName = (name, indexes, tmpIndexes = indexes.splice()) => name.replaceAll("*", () => tmpIndexes.shift())
+      const expandName = (name, indexes, tmpIndexes = indexes.splice(0)) => name.replaceAll("*", () => tmpIndexes.shift())
       list.push({
         name: isExpand ? expandName(node.name) : node.name,
         pattern: node.name,
