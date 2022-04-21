@@ -3,6 +3,10 @@ class ViewModelClass {
   get "emptyMessage"() {
     return (this["message"] ?? "").length == 0;
   }
+
+  onClickRegist() {
+    alert(`regist message "${this["message"]}"`);
+  }
 }
 
 const dependencyRules = [
