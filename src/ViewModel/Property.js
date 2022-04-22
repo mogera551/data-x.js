@@ -5,6 +5,37 @@ export class PropertyType {
   static EXPANDED = 3;
 }
 
+export class PropertyName {
+  #name;
+  #pattern;
+  #indexes;
+  #lastName;
+  #parentName;
+  constructor({ name = null, pattern = null, indexes = null }) {
+    this.#name = name;
+    this.#pattern = pattern;
+    this.#indexes = indexes;
+    if (name == null && pattern == null) throw new Error("name required or pattern required");
+    if (pattern != null && indexes == null) throw new Error("indexes required");
+    if (name == null && pattern != null) {
+      this.#name = PropertyName.expandName(pattern, indexes);
+    }
+    const elements = this.#name.split(".");
+    this.#lastName = elements.pop();
+    this.#parentName = elements.join(".");
+  }
+
+  static expandName(pattern, indexes, tmpIndexes = indexes.slice(0)) {
+    const replacer = () => tmpIndexes.shift();
+    return pattern => pattern.replaceAll("*", replacer);
+  }
+  get name() { return this.#name; }
+  get pattern() { return this.#pattern; }
+  get indexes() { return this.#indexes; }
+  get lastName() { return this.#lastName; }
+  get parentName() { return this.#parentName; }
+}
+
 export class Property {
   #name;
   #pattern;
@@ -15,6 +46,7 @@ export class Property {
   #type;
   #isNew = true;
   #isUpdate = false;
+  #propName;
   constructor(context, type, name, pattern, desc) {
     this.#context = context;
     this.#type = type;
