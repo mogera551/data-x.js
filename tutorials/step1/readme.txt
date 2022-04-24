@@ -2,11 +2,11 @@
 0.最小構成と変数の出力（片方向バインディング）
 1.フォルダ構成
 
+ANY.html メインとなるhtml
 ANY-spa/
 ANY-spa/css/ cssファイルを格納
 ANY-spa/html/ htmlファイルを格納
 ANY-spa/module/ javascriptファイルを格納
-ANY.html メインとなるhtml
 
 ※ANYは、メインとなるhtmlの拡張子を除いた部分
 　例
@@ -20,7 +20,7 @@ ANY.html メインとなるhtml
 
 ※ブロックは、spaを管理するための単位で、
 　ブロック名.css、ブロック名.html、ブロック名.js
-　で構成し、それぞれ、ANY-spa/css、ANY-spa/html、ANY-spa/module
+　で構成され、それぞれ、ANY-spa/css、ANY-spa/html、ANY-spa/module
   に格納する。
 
 2-3.フレームワークを実行するためのコードを記述

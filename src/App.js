@@ -26,9 +26,9 @@ export default class App {
 
   static getOptions(options) {
     /**
-     * spaPath
-     * localFilter
-     * filterPath
+     * spaPath {string} spa folder path, default "(html)-spa"
+     * localFilter {boolean} use local filter, default false
+     * filterPath {string} local filter path, default "(html)-spa/module/filter, require localFilter"
      */
     const baseName = this.getBaseName();
     options.spaPath = options.spaPath ?? `${baseName}-spa`;
