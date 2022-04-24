@@ -1,5 +1,5 @@
 class ViewModelClass {
-  "@greeting" = "welcome to data-x.js";
+  "@@message" = "welcome to data-x.js";
 }
 
 export default { ViewModelClass };
