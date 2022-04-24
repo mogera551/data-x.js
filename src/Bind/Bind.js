@@ -20,7 +20,7 @@ class DomPropertyType {
 
   static updateDomByValueType(bind) {
     const properties = bind.domProperty.split(".");
-    const value = bind.viewModel[bind.path];
+    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
     const walk = (props, o, name = props.shift()) => (props.length === 0) ? (o[name] = value) : walk(props, o[name]);
     walk(properties, bind.dom);
   }
@@ -44,7 +44,7 @@ class DomPropertyType {
   static updateViewModelByValueType(bind) {
     const properties = bind.domProperty.split(".");
     const walk = (props, o, name = props.shift()) => (props.length === 0) ? o[name] : walk(props, o[name]);
-    bind.viewModel[bind.path] = walk(properties, bind.dom);
+    bind.viewModel[bind.path] = bind.filter.backward(bind.backwardFilters, walk(properties, bind.dom));
   }
 
   static updateViewModelByClassType(bind) {
@@ -103,6 +103,8 @@ export default class Bind {
   #path;
   #pattern;
   #domPropertyType;
+  #forwardFilters;
+  #backwardFilters;
   
   constructor(dom, rule, context) {
     this.#dom = dom;
@@ -110,6 +112,9 @@ export default class Bind {
     this.#viewModel = context.viewModel;
     this.#viewModelProperty = rule.viewModel?.property;
     this.#inputable = rule.inputable;
+    this.#forwardFilters = rule?.filters ?? [];
+    this.#backwardFilters = this.#forwardFilters.slice(0).reverse()
+
     this.#context = context;
     this.#indexes = context.indexes?.slice() ?? [];
     this.#domPropertyType = DomPropertyType.getType(this.#domProperty);
@@ -126,6 +131,9 @@ export default class Bind {
   get path() { return this.#path; }
   get pattern() { return this.#pattern; }
   get domPropertyType() { return this.#domPropertyType; } 
+  get forwardFilters() { return this.#forwardFilters; }
+  get backwardFilters() { return this.#backwardFilters; }
+  get filter() { return this.#context.filter; }
 
   init(inputable = this.#inputable) {
     if (inputable) {

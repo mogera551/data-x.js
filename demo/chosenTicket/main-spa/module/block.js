@@ -19,12 +19,6 @@ class ViewModelClass {
   get "isChosenTicket"() {
     return this["chosenTicket"] != null;
   }
-  get "dispTicket"() {
-    return this["isChosenTicket"] ? "block" : "none";
-  }
-  get "disableButton"() {
-    return !this["isChosenTicket"];
-  }
 
   onClickClear() {
     this["chosenTicketId"] = "";
@@ -36,8 +30,6 @@ const dependencyRules = [
   ["chosenTicket.name", ["chosenTicket"]],
   ["chosenTicket.price", ["chosenTicket"]],
   ["isChosenTicket", ["chosenTicket"]],
-  ["dispTicket", ["isChosenTicket"]],
-  ["disableButton", ["isChosenTicket"]],
 ]
 
 export default { ViewModelClass, dependencyRules };

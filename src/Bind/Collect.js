@@ -32,6 +32,14 @@ export default class Collect {
     return (element.tagName === "INPUT" && element.type === "checkbox");
   }
 
+  static parsePropertyName(name) {
+    const names = name.split("|");
+    return {
+      property: names.shift(),
+      filters: names
+    }
+  }
+
   static parseDataBind(
     element, 
     value, 
@@ -41,20 +49,25 @@ export default class Collect {
   ) {
     const values = value.split(",");
     if (values.length == 1) {
-      const rule = {dom:{}, viewModel:{}};
+      const rule = {dom:{}, viewModel:{}, filters:[]};
       if (value.includes("=")) {
         const [domProperty, viewModelProperty] = value.split("=");
+        const { property, filters } = this.parsePropertyName(viewModelProperty);
         rule.dom.property = domProperty;
-        rule.viewModel.property = viewModelProperty;
+        rule.viewModel.property = property;
+        rule.filters = filters;
       } else {
+        const { property, filters } = this.parsePropertyName(value);
         rule.dom.property = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : "value") : "textContent";
-        rule.viewModel.property = value;
+        rule.viewModel.property = property;
+        rule.filters = filters;
       }
       return [rule];
     } else {
       const rules = values.map(s => {
         const [domProperty, vmProperty] = s.split("=");
-        return { dom:{ property:domProperty }, viewModel:{ property: vmProperty } };
+        const { property, filters } = this.parsePropertyName(vmProperty);
+        return { dom:{ property:domProperty }, viewModel:{ property: property }, filters };
       });
       return rules;
     }
@@ -70,7 +83,7 @@ export default class Collect {
         if (element.tagName !== "TEMPLATE") return;
         if (processings.includes("loop")) return;
         const property = element.dataset[DATA_LOOP];
-        const rule = {dom:{}, viewModel:{ property }};
+        const rule = {dom:{}, viewModel:{ property }, filters:[]};
         loops.push(new Loop(element, rule, context));
         processings.push("loop");
       } else {
@@ -83,7 +96,7 @@ export default class Collect {
           if (processings.includes("events")) return;
           // <div data-events="click,dblclick">
           element.dataset[DATA_EVENTS].split(",").forEach(event => {
-            const rule = {dom:{ event }, viewModel:{}};
+            const rule = {dom:{ event }, viewModel:{}, filters:[]};
             events.push(new Event(element, rule, context));
           });
           processings.push("events");
@@ -101,7 +114,7 @@ export default class Collect {
       const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
       const isRadio = this.testRadio(element);
       const isCheckbox = this.testCheckbox(element);
-      const rule = {dom:{}, viewModel:{}};
+      const rule = {dom:{}, viewModel:{}, filters:[]};
       if (element.tagName === "BUTTON" || (element.tagName === "INPUT" && element.type === "button")) {
         if (processings.includes("events")) return;
         rule.dom.event = "click";
@@ -109,8 +122,10 @@ export default class Collect {
         processings.push("events");
       } else {
         if (processings.includes("bind")) return;
+        const { property, filters } = this.parsePropertyName(element.name);
         rule.dom.property = isRadio ? "radio" : isCheckbox ? "checkbox" : "value";
-        rule.viewModel.property = element.name;
+        rule.viewModel.property = property;
+        rule.filters = filters;
         rule.inputable = true;
         binds.push(new Bind(element, rule, context))
         processings.push("bind");

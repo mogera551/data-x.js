@@ -1,4 +1,5 @@
 import ViewContainer from "./Container.js"
+import App from "../App.js"
 
 export default class Context {
   #parentElement;
@@ -21,6 +22,8 @@ export default class Context {
   #cache;
   #template;
   #module;
+  #filter;
+
   constructor(parentElement) { 
     this.#parentElement = parentElement;
   }
@@ -34,6 +37,7 @@ export default class Context {
     this.#properties = this.#container.properties;
     this.#notifier = this.#container.notifier;
     this.#cache = this.#container.cache;
+    this.#filter = App.filter;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -67,6 +71,7 @@ export default class Context {
   get context() { return this; }
   get template() { return this.#template; }
   get module() { return this.#module; }
+  get filter() { return this.#filter; }
 
   set rootElement(v) { this.#rootElement = v; }
   set viewModel(v) { 

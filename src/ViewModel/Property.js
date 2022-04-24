@@ -15,19 +15,17 @@ export class PropertyName {
     this.#name = name;
     this.#pattern = pattern;
     this.#indexes = indexes;
-    if (name == null && pattern == null) throw new Error("name required or pattern required");
-    if (pattern != null && indexes == null) throw new Error("indexes required");
-    if (name == null && pattern != null) {
-      this.#name = PropertyName.expandName(pattern, indexes);
+    if (name == null && pattern != null && indexes != null) {
+      this.#name = PropertyName.expand(pattern, indexes);
     }
     const elements = this.#name.split(".");
     this.#lastName = elements.pop();
     this.#parentName = elements.join(".");
   }
 
-  static expandName(pattern, indexes, tmpIndexes = indexes.slice(0)) {
+  static expand(pattern, indexes, tmpIndexes = indexes.slice(0)) {
     const replacer = () => tmpIndexes.shift();
-    return pattern => pattern.replaceAll("*", replacer);
+    return pattern.replaceAll("*", replacer);
   }
   get name() { return this.#name; }
   get pattern() { return this.#pattern; }
@@ -284,7 +282,6 @@ export class ExpandedProperty extends Property {
           this[patternProperty.pattern] = v;
           notifier.notify(patternProperty.pattern, patternIndexes);
           properties.update2(name);
-          cache.delete(name);
         });
       };
     }
@@ -379,9 +376,10 @@ export default class Properties {
     });
   }
 
-  removeProperty(name, object = this.#context.viewModel, propertyByName = this.#propertyByName) {
+  removeProperty(name, object = this.#context.viewModel, cache = this.#context.cache, propertyByName = this.#propertyByName) {
     delete object[name];
     propertyByName.delete(name);
+    cache.delete(name);
   }
 
   getProperty(name, propertyByName = this.#propertyByName) {
@@ -438,11 +436,12 @@ export default class Properties {
     return propertyByName.has(`${name}.*`);
   }
 
-  #update(property) {
+  #update(property, cache = this.#context.cache, ) {
     if (property.isArray) {
       this.#contract(property);
       this.#expand(property);
     }
+    cache.delete(property.name);
   }
 
   update2(name) {
