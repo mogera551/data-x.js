@@ -13,15 +13,15 @@ ANY.html メインとなるhtml
 　　main.htmlの場合SPAフォルダは、main-spaとなる
 
 2.メインとなるhtml
-2-1.ANY-spa/フォルダと同じレベルに配置
+2-1.ANY-spa/フォルダと同じ階層に配置
 2-2.ブロックをロードするためのHTML要素を書く
 
 <div data-x:block="ブロック名"></div>
 
 ※ブロックは、spaを管理するための単位で、
 　ブロック名.css、ブロック名.html、ブロック名.js
-　で構成され、それぞれ、ANY-spa/css、ANY-spa/html、ANY-spa/module
-  に格納される。
+　で構成し、それぞれ、ANY-spa/css、ANY-spa/html、ANY-spa/module
+  に格納する。
 
 2-3.フレームワークを実行するためのコードを記述
 App.jsをimportして、App.boot()を実行

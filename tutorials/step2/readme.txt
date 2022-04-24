@@ -1,9 +1,9 @@
 1.双方向バインディング
-inputなどのHTML要素からviewModelのプロパティへ値を反映する
+inputなどの入力可能なHTML要素からviewModelのプロパティへ値を反映する
 
 1-1.ブロック、htmlファイル
-入力要素を配置
-入力要素は、name属性にバインドするViewModelのプロパティを書く
+入力可能なHTML要素を配置
+HTML要素のname属性にバインドするViewModelのプロパティを書く
 
 <input type="text" name="message">
 <div data-x:bind="message"></div>
