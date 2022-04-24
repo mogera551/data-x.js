@@ -178,7 +178,6 @@ export class PlainProperty extends Property {
       desc.set = function(v) {
         Reflect.apply(setter, this, [v]);
         notifier.notify(name);        
-        properties.update2(name);
       };
       this.desc = desc;
     }
@@ -281,7 +280,6 @@ export class ExpandedProperty extends Property {
         context.pushIndexes(patternIndexes, () => {
           this[patternProperty.pattern] = v;
           notifier.notify(patternProperty.pattern, patternIndexes);
-          properties.update2(name);
         });
       };
     }
@@ -444,12 +442,17 @@ export default class Properties {
     cache.delete(property.name);
   }
 
-  update2(name) {
+  updateByName(name) {
     const property = this.getProperty(name);
     this.#update(property);
 
     const updateInfos = this.#context.dependencies.getReferedProperties(name);
     updateInfos.forEach(info => (name != info.name) && this.#update(this.getProperty(info.name)));
+  }
+
+  updateByPatternIndexes({ name, indexes }) {
+    const propName = PropertyName.expand(name, indexes);
+    this.updateByName(propName);
   }
 
   expandAll(propertyByName = this.#propertyByName) {

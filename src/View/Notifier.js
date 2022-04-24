@@ -8,6 +8,7 @@ export default class Notifier {
   
   notify(name, indexes = []) {
     this.#queue.push({name, indexes});
+    this.#context.properties.updateByPatternIndexes({name, indexes});
   }
 
   clear() {

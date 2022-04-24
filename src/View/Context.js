@@ -169,8 +169,8 @@ export default class Context {
 
   }
 
-  $notify(...args) {
-    this.context.notifier.notify(...args);
+  $notify(pattern, indexes = []) {
+    this.context.notifier.notify(pattern, indexes);
   }
 
 }
