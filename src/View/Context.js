@@ -1,5 +1,6 @@
 import ViewContainer from "./Container.js"
 import App from "../App.js"
+import ViewBuilder from "./ViewBuilder.js"
 
 export default class Context {
   #parentElement;
@@ -31,7 +32,7 @@ export default class Context {
   build() {
     this.#container = ViewContainer.create(this);
     this.#view = this.#container.view;
-    this.#viewBuilder = this.#container.viewBuilder;
+    this.#viewBuilder = ViewBuilder;
     this.#viewUpdator = this.#container.viewUpdator;
     this.#dependencies = this.#container.dependencies;
     this.#properties = this.#container.properties;

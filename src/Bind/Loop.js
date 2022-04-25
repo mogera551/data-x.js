@@ -42,7 +42,7 @@ export default class Loop {
 
         const clone = dom.content.cloneNode(true);
 
-        const info = context.viewBuilder.build(clone);
+        const info = context.viewBuilder.build(context, clone);
         child.binds = info.binds;
         child.loops = info.loops;
         fragment.appendChild(clone);

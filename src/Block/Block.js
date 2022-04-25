@@ -6,14 +6,21 @@ export default class Block {
   #name;
   #context;
   #blocks = [];
+  #data;
 
-  constructor(name, parentElement) {
+  constructor(data) {
+    this.#data = data;
+  }
+
+  createContext(name, parentElement) {
     this.#name = name;
     this.#context = new Context(parentElement);
     this.#context.build();
+    return this.#context;
   }
 
-  async load(context = this.#context, name = this.#name) {
+  async load(name, parentElement) {
+    const context = this.createContext(name, parentElement);
     try {
       const loader = container.blockLoader;
       const {template, module} = await loader.load(name);
@@ -36,10 +43,10 @@ export default class Block {
     }
   }
 
-  async build(context = this.#context) {
+  async build(context = this.#context, data = this.#data) {
     context.properties.build();
     context.dependencies.build();
-    ("onInit" in context.viewModel) && await context.viewModel.onInit();
+    ("onInit" in context.viewModel) && await context.viewModel.onInit(data);
     context.properties.expandAll();
     context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));

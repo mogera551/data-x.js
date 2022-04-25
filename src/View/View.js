@@ -5,7 +5,7 @@ export default class View {
   }
 
   build(context = this.#context, builder = this.#context.viewBuilder, rootElement = this.#context.rootElement) {
-    const info = builder.build(rootElement);
+    const info = builder.build(context, rootElement);
     context.setBindTree(info);
     context.buildBinds();
   }

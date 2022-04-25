@@ -1,4 +1,4 @@
-import Block from "./Block.js"
+import container from "./Container.js"
 
 const QUERY_BLOCK = "[data-x\\:block]";
 const DATASET_BLOCK = "x:block";
@@ -9,15 +9,14 @@ export default class BlockBuilder {
   }
 
   static async createBlock(element) {
-    const name = element.dataset[DATASET_BLOCK];
-    const block = new Block(name, element);
-    await block.load();
+    const blockName = element.dataset[DATASET_BLOCK];
+    const block = container.block;
+    await block.load(blockName, element);
     await block.build();
     return block;
   }
 
-  static async build(rootElement, blocks = []) {
-    blocks.push(...this.collect(rootElement).map(async element => await this.createBlock(element)));
-    return blocks;
+  static async build(rootElement) {
+    return await Promise.all(this.collect(rootElement).map(element => this.createBlock(element)));
   }
 }

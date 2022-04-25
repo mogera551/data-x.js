@@ -4,7 +4,9 @@ export default class App {
   static root;
   static options;
   static filter;
-  static async boot(options = {}) {
+  static data;
+  static async boot(data = {}, options = {}) {
+    this.data = data;
     this.options = this.getOptions(options);
     this.filter = await this.getFilter();
 
