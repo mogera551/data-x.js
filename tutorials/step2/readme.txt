@@ -3,7 +3,8 @@ inputなどの入力可能なHTML要素からviewModelのプロパティへ値�
 
 1-1.ブロック、htmlファイル
 入力可能なHTML要素を配置
-HTML要素のname属性にバインドするViewModelのプロパティを書く
+そのHTML要素のname属性にバインドするViewModelのプロパティを書くと、
+HTML要素のvalueとViewModelのプロパティがバインドされる
 
 <input type="text" name="message">
 <div data-x:bind="message"></div>
