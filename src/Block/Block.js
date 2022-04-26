@@ -7,10 +7,14 @@ export default class Block {
   #context;
   #blocks = [];
   #data;
+  #dialog;
 
-  constructor(data) {
+  constructor(data, dialog = null) {
     this.#data = data;
+    this.#dialog = dialog;
   }
+
+  get context() { return this.#context; }
 
   createContext(name, parentElement) {
     this.#name = name;
@@ -21,6 +25,7 @@ export default class Block {
 
   async load(name, parentElement) {
     const context = this.createContext(name, parentElement);
+    const dialog = this.#dialog;
     try {
       const loader = container.blockLoader;
       const {template, module} = await loader.load(name);
@@ -33,7 +38,7 @@ export default class Block {
       context.bindRules.push(...module.default?.bindRules ?? []);
       context.dependencyRules.push(...module.default?.dependencyRules ?? []);
       const reflectContext = module.default?.context ?? module.default?._;
-      (reflectContext != null) && context.reflect(reflectContext);
+      (reflectContext != null) && context.reflect(reflectContext, dialog);
 
       context.rootElement = template.content.cloneNode(true);
 

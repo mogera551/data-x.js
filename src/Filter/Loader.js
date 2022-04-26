@@ -13,12 +13,12 @@ class Loader {
   static getLocalPathInfo() {
     const index = document.baseURI.lastIndexOf("/");
     const base = (index >= 0) ? document.baseURI.slice(0, index + 1) : "";
-    const path = App.options.filterPath;
+    const path = App?.options?.localFilter ? App?.options?.filterPath : null;
     return { base, path };
   }
 
   static async getLocalList(base, path) {
-    if (!App.options.localFilter) return [];
+    if (!App?.options?.localFilter) return [];
     const module  = await import(`${base}${path}/list.js`);
     return module.default;
   }

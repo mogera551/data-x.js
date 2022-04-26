@@ -1,6 +1,7 @@
 import ViewContainer from "./Container.js"
 import App from "../App.js"
 import ViewBuilder from "./ViewBuilder.js"
+import Dialog from "../Dialog/Dialog.js"
 
 export default class Context {
   #parentElement;
@@ -143,7 +144,7 @@ export default class Context {
     bindTree.loops.forEach(walk);
   }
 
-  reflect(object) {
+  reflect(object, dialog) {
     const proto = Object.getPrototypeOf(this);
     const context = this;
     Object.entries(Object.getOwnPropertyDescriptors(proto)).forEach(([key, desc]) => {
@@ -158,20 +159,48 @@ export default class Context {
     });
     [
       ["$notify", "notify"],
+      ["$openDialog", "openDialog"],
     ].forEach(([orgFunc, func]) => {
+      const isAsync = orgFunc.constructor.name === "AsyncFunction";
+      const value = isAsync 
+        ? async (...args) => Reflect.apply(this[orgFunc], this, args)
+        : (...args) => Reflect.apply(this[orgFunc], this, args);
       const desc = {
         configurable: true,
         enumerable: false,
-        value: (...args) => Reflect.apply(this[orgFunc], this, args),
+        value,
       };
       Object.defineProperty(object, func, desc);
-  
-    })
+    });
+    if (dialog != null) {
+      this.$closeDialog = function (data) {
+        dialog.closeDialog(data);
+      };
+      const descClose = {
+        configurable: true,
+        enumerable: false,
+        value: (...args) => Reflect.apply(this.$closeDialog, this, args),
+      };
+      Object.defineProperty(object, "closeDialog", descClose);
 
+      this.$cancelDialog = function () {
+        dialog.cancelDialog();
+      };
+      const descCancel = {
+        configurable: true,
+        enumerable: false,
+        value: (...args) => Reflect.apply(this.$cancelDialog, this, args),
+      };
+      Object.defineProperty(object, "cancelDialog", descCancel);
+    }
   }
 
   $notify(pattern, indexes = []) {
     this.context.notifier.notify(pattern, indexes);
+  }
+
+  async $openDialog(name, data = {}) {
+    return Dialog.open(name, data);
   }
 
 }
