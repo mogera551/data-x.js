@@ -48,9 +48,9 @@ class ViewModelClass {
   get message() { return "welcome to data-x.js"; }
 }
 
-※バインドできるのは、アクセサプロパティ（get/setを持つプロパティ）だけ
+※バインドできるのは、アクセサプロパティ（get/setを持つプロパティ）のみ
 
-ViewModelクラスをエクスポートをする
+ViewModelクラスをエクスポートする
 
 export default { ViewModelClass };
 
