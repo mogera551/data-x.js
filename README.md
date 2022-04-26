@@ -1,7 +1,7 @@
 # data-x.js
-simple javascript framework
+simple and easy javascript framework
 
-MVVM
+MVVM, 2way bind
 
 Separate HTML, CSS, Script
 
