@@ -346,6 +346,8 @@ export default class Properties {
         if (this.#propertyByName.has(name)) return;
         if (desc?.get != null) {
           this.setProperty(Property.create(context, {name, desc, requireSetter:desc?.set != null}));
+        } else if (desc?.set != null) {
+          this.setProperty(Property.create(context, {name, desc, requireSetter:true}));
         }
       });
     });
