@@ -1,0 +1,7 @@
+<div>
+  <input type="text" name="newFruits">
+  <button type="button" name="add" data-x:bind="disabled=isEmpty">add</button>
+</div>
+<template data-x:loop="fruits">
+  <div data-x:bind="fruits.*"></div>
+</template>
