@@ -1,6 +1,12 @@
 
+const context = {};
 class ViewModelClass {
-  "@@name" = "";
+  $$name = "";
+  get "name"() { return this.$$name; }
+  set "name"(value) { 
+    this.$$name = value;
+    context.notify("isEmpty", []);
+  }
   get "isEmpty"() {
     return !this["name"];
   };
@@ -10,8 +16,4 @@ class ViewModelClass {
   }
 }
 
-const dependencyRules = [
-  ["isEmpty", ["name"]],
-]
-
-export default { ViewModelClass, dependencyRules };
+export default { ViewModelClass, context };
