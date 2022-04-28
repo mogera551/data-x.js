@@ -6,13 +6,14 @@ const fruits = [
   "strawberry",
 ];
 
+const context = {};
 class ViewModelClass {
   $$fruits = fruits;
   get "fruits"() { return this.$$fruits; }
   get "fruits.*"() {
-    const { $1 } = this.$context;
+    const { $1 } = context;
     return this["fruits"][$1];
   }
 }
 
-export default { ViewModelClass };
+export default { ViewModelClass, context };

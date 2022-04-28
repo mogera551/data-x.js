@@ -1,11 +1,11 @@
 
-const _ = {};
+const context = {};
 class ViewModelClass {
   $$name = "";
   get "name"() { return this.$$name; }
   set "name"(value) { 
     this.$$name = value;
-    _.notify("isEmpty", []);
+    context.notify("isEmpty", []);
   }
   get "isEmpty"() {
     return !this["name"];
@@ -16,4 +16,4 @@ class ViewModelClass {
   }
 }
 
-export default { ViewModelClass, _ };
+export default { ViewModelClass, context };
