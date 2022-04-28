@@ -38,7 +38,7 @@ class ViewModelClass {
     }
     
     // イベントプロパティ
-    set eventClickCancel(event) {
+    set "eventClickCancel"(event) {
         alert("click cancel button");
     }
 

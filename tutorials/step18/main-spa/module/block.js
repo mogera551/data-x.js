@@ -13,7 +13,7 @@ class ViewModelClass {
   get "isEmpty"() {
     return !this["newFruits"];
   }
-  set eventClickAdd(event) {
+  set "eventClickAdd"(event) {
     this["fruits"].push(this["newFruits"]);
     this["newFruits"] = "";
   }
