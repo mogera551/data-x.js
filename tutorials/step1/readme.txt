@@ -42,7 +42,8 @@ HTML要素のdata-x:bind属性にバインドするViewModelのプロパティ�
 
 3-2.JSファイル
 名前は、ブロック名.js
-ViewModelクラスの定義を書く
+ViewModelクラスの定義をする
+バインドするプロパティを定義する
 
 class ViewModelClass {
   get message() { return "welcome to data-x.js"; }
