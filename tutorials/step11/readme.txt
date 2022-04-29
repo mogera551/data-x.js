@@ -5,7 +5,7 @@ class ViewModelClass {
   "@list.*";
 }
 
-"@@ワイルドカードを含むプロパティ名"をViewModelクラスで定義すると、下記のように展開される
+"@ワイルドカードを含むプロパティ名"をViewModelクラスで定義すると、下記のように展開される
 
 class ViewModelClass {
   $$list = [10, 20, 30];
