@@ -47,27 +47,37 @@ export default class Collect {
     isRadio = this.testRadio(element), 
     isCheckbox = this.testCheckbox(element)
   ) {
-    const values = value.split(",");
-    if (values.length == 1) {
-      const rule = {dom:{}, viewModel:{}, filters:[]};
+    const assignRule = (value, rule) => {
       if (value.includes("=")) {
         const [domProperty, viewModelProperty] = value.split("=");
         const { property, filters } = this.parsePropertyName(viewModelProperty);
         rule.dom.property = domProperty;
         rule.viewModel.property = property;
         rule.filters = filters;
+        const defaultProperty = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : "value") : "";
+        rule.inputable = defaultProperty === domProperty;
       } else {
         const { property, filters } = this.parsePropertyName(value);
         rule.dom.property = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : "value") : "textContent";
         rule.viewModel.property = property;
         rule.filters = filters;
+        rule.inputable = isInputable;
       }
-      return [rule];
+      return rule;
+    }
+    const values = value.split(",");
+    if (values.length == 1) {
+      const rule = {dom:{}, viewModel:{}, filters:[]};
+      return [assignRule(value, rule)];
     } else {
-      const rules = values.map(s => {
+      const rules = values.map(value => {
+        const rule = {dom:{}, viewModel:{}, filters:[]};
+        return assignRule(value, rule);
+/*
         const [domProperty, vmProperty] = s.split("=");
         const { property, filters } = this.parsePropertyName(vmProperty);
         return { dom:{ property:domProperty }, viewModel:{ property: property }, filters };
+*/
       });
       return rules;
     }
