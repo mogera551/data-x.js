@@ -10,7 +10,7 @@ ANY-spa/module/ javascriptファイルを格納
 
 ※ANYは、メインとなるhtmlの拡張子を除いた部分
 　例
-　　main.htmlの場合SPAフォルダは、main-spaとなる
+　　index.htmlの場合SPAフォルダは、index-spaとなる
 
 2.メインとなるhtml
 2-1.ANY-spa/フォルダと同じ階層に配置
