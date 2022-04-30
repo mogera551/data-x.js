@@ -246,17 +246,16 @@ export class ExpandedProperty extends Property {
     const name = patternProperty.pattern.replaceAll("*", replacer);
     super(context, PropertyType.EXPANDED, name, patternProperty.pattern, null);
     this.#patternProperty = patternProperty;
-    this.#patternIndexes = patternIndexes;
+    this.#patternIndexes = patternIndexes.slice(0);
     this.#buildDesc();
   }
   get patternProperty() {
     return this.#patternProperty;
   }
   get patternIndexes() {
-    return this.#patternIndexes.slice(0);
+    return this.#patternIndexes;
   }
   #buildDesc() {
-    
     const context = this.context;
     const cache = this.context.cache;
     const viewModel = this.context.viewModel;
@@ -268,17 +267,18 @@ export class ExpandedProperty extends Property {
     const desc = {};
     desc.configurable = true;
     desc.enumerable = true;
-    desc.get = function() {
-      const patternIndexes = context.properties.getProperty(name).patternIndexes;
+    desc.get = () => {
+      const self = this;
       return context.pushIndexes(patternIndexes, () => {
-        return cache.has(name) ? cache.get(name) : cache.set(name, this[patternProperty.pattern]);
+        return cache.has(name) ? cache.get(name) : cache.set(name, viewModel[patternProperty.pattern]);
       });
     };
+
     if (patternProperty.desc.set != null) {
-      desc.set = function(v) {
-        const patternIndexes = context.properties.getProperty(name).patternIndexes;
+      desc.set = (v) => {
+        const self = this;
         context.pushIndexes(patternIndexes, () => {
-          this[patternProperty.pattern] = v;
+          viewModel[patternProperty.pattern] = v;
           notifier.notify(patternProperty.pattern, patternIndexes);
         });
       };
@@ -316,28 +316,56 @@ export default class Properties {
     const proto = Object.getPrototypeOf(viewModel);
 
     // "aaa", "aaa.bbb", "aaa.*.bbb"
-    const isNotRealProperty = desc => desc?.get != null || desc?.set != null || (typeof desc?.value) === "function";
-    const isPrivate = name => name.startsWith("$$");
-    const isProperty = name => name.startsWith("@");
     const toPrivateDesc = desc => ({configurable: true, enumerable: false, writable: true, value: desc?.value});
+    const isPropertyName = name => /^\@\@?([a-zA-Z0-9_\.\*])+(#(get|set))?$/.test(name);
+    const isPrivateName = name => /^\$\$([a-zA-Z0-9_])+$/.test(name);
+
+    const createInfo = () => ({
+      baseName: null,
+      originalName: null,
+      privateName: null,
+      get: null,
+      set: null,
+      requireGet: false,
+      requireSet: false,
+      privateValue: undefined,
+    });
+    const infoByBaseName = new Map();
     [viewModel].forEach(o => {
       Object.entries(Object.getOwnPropertyDescriptors(o)).forEach(([name, desc]) => {
-        if (isNotRealProperty(desc)) return;
-        if (isPrivate(name)) {
+        if (!isPropertyName(name) && !isPrivateName(name)) return;
+        if (isPrivateName(name)) {
           Reflect.defineProperty(viewModel, name, toPrivateDesc(desc));
-        } else if (isProperty(name))  {
-          const requireSetter = (name.at(1) === "@");
-          const baseName = requireSetter ? name.slice(2) : name.slice(1);
+        } else if (isPropertyName(name))  {
+          const [ originalName, method ] = name.includes("#") ? name.split("#") : [ name, null ];
+          const requireSet = (name.at(1) === "@");
+          const baseName = requireSet ? originalName.slice(2) : originalName.slice(1);
+          const info = (infoByBaseName.has(baseName)) ? infoByBaseName.get(baseName) : createInfo();
+          info.baseName = info.baseName ?? baseName;
+          info.originalName = info.originalName ?? originalName;
+          info.privateName = info.privateName ?? `$$${baseName}`;
+          info.get = method === "get" ? desc.value : info.get;
+          info.set = method === "set" ? desc.value : info.set;
+          info.requireGet = (method == null) ? true : info.requireGet;
+          info.requireSet = requireSet;
+          info.privateValue = (method == null) ? desc.value : info.privateValue;
+          infoByBaseName.set(baseName, info);
           Reflect.deleteProperty(viewModel, name);
-          // private property $$name
-          const privateName = `$$${baseName}`;
-          if (!(privateName in viewModel) && !baseName.includes(".")) {
-            Reflect.defineProperty(viewModel, privateName, toPrivateDesc(desc));
-          }
-          const defineDesc = Object.getOwnPropertyDescriptor(viewModel, baseName) ?? Object.getOwnPropertyDescriptor(proto, baseName) ?? {};
-          this.setProperty(Property.create(context, {name:baseName, desc:defineDesc, requireSetter}));
         }
       });
+    });
+
+    Array.from(infoByBaseName.entries()).forEach(([baseName, info]) => {
+      // private property $$name
+      if (!(info.privateName in viewModel) && !info.baseName.includes(".")) {
+        Reflect.defineProperty(viewModel, info.privateName, toPrivateDesc({value:info.privateValue}));
+      }
+      const desc = Object.getOwnPropertyDescriptor(viewModel, baseName) ?? Object.getOwnPropertyDescriptor(proto, baseName) ?? {};
+      desc.get = info.get != null ? info.get : (desc.get ?? null);
+      desc.set = info.set != null ? info.set : (desc.set ?? null);
+      const requireSetter = info.requireSet;
+      const name = baseName;
+      this.setProperty(Property.create(context, {name, desc, requireSetter}));
     });
 
     // accessor property set enumerable 
@@ -413,7 +441,7 @@ export default class Properties {
 
   expand(name, indexes = null) {
     const property = this.getProperty(name);
-    this.#expand(property);
+    property != null && this.#expand(property);
   }
 
   #contract(property) {
@@ -429,24 +457,24 @@ export default class Properties {
 
   contract(name) {
     const property = this.getProperty(name);
-    this.#contract(property);
+    property != null && this.#contract(property);
   }
 
   testIsArray(name, propertyByName = this.#propertyByName) {
     return propertyByName.has(`${name}.*`);
   }
 
-  #update(property, cache = this.#context.cache, ) {
+  #update(property) {
     if (property.isArray) {
       this.#contract(property);
       this.#expand(property);
     }
-    cache.delete(property.name);
   }
 
-  updateByName(name) {
+  updateByName(name, cache = this.#context.cache) {
+    cache.delete(name);
     const property = this.getProperty(name);
-    this.#update(property);
+    property != null && this.#update(property);
 
     const updateInfos = this.#context.dependencies.getReferedProperties(name);
     updateInfos.forEach(info => (name != info.name) && this.#update(this.getProperty(info.name)));

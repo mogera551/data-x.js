@@ -25,7 +25,7 @@ export default class ViewUpdator {
   ) {
     const updatePaths = [];
     const isExpand = name => name.includes("*");
-    const expandName = (name, indexes, tmpIndexes = indexes.splice(0)) => name.replaceAll("*", () => tmpIndexes.shift());
+    const expandName = (name, indexes, tmpIndexes = indexes.slice(0)) => name.replaceAll("*", () => tmpIndexes.shift());
     const conv = ({name, indexes}) => ({ name: isExpand(name) ? expandName(name, indexes) : name, pattern:name, indexes });
     const getUpdatePaths = ({name, indexes}) => updatePaths.push(...dependencies.getReferedProperties(name, indexes), conv({name, indexes}));
     notifier.queue.forEach(getUpdatePaths);

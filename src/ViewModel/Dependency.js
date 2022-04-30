@@ -19,7 +19,7 @@ export default class Dependencies {
 
   build(map = this.#map, dependencyRules = this.#context.dependencyRules) {
     map.clear();
-    this.#dependencyRules = this.#context.dependencyRules.slice();
+    this.#dependencyRules = this.#context.dependencyRules.slice(0);
     dependencyRules.forEach(([ property, refProperties ]) => this.add(map, property, refProperties));
   }
 
@@ -43,7 +43,7 @@ export default class Dependencies {
     const walk = (node, list) => {
       if (node == null) return list;
       const isExpand = node.name.includes("*");
-      const expandName = (name, indexes, tmpIndexes = indexes.splice(0)) => name.replaceAll("*", () => tmpIndexes.shift())
+      const expandName = (name, indexes, tmpIndexes = indexes.slice(0)) => name.replaceAll("*", () => tmpIndexes.shift())
       list.push({
         name: isExpand ? expandName(node.name) : node.name,
         pattern: node.name,
