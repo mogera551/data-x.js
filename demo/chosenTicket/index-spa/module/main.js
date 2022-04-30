@@ -16,11 +16,7 @@ class ViewModelClass {
   "@chosenTicket.name";
   "@chosenTicket.price";
 
-  get "isChosenTicket"() {
-    return this["chosenTicket"] != null;
-  }
-
-  onClickClear() {
+  set "eventClickClear"(event) {
     this["chosenTicketId"] = "";
   }
 }
@@ -29,7 +25,6 @@ const dependencyRules = [
   ["chosenTicket", ["chosenTicketId"]],
   ["chosenTicket.name", ["chosenTicket"]],
   ["chosenTicket.price", ["chosenTicket"]],
-  ["isChosenTicket", ["chosenTicket"]],
 ]
 
 export default { ViewModelClass, dependencyRules };

@@ -5,8 +5,8 @@ Choose a ticket class:
     <option data-x:bind="value=tickets.*.id,textContent=tickets.*.name"></option>
   </template>
 </select>
-<button name="clear" data-x:bind="disabled=isChosenTicket|not">Clear</button>
-<p data-x:bind="style.display=isChosenTicket|style-display">
+<button name="clear" data-x:bind="disabled=chosenTicket|falsey">Clear</button>
+<p data-x:bind="style.display=chosenTicket|falsey|not|style-display">
   You have chosen <b data-x:bind="chosenTicket.name"></b>
   ($<span data-x:bind="chosenTicket.price"></span>)
 </p>
