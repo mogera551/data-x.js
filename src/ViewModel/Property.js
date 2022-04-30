@@ -464,20 +464,20 @@ export default class Properties {
     return propertyByName.has(`${name}.*`);
   }
 
-  #update(property) {
-    if (property.isArray) {
+  #update(name, cache = this.#context.cache) {
+    cache.delete(name);
+    const property = this.getProperty(name);
+    if (property != null && property.isArray) {
       this.#contract(property);
       this.#expand(property);
     }
   }
 
   updateByName(name, cache = this.#context.cache) {
-    cache.delete(name);
-    const property = this.getProperty(name);
-    property != null && this.#update(property);
+    this.#update(name);
 
     const updateInfos = this.#context.dependencies.getReferedProperties(name);
-    updateInfos.forEach(info => (name != info.name) && this.#update(this.getProperty(info.name)));
+    updateInfos.forEach(info => (name != info.name) && this.#update(info.name));
   }
 
   updateByPatternIndexes({ name, indexes }) {
