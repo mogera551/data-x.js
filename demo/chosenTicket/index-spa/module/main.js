@@ -3,22 +3,18 @@ const tickets = [
   { id:2, name:"Bussiness", price: 449.22 },
   { id:3, name:"First Class", price: 1199.99 },
 ];
+
 class ViewModelClass {
   "@tickets" = tickets;
   "@tickets.*.id";
   "@tickets.*.name";
 
   "@@chosenTicketId" = "";
-
-  get "chosenTicket"() {
-    return this["tickets"].find(ticket => ticket.id == this["chosenTicketId"]);
-  }
+  "@chosenTicket#get" = () => this["tickets"].find(ticket => ticket.id == this["chosenTicketId"]);
   "@chosenTicket.name";
   "@chosenTicket.price";
 
-  set "eventClickClear"(event) {
-    this["chosenTicketId"] = "";
-  }
+  "@@eventClickClear#set" = event => this["chosenTicketId"] = "";
 }
 
 const dependencyRules = [
