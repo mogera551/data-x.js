@@ -33,7 +33,7 @@ class ViewModelClass {
   }
 }
 
-export default { ViewModelClass, context }
+export default { ViewModelClass, context }; // context変数を含む
 
 2.ループ展開
 リストなどの繰り返し構造を表現する
