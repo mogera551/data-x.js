@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<div data-x:block="main"></div>
+
+<script type="module">
+import App from "../../src/App.js"
+
+const member = {
+  name: "Yamada Taro",
+  age: 36,
+  address: {
+    postalcode: "100-0001",
+    prefecture: "Tokyo",
+    city: "Chiyoda-ku",
+  }
+}
+
+App.boot({ member });
+</script>
+

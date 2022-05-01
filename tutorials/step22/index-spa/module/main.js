@@ -1,0 +1,15 @@
+class ViewModelClass {
+  "@@member";
+  "@@member.name";
+  "@@member.age";
+  "@@member.address.postalcode";
+  "@@member.address.prefecture";
+  "@@member.address.city";
+  async onInit(data) {
+    const response = await fetch(data.url);
+    const json = await response.json();
+    this["member"] = json;
+  }
+}
+
+export default { ViewModelClass };
