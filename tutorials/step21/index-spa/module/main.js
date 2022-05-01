@@ -5,8 +5,7 @@ class ViewModelClass {
   "@@member.address.postalcode";
   "@@member.address.prefecture";
   "@@member.address.city";
-  "@@eventInit#set" = function(args) {
-    const data = args[0];
+  onInit(data) {
     this["member"] = data.member;
   }
 }
