@@ -1,0 +1,5 @@
+<input type="text" name="message">
+<button type="button" name="regist" data-x:bind="disabled=message|falsey">regist</button>
+<div data-x:bind="style.display=message|style-display">
+  input message is "<span data-x:bind="message"></span>"
+</div>
