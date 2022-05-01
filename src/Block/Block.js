@@ -15,10 +15,11 @@ export default class Block {
   }
 
   get context() { return this.#context; }
+  get name() { return this.#name; }
 
   createContext(name, parentElement) {
     this.#name = name;
-    this.#context = new Context(parentElement);
+    this.#context = new Context(this, parentElement);
     this.#context.build();
     return this.#context;
   }
@@ -56,6 +57,22 @@ export default class Block {
     context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));
     context.view.appear();
+  }
+
+  async notifyAll(pattern, indexes, fromBlock) {
+    const viewModel = this.#context.viewModel;
+    if (fromBlock !== this) {
+      if ("eventNotifyAll" in viewModel) {
+        await (viewModel["eventNotifyAll"] = { pattern, indexes, fromBlock });
+      } else if ("onNotifyAll" in viewModel) {
+        await viewModel["onNotifyAll"](pattern, indexes, fromBlock);
+      }
+    }
+    const promises = [];
+    for(const block of this.#blocks) {
+      promises.push(block.notifyAll(pattern, indexes, fromBlock));
+    }
+    await Promise.all(promises);
   }
 
 }

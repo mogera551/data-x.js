@@ -14,4 +14,13 @@ export default class Root {
   async build() {
     this.#blocks.push(...await BlockBuilder.build(document.body));
   }
+
+  async notifyAll(pattern, indexes, fromBlock) {
+    const promises = [];
+    for(const block of this.#blocks) {
+      promises.push(block.notifyAll(pattern, indexes, fromBlock));
+    }
+    await Promise.all(promises);
+  }
+
 }

@@ -25,8 +25,11 @@ export default class Context {
   #template;
   #module;
   #filter;
+  #rootBlock;
+  #block;
 
-  constructor(parentElement) { 
+  constructor(block, parentElement) { 
+    this.#block = block;
     this.#parentElement = parentElement;
   }
 
@@ -40,6 +43,7 @@ export default class Context {
     this.#notifier = this.#container.notifier;
     this.#cache = this.#container.cache;
     this.#filter = App.filter;
+    this.#rootBlock = App.root;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -74,6 +78,8 @@ export default class Context {
   get template() { return this.#template; }
   get module() { return this.#module; }
   get filter() { return this.#filter; }
+  get rootBlock() { return this.#rootBlock; }
+  get block() { return this.#block; }
 
   set rootElement(v) { this.#rootElement = v; }
   set viewModel(v) { 
@@ -159,6 +165,7 @@ export default class Context {
     });
     [
       ["$notify", "notify"],
+      ["$notifyAll", "notifyAll"],
       ["$openDialog", "openDialog"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
@@ -196,7 +203,10 @@ export default class Context {
   }
 
   $notify(pattern, indexes = []) {
-    this.context.notifier.notify(pattern, indexes);
+    this.notifier.notify(pattern, indexes);
+  }
+  async $notifyAll(pattern, indexes = []) {
+    this.rootBlock.notifyAll(pattern, indexes, this.block);
   }
 
   async $openDialog(name, data = {}) {
