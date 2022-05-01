@@ -147,9 +147,10 @@ export class PlainProperty extends Property {
     const desc = this.desc;
     const name = this.name;
     if (desc.set != null) {
-      desc.set = function(v) {
-        Reflect.apply(setter, this, [v]);
-        notifier.notify(name);        
+      desc.set = async function(v) {
+        const result = Reflect.apply(setter, this, [v]);
+        notifier.notify(name);
+        return result;       
       };
       this.desc = desc;
     }

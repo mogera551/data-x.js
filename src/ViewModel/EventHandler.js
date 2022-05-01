@@ -4,9 +4,10 @@ export default class EventHandler {
     const eventPrperty = `event${propName}`;
     const eventHandler = `on${propName}`;
     if (eventPrperty in viewModel) {
-      viewModel[eventPrperty] = args;
+      const desc = Object.getOwnPropertyDescriptor(viewModel, eventPrperty);
+      return Reflect.apply(desc.set, viewModel, [args]);
     } else if (eventHandler in viewModel) {
-      viewModel[eventHandler](...args);
+      return viewModel[eventHandler](...args);
     }
   }
 }
