@@ -52,7 +52,10 @@ export default class Block {
   async build(context = this.#context, data = this.#data) {
     context.properties.build();
     context.dependencies.build();
-    ("onInit" in context.viewModel) && await context.viewModel.onInit(data);
+
+    const viewModel = context.viewModel;
+    const eventHandler = context.eventHandler;
+    await eventHandler.exec(viewModel, "init", data);
     context.properties.expandAll();
     context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));
@@ -60,19 +63,16 @@ export default class Block {
   }
 
   async notifyAll(pattern, indexes, fromBlock) {
-    const viewModel = this.#context.viewModel;
     if (fromBlock !== this) {
-      if ("eventNotifyAll" in viewModel) {
-        await (viewModel["eventNotifyAll"] = { pattern, indexes, fromBlock });
-      } else if ("onNotifyAll" in viewModel) {
-        await viewModel["onNotifyAll"](pattern, indexes, fromBlock);
-      }
+      const viewModel = this.#context.viewModel;
+      const eventHandler = this.#context.eventHandler;
+      await eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
     }
     const promises = [];
     for(const block of this.#blocks) {
       promises.push(block.notifyAll(pattern, indexes, fromBlock));
     }
-    await Promise.all(promises);
+    return Promise.all(promises);
   }
 
 }

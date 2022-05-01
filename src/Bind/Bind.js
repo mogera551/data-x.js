@@ -113,7 +113,7 @@ export default class Bind {
     this.#viewModelProperty = rule.viewModel?.property;
     this.#inputable = rule.inputable;
     this.#forwardFilters = rule?.filters ?? [];
-    this.#backwardFilters = this.#forwardFilters.slice(0).reverse()
+    this.#backwardFilters = this.#forwardFilters.slice().reverse()
 
     this.#context = context;
     this.#indexes = context.indexes?.slice() ?? [];

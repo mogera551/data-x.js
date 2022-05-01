@@ -1,3 +1,4 @@
+import PropertyName from "./PropertyName.js"
 
 class DepNode {
   parentNodes = [];
@@ -19,7 +20,7 @@ export default class Dependencies {
 
   build(map = this.#map, dependencyRules = this.#context.dependencyRules) {
     map.clear();
-    this.#dependencyRules = this.#context.dependencyRules.slice(0);
+    this.#dependencyRules = this.#context.dependencyRules.slice();
     dependencyRules.forEach(([ property, refProperties ]) => this.add(map, property, refProperties));
   }
 
@@ -42,10 +43,8 @@ export default class Dependencies {
     const node = map.get(property);
     const walk = (node, list) => {
       if (node == null) return list;
-      const isExpand = node.name.includes("*");
-      const expandName = (name, indexes, tmpIndexes = indexes.slice(0)) => name.replaceAll("*", () => tmpIndexes.shift())
       list.push({
-        name: isExpand ? expandName(node.name) : node.name,
+        name: PropertyName.expand(node.name, indexes ?? []),
         pattern: node.name,
         indexes
       });

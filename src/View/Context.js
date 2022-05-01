@@ -2,6 +2,8 @@ import ViewContainer from "./Container.js"
 import App from "../App.js"
 import ViewBuilder from "./ViewBuilder.js"
 import Dialog from "../Dialog/Dialog.js"
+import PropertyName from "../ViewModel/PropertyName.js"
+import EventHandler from "../ViewModel/EventHandler.js"
 
 export default class Context {
   #parentElement;
@@ -27,6 +29,7 @@ export default class Context {
   #filter;
   #rootBlock;
   #block;
+  #eventHandler;
 
   constructor(block, parentElement) { 
     this.#block = block;
@@ -44,6 +47,7 @@ export default class Context {
     this.#cache = this.#container.cache;
     this.#filter = App.filter;
     this.#rootBlock = App.root;
+    this.#eventHandler = EventHandler;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -80,6 +84,7 @@ export default class Context {
   get filter() { return this.#filter; }
   get rootBlock() { return this.#rootBlock; }
   get block() { return this.#block; }
+  get eventHandler() { return this.#eventHandler; }
 
   set rootElement(v) { this.#rootElement = v; }
   set viewModel(v) { 
@@ -112,8 +117,8 @@ export default class Context {
     pattern = property, 
     loop = this.currentLoop?.loop, 
     key = this.currentLoop?.key, 
-    indexes = this.indexes, 
-    replaceIndexes = indexes?.slice()) {
+    indexes = this.indexes ?? []
+  ) {
     return (property[0] === ".") ?
       (  // relative path
         (property === ".") 
@@ -121,7 +126,7 @@ export default class Context {
         : { path: `${loop.path}.${key}.${property}`, pattern: `${loop.pattern}.*.${property}` }
       )
       : { // absolute path
-        path: pattern.replaceAll("*", () => replaceIndexes.shift()),
+        path: PropertyName.expand(pattern, indexes),
         pattern: pattern,
       };
   }

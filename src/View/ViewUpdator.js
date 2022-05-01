@@ -1,3 +1,5 @@
+import PropertyName from "../ViewModel/PropertyName.js"
+
 export default class ViewUpdator {
   #context;
   #processQueue = [];
@@ -24,9 +26,7 @@ export default class ViewUpdator {
     dependencies = this.#context.dependencies
   ) {
     const updatePaths = [];
-    const isExpand = name => name.includes("*");
-    const expandName = (name, indexes, tmpIndexes = indexes.slice(0)) => name.replaceAll("*", () => tmpIndexes.shift());
-    const conv = ({name, indexes}) => ({ name: isExpand(name) ? expandName(name, indexes) : name, pattern:name, indexes });
+    const conv = ({name, indexes}) => ({ name: PropertyName.expand(name, indexes), pattern:name, indexes });
     const getUpdatePaths = ({name, indexes}) => updatePaths.push(...dependencies.getReferedProperties(name, indexes), conv({name, indexes}));
     notifier.queue.forEach(getUpdatePaths);
     const setOfUpdatePaths = new Set(updatePaths.map(info => info.name));

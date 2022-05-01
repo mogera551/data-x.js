@@ -3,7 +3,7 @@ import View from "./View.js";
 import ViewBuilder from "./ViewBuilder.js";
 import ViewUpdator from "./ViewUpdator.js";
 import Dependencies from "../ViewModel/Dependency.js";
-import Properties from "../ViewModel/Property.js";
+import Properties from "../ViewModel/Properties.js";
 import Notifier from "./Notifier.js";
 import Cache from "../ViewModel/Cache.js";
 
