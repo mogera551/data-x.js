@@ -2,7 +2,7 @@ import { Members, Member } from "../../models/Members.js"
 
 const context = {};
 class ViewModelClass {
-  "@members#init" = async () => { 
+  "@members#init" = () => { 
     const members = new Members; 
     members.load();
     (members.length == 0) && members.push(Member.create());

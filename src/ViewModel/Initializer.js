@@ -4,9 +4,11 @@ export default class Initializer {
   static async init(context, data, viewModel = context.viewModel, properties = context.properties) {
     const promises = [];
     for(const property of properties.values) {
-      property?.init && promises.push(property.init(data).then(value => {
-        return property.name.includes(".") ? (viewModel[property.name] = value) : (viewModel[`$$${property.name}`] = value);
-      }));
+      const assign = value => property.name.includes(".") ? (viewModel[property.name] = value) : (viewModel[`$$${property.name}`] = value);
+      property?.init && (
+        (property.init).constructor.name === "AsyncFunction" ?
+          promises.push(property.init(data).then(value => assign(value))) : assign(property.init(data))
+      );
     }
     await Promise.all(promises);
     return eventHandler.exec(viewModel, "init", data);
