@@ -49,6 +49,7 @@ export default class ViewUpdator {
     properties.clearStatus();
 
     await updateCallback();
+    console.log("call updateDom()");
 
     this.updateDom();
     properties.isUpdate && context.buildBinds();
