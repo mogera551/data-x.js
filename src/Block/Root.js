@@ -16,11 +16,9 @@ export default class Root {
   }
 
   async notifyAll(pattern, indexes, fromBlock) {
-    const promises = [];
     for(const block of this.#blocks) {
-      promises.push(block.notifyAll(pattern, indexes, fromBlock));
+      block.notifyAll(pattern, indexes, fromBlock);
     }
-    await Promise.all(promises);
   }
 
 }

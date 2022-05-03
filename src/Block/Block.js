@@ -62,16 +62,12 @@ export default class Block {
   }
 
   async notifyAll(pattern, indexes, fromBlock) {
-    if (fromBlock !== this) {
-      const viewModel = this.#context.viewModel;
-      const eventHandler = this.#context.eventHandler;
-      await eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
-    }
-    const promises = [];
+    const viewModel = this.#context.viewModel;
+    const eventHandler = this.#context.eventHandler;
     for(const block of this.#blocks) {
-      promises.push(block.notifyAll(pattern, indexes, fromBlock));
+      block.notifyAll(pattern, indexes, fromBlock);
     }
-    return Promise.all(promises);
+    (fromBlock !== this) && eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
   }
 
 }
