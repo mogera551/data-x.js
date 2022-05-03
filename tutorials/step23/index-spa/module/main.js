@@ -1,5 +1,5 @@
 class ViewModelClass {
-  "@@member#init" = async (data) => fetch(data.url).then(response => response.json());
+  "@@member#init" = async data => fetch(data.url).then(response => response.json());
   "@@member.name";
   "@@member.age";
   "@@member.address.postalcode";
