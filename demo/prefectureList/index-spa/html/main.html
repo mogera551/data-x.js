@@ -1,0 +1,26 @@
+
+<h3>都道府県一覧</h3>
+<table>
+  <colgroup>
+    <col style="width:50px">
+    <col style="width:100px">
+    <col style="width:100px">
+    <col style="width:120px">
+  </colgroup>
+  <thead>
+    <th>no.</th>
+    <th>名前</th>
+    <th>県庁所在地</th>
+    <th>人口</th>
+  </thead>
+  <tbody>
+    <template data-x:loop="prefectures">
+      <tr>
+        <td class="center" data-x:bind="prefectures.*.no"></td>
+        <td class="center" data-x:bind="prefectures.*.name"></td>
+        <td class="center" data-x:bind="prefectures.*.capital"></td>
+        <td class="right" data-x:bind="prefectures.*.population|locale-num"></td>
+      </tr>
+    </template>
+  </tbody>
+</table>
