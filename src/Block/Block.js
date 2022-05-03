@@ -53,9 +53,8 @@ export default class Block {
     context.properties.build();
     context.dependencies.build();
 
-    const viewModel = context.viewModel;
-    const eventHandler = context.eventHandler;
-    await eventHandler.exec(viewModel, "init", data);
+    const initializer = context.initializer;
+    await initializer.init(context, data);
     context.properties.expandAll();
     context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));

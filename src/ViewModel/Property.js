@@ -13,16 +13,18 @@ export class Property {
   #pathParent;
   #context;
   #desc;
+  #init;
   #type;
   #isNew = true;
   #isUpdate = false;
   #propName;
-  constructor(context, type, name, pattern, desc) {
+  constructor(context, type, name, pattern, desc, init) {
     this.#context = context;
     this.#type = type;
     this.#name = name;
     this.#pattern = pattern;
     this.#desc = desc;
+    this.#init = init;
     const elements = name.split(".");
     this.#pathLastElement = elements.pop();
     this.#pathParent = elements.join(".");
@@ -41,6 +43,9 @@ export class Property {
   }
   get desc() {
     return this.#desc;
+  }
+  get init() {
+    return this.#init;
   }
   get type() {
     return this.#type;
@@ -84,7 +89,7 @@ export class Property {
     this.isUpdate = false;
   }
 
-  static create(context, { name = null, desc = {}, patternProperty = null, patternIndexes = [], requireSetter = null }) {
+  static create(context, { name = null, desc = {}, patternProperty = null, patternIndexes = [], requireSetter = null, init = null }) {
     if (patternProperty != null) {
       return new ExpandedProperty(context, patternProperty, patternIndexes);
     } else {
@@ -92,9 +97,9 @@ export class Property {
         requireSetter = ("set" in desc);
       }
       if (name.includes("*")) {
-        return new PatternProperty(context, name, desc, requireSetter);
+        return new PatternProperty(context, name, desc, requireSetter, init);
       } else {
-        return new PlainProperty(context, name, desc, requireSetter);
+        return new PlainProperty(context, name, desc, requireSetter, init);
       }
     }
   } 
@@ -103,8 +108,8 @@ export class Property {
 
 // path not include "*"
 export class PlainProperty extends Property {
-  constructor(context, name, desc, requireSetter) {
-    super(context, PropertyType.PLAIN, name, name, desc);
+  constructor(context, name, desc, requireSetter, init) {
+    super(context, PropertyType.PLAIN, name, name, desc, init);
     this.#buildDesc(requireSetter);
     this.#addNotifiable();
   }
@@ -165,7 +170,7 @@ export class PlainProperty extends Property {
 
 // path include "*"
 export class PatternProperty extends Property {
-  constructor(context, pattern, desc, requireSetter) {
+  constructor(context, pattern, desc, requireSetter, init) {
     super(context, PropertyType.PATTERN, pattern, pattern, desc);
     this.#buildDesc(requireSetter);
   }
@@ -213,7 +218,7 @@ export class ExpandedProperty extends Property {
   #patternIndexes;
   constructor(context, patternProperty, patternIndexes) {
     const name = PropertyName.expand(patternProperty.pattern, patternIndexes);
-    super(context, PropertyType.EXPANDED, name, patternProperty.pattern, null);
+    super(context, PropertyType.EXPANDED, name, patternProperty.pattern, null, patternProperty.init);
     this.#patternProperty = patternProperty;
     this.#patternIndexes = patternIndexes.slice();
     this.#buildDesc();

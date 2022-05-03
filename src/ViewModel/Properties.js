@@ -22,7 +22,7 @@ export default class Properties {
 
     // "aaa", "aaa.bbb", "aaa.*.bbb"
     const toPrivateDesc = desc => ({configurable: true, enumerable: false, writable: true, value: desc?.value});
-    const isPropertyName = name => /^\@\@?([a-zA-Z0-9_\.\*])+(#(get|set))?$/.test(name);
+    const isPropertyName = name => /^\@\@?([a-zA-Z0-9_\.\*])+(#(get|set|init))?$/.test(name);
     const isPrivateName = name => /^\$\$([a-zA-Z0-9_])+$/.test(name);
 
     const createInfo = () => ({
@@ -31,6 +31,7 @@ export default class Properties {
       privateName: null,
       get: null,
       set: null,
+      init: null,
       requireGet: false,
       requireSet: false,
       privateValue: undefined,
@@ -51,6 +52,7 @@ export default class Properties {
           info.privateName = info.privateName ?? `$$${baseName}`;
           info.get = method === "get" ? desc.value : info.get;
           info.set = method === "set" ? desc.value : info.set;
+          info.init = method === "init" ? desc.value : info.init;
           info.requireGet = (method == null) ? true : info.requireGet;
           info.requireSet = requireSet;
           info.privateValue = (method == null) ? desc.value : info.privateValue;
@@ -68,9 +70,10 @@ export default class Properties {
       const desc = Object.getOwnPropertyDescriptor(viewModel, baseName) ?? Object.getOwnPropertyDescriptor(proto, baseName) ?? {};
       desc.get = info.get != null ? info.get : (desc.get ?? null);
       desc.set = info.set != null ? info.set : (desc.set ?? null);
+      const init = info.init;
       const requireSetter = info.requireSet;
       const name = baseName;
-      this.setProperty(Property.create(context, {name, desc, requireSetter}));
+      this.setProperty(Property.create(context, {name, desc, requireSetter, init}));
     });
 
     // accessor property set enumerable 

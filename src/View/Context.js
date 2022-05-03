@@ -4,6 +4,7 @@ import ViewBuilder from "./ViewBuilder.js"
 import Dialog from "../Dialog/Dialog.js"
 import PropertyName from "../ViewModel/PropertyName.js"
 import EventHandler from "../ViewModel/EventHandler.js"
+import Initializer from "../ViewModel/Initializer.js"
 
 export default class Context {
   #parentElement;
@@ -30,6 +31,7 @@ export default class Context {
   #rootBlock;
   #block;
   #eventHandler;
+  #initializer;
 
   constructor(block, parentElement) { 
     this.#block = block;
@@ -48,6 +50,7 @@ export default class Context {
     this.#filter = App.filter;
     this.#rootBlock = App.root;
     this.#eventHandler = EventHandler;
+    this.#initializer = Initializer;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -85,6 +88,7 @@ export default class Context {
   get rootBlock() { return this.#rootBlock; }
   get block() { return this.#block; }
   get eventHandler() { return this.#eventHandler; }
+  get initializer() { return this.#initializer; }
 
   set rootElement(v) { this.#rootElement = v; }
   set viewModel(v) { 
