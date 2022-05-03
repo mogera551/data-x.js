@@ -6,12 +6,14 @@
     <col style="width:100px">
     <col style="width:100px">
     <col style="width:120px">
+    <col style="width:80px">
   </colgroup>
   <thead>
     <th>no.</th>
     <th>名前</th>
     <th>県庁所在地</th>
-    <th>人口</th>
+    <th>人口(人)</th>
+    <th>割合(%)</th>
   </thead>
   <tbody>
     <template data-x:loop="prefectures">
@@ -20,7 +22,13 @@
         <td class="center" data-x:bind="prefectures.*.name"></td>
         <td class="center" data-x:bind="prefectures.*.capital"></td>
         <td class="right" data-x:bind="prefectures.*.population|locale-num"></td>
+        <td class="right" data-x:bind="prefectures.*.sharePopulation"></td>
       </tr>
     </template>
-  </tbody>
+    <tr>
+      <td class="center" colspan="3"></td>
+      <td class="right" data-x:bind="sumPopulation|locale-num"></td>
+      <td class="right">100</td>
+    </tr>
+</tbody>
 </table>

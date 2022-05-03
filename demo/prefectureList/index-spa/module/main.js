@@ -5,6 +5,8 @@ class ViewModelClass {
   "@prefectures.*.name";
   "@prefectures.*.capital";
   "@prefectures.*.population";
+  "@prefectures.*.sharePopulation#get" = () => Math.floor(this["prefectures.*.population"] / this["sumPopulation"] * 10000) / 100;
+  "@sumPopulation#get" = () => this["prefectures"].reduce((sum, pref) => sum + pref.population, 0);
 }
 
 export default { ViewModelClass, context }
