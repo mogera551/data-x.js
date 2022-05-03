@@ -21,14 +21,14 @@
         <td class="center" data-x:bind="prefectures.*.no"></td>
         <td class="center" data-x:bind="prefectures.*.name"></td>
         <td class="center" data-x:bind="prefectures.*.capital"></td>
-        <td class="right" data-x:bind="prefectures.*.population|locale-num"></td>
-        <td class="right" data-x:bind="prefectures.*.sharePopulation"></td>
+        <td class="right" data-x:bind="prefectures.*.population|locale-string"></td>
+        <td class="right" data-x:bind="prefectures.*.sharePopulation|fixed2"></td>
       </tr>
     </template>
     <tr>
       <td class="center" colspan="3"></td>
-      <td class="right" data-x:bind="sumPopulation|locale-num"></td>
-      <td class="right">100</td>
+      <td class="right" data-x:bind="sumPopulation|locale-string"></td>
+      <td class="right">100.00</td>
     </tr>
 </tbody>
 </table>

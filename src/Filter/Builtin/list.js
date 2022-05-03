@@ -3,5 +3,6 @@ export default [
   "Not",
   "Null",
   "StyleDisplay",
-  "LocaleNum",
+  "LocaleString",
+  "Fixed2",
 ];

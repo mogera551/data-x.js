@@ -5,7 +5,7 @@ class ViewModelClass {
   "@prefectures.*.name";
   "@prefectures.*.capital";
   "@prefectures.*.population";
-  "@prefectures.*.sharePopulation#get" = () => Math.floor(this["prefectures.*.population"] / this["sumPopulation"] * 10000) / 100;
+  "@prefectures.*.sharePopulation#get" = () => this["prefectures.*.population"] / this["sumPopulation"] * 100;
   "@sumPopulation#get" = () => this["prefectures"].reduce((sum, pref) => sum + pref.population, 0);
 }
 
