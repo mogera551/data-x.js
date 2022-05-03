@@ -3,4 +3,5 @@ export default [
   "Not",
   "Null",
   "StyleDisplay",
+  "LocaleNum",
 ];
