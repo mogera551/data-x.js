@@ -70,4 +70,12 @@ export default class Block {
     (fromBlock !== this) && eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
   }
 
+  async inquiryAll(message, param1, param2, fromBlock) {
+    const viewModel = this.#context.viewModel;
+    const eventHandler = this.#context.eventHandler;
+    for(const block of this.#blocks) {
+      block.inquiryAll(message, param1, param2, fromBlock);
+    }
+    eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock);
+  }
 }

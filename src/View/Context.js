@@ -175,6 +175,7 @@ export default class Context {
     [
       ["$notify", "notify"],
       ["$notifyAll", "notifyAll"],
+      ["$inquiryAll", "inquiryAll"],
       ["$openDialog", "openDialog"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
@@ -216,6 +217,9 @@ export default class Context {
   }
   async $notifyAll(pattern, indexes = []) {
     this.rootBlock.notifyAll(pattern, indexes, this.block);
+  }
+  async $inquiryAll(message, param1, param2) {
+    this.rootBlock.inquiryAll(message, param1, param2, this.block);
   }
 
   async $openDialog(name, data = {}) {

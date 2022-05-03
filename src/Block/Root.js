@@ -21,4 +21,10 @@ export default class Root {
     }
   }
 
+  async inquiryAll(message, param1, param2, fromBlock) {
+    for(const block of this.#blocks) {
+      block.inquiryAll(message, param1, param2, fromBlock);
+    }
+  }
+
 }
