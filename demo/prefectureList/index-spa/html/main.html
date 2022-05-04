@@ -21,8 +21,8 @@
         <td class="center" data-x:bind="prefectures.*.no"></td>
         <td class="center" data-x:bind="prefectures.*.name"></td>
         <td class="center" data-x:bind="prefectures.*.capital"></td>
-        <td class="right" data-x:bind="prefectures.*.population|locale-string"></td>
-        <td class="right" data-x:bind="prefectures.*.sharePopulation|fixed2"></td>
+        <td class="right" data-x:bind="textContent=prefectures.*.population|locale-string,class.underMillion=prefectures.*.population|lt:1000000"></td>
+        <td class="right" data-x:bind="prefectures.*.sharePopulation|fixed:2"></td>
       </tr>
     </template>
     <tr>

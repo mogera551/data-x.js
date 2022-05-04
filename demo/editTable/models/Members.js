@@ -5,9 +5,6 @@ export class Member {
   age = "";
   address = { postalcode:"", prefecture:"", city:"", address:"" };
   phone = "";
-  static create() {
-    return new Member();
-  }
 }
 
 export class Members extends Array {
@@ -23,4 +20,10 @@ export class Members extends Array {
     localStorage.removeItem(STORAGE_KEY);
     this.splice(0);
   }
+  createMember() {
+    return new Member();
+  }
 }
+
+const members = new Members;
+export default members;

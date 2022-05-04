@@ -18,3 +18,7 @@ table td, table th{
 .center {
   text-align:center;
 }
+
+.underMillion {
+  color: blue;
+}
