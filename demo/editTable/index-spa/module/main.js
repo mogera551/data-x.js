@@ -1,11 +1,10 @@
-import members from "../../models/Members.js" 
 
 const context = {};
 class ViewModelClass {
-  "@members#init" = () => { 
-    members.load();
-    (members.length == 0) && members.push(members.createMember());
-    return members; 
+  "@members#init" = data => { 
+    data.members.load();
+    (data.members.length == 0) && data.members.push(data.members.createMember());
+    return data.members; 
   };
   "@@members.*.name";
   "@@members.*.age";
