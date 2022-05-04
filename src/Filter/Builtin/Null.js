@@ -1,7 +1,7 @@
 import Filters from "../Filters.js"
 
 Filters.regist("null", {
-  forward(value) {
+  forward(value, options = []) {
     return value == null;
   }
 });

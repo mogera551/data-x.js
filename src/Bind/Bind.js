@@ -27,17 +27,20 @@ class DomPropertyType {
 
   static updateDomByClassType(bind) {
     const className = bind.domProperty.slice(this.matchClass.length);
-    const value = bind.viewModel[bind.path];
+    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
+//    const value = bind.viewModel[bind.path];
     value ? bind.dom.classList.add(className) : bind.dom.classList.remove(className);
   }
 
   static updateDomByRadioType(bind) {
-    const value = bind.viewModel[bind.path];
+    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
+//    const value = bind.viewModel[bind.path];
     bind.dom.checked = (bind.dom.value == value);
   }
 
   static updateDomByCheckboxType(bind) {
-    const value = bind.viewModel[bind.path];
+    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
+//    const value = bind.viewModel[bind.path];
     bind.dom.checked = (value ?? []).includes(bind.dom.value);
   }
 

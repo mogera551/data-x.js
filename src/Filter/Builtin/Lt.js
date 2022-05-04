@@ -1,7 +1,7 @@
 import Filters from "../Filters.js"
 
-Filters.regist("falsey", {
+Filters.regist("lt", {
   forward(value, options = []) {
-    return !(value);
+    return Number(value) < Number(options[0] ?? 0);
   }
 });

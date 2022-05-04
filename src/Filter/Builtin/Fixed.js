@@ -1,7 +1,7 @@
 import Filters from "../Filters.js"
 
-Filters.regist("falsey", {
+Filters.regist("fixed", {
   forward(value, options = []) {
-    return !(value);
+    return Number(value).toFixed(options[0] ?? 0);
   }
 });

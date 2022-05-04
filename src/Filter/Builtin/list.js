@@ -4,5 +4,9 @@ export default [
   "Null",
   "StyleDisplay",
   "LocaleString",
-  "Fixed2",
+  "Fixed",
+  "Gt",
+  "Ge",
+  "Lt",
+  "Le",
 ];
