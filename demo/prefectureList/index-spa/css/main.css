@@ -22,3 +22,7 @@ table td, table th{
 .underMillion {
   color: blue;
 }
+
+.over5Million {
+  color: red;
+}
