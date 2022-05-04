@@ -1,5 +1,15 @@
 
 <h3>都道府県一覧</h3>
+<div>
+  地方選択：
+  <select name="chosenRegion">
+    <option value="">全国</option>
+    <template data-x:loop="regions">
+      <option data-x:bind="value=regions.*,textContent=regions.*"></option>
+    </template>
+  </select>
+</div>
+
 <table>
   <colgroup>
     <col style="width:50px">
@@ -16,17 +26,17 @@
     <th>割合(%)</th>
   </thead>
   <tbody>
-    <template data-x:loop="prefectures">
+    <template data-x:loop="filteredPrefectures">
       <tr>
-        <td class="center" data-x:bind="prefectures.*.no"></td>
-        <td class="center" data-x:bind="prefectures.*.name"></td>
-        <td class="center" data-x:bind="prefectures.*.capital"></td>
-        <td class="right" data-x:bind="textContent=prefectures.*.population|locale-string,class.underMillion=prefectures.*.population|lt:1000000,class.over5Million=prefectures.*.population|ge:5000000"></td>
-        <td class="right" data-x:bind="prefectures.*.sharePopulation|fixed:2"></td>
+        <td class="center" data-x:bind="filteredPrefectures.*.no"></td>
+        <td class="center" data-x:bind="filteredPrefectures.*.name"></td>
+        <td class="center" data-x:bind="filteredPrefectures.*.capital"></td>
+        <td class="right" data-x:bind="textContent=filteredPrefectures.*.population|locale-string,class.underMillion=filteredPrefectures.*.population|lt:1000000,class.over5Million=filteredPrefectures.*.population|ge:5000000"></td>
+        <td class="right" data-x:bind="filteredPrefectures.*.sharePopulation|fixed:2"></td>
       </tr>
     </template>
     <tr>
-      <td class="center" colspan="3"></td>
+      <td class="center" colspan="3" data-x:bind="sumTitle"></td>
       <td class="right" data-x:bind="sumPopulation|locale-string"></td>
       <td class="right">100.00</td>
     </tr>
