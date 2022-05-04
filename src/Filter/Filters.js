@@ -5,21 +5,13 @@ export default class Filters {
     this.filterByName.set(name, filter);
   }
 
-  static forward(filterDescs, value) {
-    return filterDescs.map(filterDesc => {
-      const [name, optDesc] = filterDesc.split(":");
-      const options = (optDesc ?? "").split(";");
-      const filter = this.filterByName.get(name);
-      return { name, options, filter }
-    }).reduce((value, { options, filter }) => ("forward" in filter) ? filter.forward(value, options) : value, value)
+  static forward(filters, value) {
+    const exec = (info,value) => info.filter.forward(value, info.options);
+    return filters.reduce((value, info) => ("forward" in info.filter) ? exec(info, value) : value, value)
   }
 
-  static backward(filterDescs, value) {
-    return filterDescs.map(filterDesc => {
-      const [name, optDesc] = filterDesc.split(":");
-      const options = (optDesc ?? "").split(";");
-      const filter = this.filterByName.get(name);
-      return { name, options, filter }
-    }).reduce((value, { options, filter }) => ("backward" in filter) ? filter.backward(value, options) : value, value)
+  static backward(filters, value) {
+    const exec = (info,value) => info.filter.backward(value, info.options);
+    return filters.reduce((value, info) => ("backward" in info.filter) ? exec(info, value) : value, value)
   }
 }

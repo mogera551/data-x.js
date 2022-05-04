@@ -1,3 +1,4 @@
+import Filter from "./Filter.js";
 
 class DomPropertyType {
   static VALUE = 1;
@@ -115,8 +116,8 @@ export default class Bind {
     this.#viewModel = context.viewModel;
     this.#viewModelProperty = rule.viewModel?.property;
     this.#inputable = rule.inputable;
-    this.#forwardFilters = rule?.filters ?? [];
-    this.#backwardFilters = this.#forwardFilters.slice().reverse()
+    this.#forwardFilters = Filter.parse(rule?.filters.join("|")) ?? [];
+    this.#backwardFilters = this.#forwardFilters.slice().reverse();
 
     this.#context = context;
     this.#indexes = context.indexes?.slice() ?? [];
