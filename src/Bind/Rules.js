@@ -85,11 +85,13 @@ export default class Rules {
     document.body.appendChild(dummy);
     const shadow = dummy.attachShadow({mode:"open"});
     const styleNode = rootElement.querySelector(BIND_SELECTOR);
-    shadow.appendChild(styleNode);
-    const styleSheetFinder = sheet => sheet.ownerNode === styleNode;
-    const styleSheet = Array.from(shadow.styleSheets).find(styleSheetFinder);
     const rules = []
-    Array.from(styleSheet?.cssRules ?? []).map(rule => rules.push(...BindRule.build(rule)));
+    if (styleNode != null) {
+      shadow.appendChild(styleNode);
+      const styleSheetFinder = sheet => sheet.ownerNode === styleNode;
+      const styleSheet = Array.from(shadow.styleSheets).find(styleSheetFinder);
+      Array.from(styleSheet?.cssRules ?? []).map(rule => rules.push(...BindRule.build(rule)));
+    }
     document.body.removeChild(dummy);
     return rules;
   }

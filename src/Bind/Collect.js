@@ -157,49 +157,29 @@ export default class Collect {
     Array.from(rulesBySelector.keys()).forEach(selector => {
       rootElement.querySelectorAll(`${selector}${NOT_PROCESSING}`).forEach(element => {
         if (DATA_IGNORE in element.dataset) return;
+        const isInputable = this.inputable(element);
         const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
         const newProcessing = processings.slice();
         rulesBySelector.get(selector).forEach(bindRule => {
+          const cloneRule = JSON.parse(JSON.stringify(bindRule));
           if (element.tagName === "TEMPLATE") {
             if (processings.includes("loop")) return;
-            createLoop(bindRule, element);
+            createLoop(cloneRule, element);
             newProcessing.push("loop");
-          } else if ("event" in bindRule.dom) {
+          } else if ("event" in cloneRule.dom) {
             if (processings.includes("events")) return;
-            createEvent(bindRule, element);
+            createEvent(cloneRule, element);
             newProcessing.push("events");
           } else {
             if (processings.includes("bind")) return;
-            createBind(bindRule, element);
+            cloneRule.inputable = isInputable;
+            createBind(cloneRule, element);
             newProcessing.push("bind");
           }
         });
         element.dataset[DATA_PROCESSING] = newProcessing.join(",");
       });
     });
-/*
-    bindRules.forEach(bindRule => {
-      const elements = rootElement.querySelectorAll(`${bindRule.dom.selector}${NOT_PROCESSING}`);
-      elements.forEach(element => {
-        const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
-        if (DATA_IGNORE in element.dataset) return;
-        if (element.tagName === "TEMPLATE") {
-          if (processings.includes("loop")) return;
-          createLoop(bindRule, element);
-          processings.push("loop");
-        } else if ("event" in bindRule.dom) {
-          if (processings.includes("events")) return;
-          createEvent(bindRule, element);
-          processings.push("events");
-        } else {
-          if (processings.includes("bind")) return;
-          createBind(bindRule, element);
-          processings.push("bind");
-        }
-        element.dataset[DATA_PROCESSING] = processings.join(",");
-      });
-    });
-*/
     return { loops, binds, events };
   }
   static collect(context, rootElement, bindRules = []) {
