@@ -70,8 +70,8 @@ tr.filteredPrefectures td[data-name='capital'] {
 
 tr.filteredPrefectures td[data-name='population'] {
   --bind-textContent: filteredPrefectures.*.population|locale-string;
-  --bind-class-underMillion: filteredPrefectures.*.population|lt:1000000;
-  --bind-class-over5Million: filteredPrefectures.*.population|ge:5000000;
+  --bind-class-under-million: filteredPrefectures.*.population|lt:1000000;
+  --bind-class-over-5million: filteredPrefectures.*.population|ge:5000000;
 }
 
 tr.filteredPrefectures td[data-name='sharePopulation'] {

@@ -12,6 +12,7 @@
 
 const BIND_SELECTOR = "style[data-x\\:rules='bind']";
 const PREFIX_BIND = "--bind-";
+const PREFIX_CLASS = "--bind-class-";
 const KEY_EVENTS = "--events";
 const KEY_LOOP = "--loop";
 class BindRule {
@@ -61,7 +62,17 @@ class BindRule {
           value
         );
         rules.push(loopRule);
-      
+      } else if (key.startsWith(PREFIX_CLASS)) {
+        const values = value.split("|");
+        const vmProp = values.shift();
+        const filters = values;
+        const bindRule = BindRule.createBind(
+          cssRule.selectorText,
+          "class." + key.slice(PREFIX_CLASS.length),
+          vmProp, 
+          filters
+        );
+        rules.push(bindRule);
       } else if (key.startsWith(PREFIX_BIND)) {
         const values = value.split("|");
         const vmProp = values.shift();

@@ -19,10 +19,10 @@ table td, table th{
   text-align:center;
 }
 
-.underMillion {
+.under-million {
   color: blue;
 }
 
-.over5Million {
+.over-5million {
   color: red;
 }
