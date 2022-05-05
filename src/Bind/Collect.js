@@ -149,6 +149,35 @@ export default class Collect {
     const createLoop = (bindRule, element) => loops.push(new Loop(element, bindRule, context));
     const createBind = (bindRule, element) => binds.push(new Bind(element, bindRule, context));
     const createEvent = (bindRule, element) => events.push(new Event(element, bindRule, context));
+    const rulesBySelector = new Map();
+    bindRules.forEach(rule => {
+      !rulesBySelector.has(rule.dom.selector) && rulesBySelector.set(rule.dom.selector, []);
+      rulesBySelector.get(rule.dom.selector).push(rule);
+    });
+    Array.from(rulesBySelector.keys()).forEach(selector => {
+      rootElement.querySelectorAll(`${selector}${NOT_PROCESSING}`).forEach(element => {
+        if (DATA_IGNORE in element.dataset) return;
+        const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
+        const newProcessing = processings.slice();
+        rulesBySelector.get(selector).forEach(bindRule => {
+          if (element.tagName === "TEMPLATE") {
+            if (processings.includes("loop")) return;
+            createLoop(bindRule, element);
+            newProcessing.push("loop");
+          } else if ("event" in bindRule.dom) {
+            if (processings.includes("events")) return;
+            createEvent(bindRule, element);
+            newProcessing.push("events");
+          } else {
+            if (processings.includes("bind")) return;
+            createBind(bindRule, element);
+            newProcessing.push("bind");
+          }
+        });
+        element.dataset[DATA_PROCESSING] = newProcessing.join(",");
+      });
+    });
+/*
     bindRules.forEach(bindRule => {
       const elements = rootElement.querySelectorAll(`${bindRule.dom.selector}${NOT_PROCESSING}`);
       elements.forEach(element => {
@@ -170,9 +199,9 @@ export default class Collect {
         element.dataset[DATA_PROCESSING] = processings.join(",");
       });
     });
+*/
     return { loops, binds, events };
   }
-
   static collect(context, rootElement, bindRules = []) {
     const binds = [], loops = [], events = [];
     this.collectByAttribute(context, rootElement, binds, loops, events);

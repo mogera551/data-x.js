@@ -1,11 +1,10 @@
-
 <h3>都道府県一覧</h3>
 <div>
   地方選択：
   <select name="chosenRegion">
     <option value="">全国</option>
-    <template data-x:loop="regions">
-      <option data-x:bind="value=regions.*,textContent=regions.*"></option>
+    <template id="regions">
+      <option class="regions"></option>
     </template>
   </select>
 </div>
@@ -26,19 +25,64 @@
     <th>割合(%)</th>
   </thead>
   <tbody>
-    <template data-x:loop="filteredPrefectures">
-      <tr>
-        <td class="center" data-x:bind="filteredPrefectures.*.no"></td>
-        <td class="center" data-x:bind="filteredPrefectures.*.name"></td>
-        <td class="center" data-x:bind="filteredPrefectures.*.capital"></td>
-        <td class="right" data-x:bind="textContent=filteredPrefectures.*.population|locale-string,class.underMillion=filteredPrefectures.*.population|lt:1000000,class.over5Million=filteredPrefectures.*.population|ge:5000000"></td>
-        <td class="right" data-x:bind="filteredPrefectures.*.sharePopulation|fixed:2"></td>
+    <template id="filteredPrefectures">
+      <tr class="filteredPrefectures">
+        <td class="center" data-name="no"></td>
+        <td class="center" data-name="name"></td>
+        <td class="center" data-name="capital"></td>
+        <td class="right" data-name="population"></td>
+        <td class="right" data-name="sharePopulation"></td>
       </tr>
     </template>
-    <tr>
-      <td class="center" colspan="3" data-x:bind="sumTitle"></td>
-      <td class="right" data-x:bind="sumPopulation|locale-string"></td>
+    <tr class="summary">
+      <td class="center" colspan="3" data-name="title"></td>
+      <td class="right" data-name="population"></td>
       <td class="right">100.00</td>
     </tr>
 </tbody>
 </table>
+
+<style data-x:rules="bind">
+template#regions {
+  --loop: regions;
+}
+
+option.regions {
+  --bind-value: regions.*;
+  --bind-textContent: regions.*;
+}
+
+template#filteredPrefectures {
+  --loop: filteredPrefectures;
+}
+
+tr.filteredPrefectures td[data-name='no'] {
+  --bind-textContent: filteredPrefectures.*.no;
+}
+
+tr.filteredPrefectures td[data-name='name'] {
+  --bind-textContent: filteredPrefectures.*.name;
+}
+
+tr.filteredPrefectures td[data-name='capital'] {
+  --bind-textContent: filteredPrefectures.*.capital;
+}
+
+tr.filteredPrefectures td[data-name='population'] {
+  --bind-textContent: filteredPrefectures.*.population|locale-string;
+  --bind-class-underMillion: filteredPrefectures.*.population|lt:1000000;
+  --bind-class-over5Million: filteredPrefectures.*.population|ge:5000000;
+}
+
+tr.filteredPrefectures td[data-name='sharePopulation'] {
+  --bind-textContent: filteredPrefectures.*.sharePopulation|fixed:2;
+}
+
+table tbody tr.summary td[data-name='title'] {
+  --bind-textContent: sumTitle;
+}
+
+table tbody tr.summary td[data-name='population'] {
+  --bind-textContent: sumPopulation|locale-string;
+}
+</style>

@@ -1,12 +1,39 @@
 Choose a ticket class:
 <select name="chosenTicketId">
   <option value="">Choose...</option>
-  <template data-x:loop="tickets">
-    <option data-x:bind="value=tickets.*.id,textContent=tickets.*.name"></option>
+  <template id="tickets">
+    <option class="tickets"></option>
   </template>
 </select>
-<button name="clear" data-x:bind="disabled=chosenTicket|falsey">Clear</button>
-<p data-x:bind="style.display=chosenTicket|style-display">
-  You have chosen <b data-x:bind="chosenTicket.name"></b>
-  ($<span data-x:bind="chosenTicket.price"></span>)
+<button name="clear">Clear</button>
+<p class="ticketInfo">
+  You have chosen <b class="ticketName"></b>
+  ($<span class="ticketPrice"></span>)
 </p>
+
+<style data-x:rules="bind">
+template#tickets {
+  --loop: tickets;
+}
+
+option.tickets {
+  --bind-value: tickets.*.id;
+  --bind-textContent: tickets.*.name;
+}
+
+button[name='clear'] {
+  --bind-disabled: chosenTicket|falsey;
+}
+
+.ticketInfo {
+  --bind-style-display: chosenTicket|style-display;
+}
+
+.ticketInfo .ticketName {
+  --bind-textContent: chosenTicket.name;
+}
+
+.ticketInfo .ticketPrice {
+  --bind-textContent: chosenTicket.price;
+}
+</style>

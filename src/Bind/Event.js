@@ -42,7 +42,7 @@ export default class Event {
   ) {
     return context.pushIndexes(indexes, async () => {
       const result = eventHandler.exec(viewModel, handlerName, event, ...indexes);
-      console.log("end eventHandler");
+//      console.log("end eventHandler");
       return result;
     });
   }

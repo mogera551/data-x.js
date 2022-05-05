@@ -1,6 +1,7 @@
 import Context from "../View/Context.js";
 import container from "./Container.js"
 import BlockBuilder from "../Block/BlockBuilder.js";
+import Rules from "../Bind/Rules.js"
 
 export default class Block {
   #name;
@@ -36,12 +37,13 @@ export default class Block {
       context.viewModel = 
         module.default?.viewModel ?? 
         (module.default?.ViewModelClass != null ? Reflect.construct(module.default.ViewModelClass, []) : {});
-      context.bindRules.push(...module.default?.bindRules ?? []);
+      //context.bindRules.push(...module.default?.bindRules ?? []);
       context.dependencyRules.push(...module.default?.dependencyRules ?? []);
       const reflectContext = module.default?.context ?? module.default?._;
       (reflectContext != null) && context.reflect(reflectContext, dialog);
 
       context.rootElement = template.content.cloneNode(true);
+      context.bindRules.push(...Rules.collect(context.rootElement));
 
       console.log(module.default);
     } catch(e) {
