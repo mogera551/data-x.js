@@ -9,9 +9,6 @@ Filters.regist("falsey", {
 Filters.regist("not", {
   forward(value, options = []) {
     return !value;
-  },
-  backward(value, options = []) {
-    return !value;
   }
 });
 
@@ -24,9 +21,6 @@ Filters.regist("null", {
 Filters.regist("style-display", {
   forward(value, options = []) {
     return value ? "" : "none";
-  },
-  backward(value, options = []) {
-    return value === "none" ? false : true;
   }
 });
 
@@ -66,3 +60,11 @@ Filters.regist("lt", {
   }
 });
 
+Filters.regist("number-value", {
+  forward(value, options = []) {
+    return value.toString();
+  },
+  backward(value, options = []) {
+    return Number(value);
+  },
+});
