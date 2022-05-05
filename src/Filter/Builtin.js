@@ -62,9 +62,9 @@ Filters.regist("lt", {
 
 Filters.regist("number-value", {
   forward(value, options = []) {
-    return value.toString();
+    return value?.toString() ?? "";
   },
   backward(value, options = []) {
-    return Number(value);
+    return (value !== "") ? Number(value) : null;
   },
 });
