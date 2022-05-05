@@ -2,6 +2,7 @@ import container from "./Container.js"
 
 const QUERY_BLOCK = "[data-x\\:block]";
 const DATASET_BLOCK = "x:block";
+const DATASET_WITH_BIND_CSS = "x:withBindCss"; // notice: camel case
 
 export default class BlockBuilder {
   static collect(rootElement) {
@@ -10,8 +11,9 @@ export default class BlockBuilder {
 
   static async createBlock(element) {
     const blockName = element.dataset[DATASET_BLOCK];
+    const withBindCss = DATASET_WITH_BIND_CSS in element.dataset;
     const block = container.block;
-    await block.load(blockName, element);
+    await block.load(blockName, element, withBindCss);
     await block.build();
     return block;
   }

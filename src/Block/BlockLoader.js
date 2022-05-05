@@ -5,8 +5,8 @@ export default class BlockLoader {
     this.#options = options;
   }
 
-  async load(name) {
-    const [html, css, module] = await Promise.all([
+  async load(name, withBindCss) {
+    const [html, css, module, bindCss] = await Promise.all([
       this.#loadParts(name)
       .then(res => {
         if (!res.ok) {
@@ -42,8 +42,30 @@ export default class BlockLoader {
         console.error(e);
         throw e;
       }),
+      new Promise((resolve, reject) => {
+        if (!withBindCss) {
+          resolve(null);
+        } else {
+          this.#loadBindCss(name)
+          .then(res => {
+            if (!res.ok) {
+              console.error('response.ok:', response.ok);
+              console.error('esponse.status:', response.status);
+              console.error('esponse.statusText:', response.statusText);
+              throw new Error(res.statusText);
+            }
+            return res.text();
+          })
+          .then(txt => {
+            resolve(txt);
+          }).catch(e => {
+            reject();
+          });
+  
+        }
+      }),
     ]);
-    const template = this.#createTemplate({name, html, css});
+    const template = this.#createTemplate({name, html, css, bindCss});
     document.body.appendChild(template);
     return { template, module};
   }
@@ -65,11 +87,18 @@ export default class BlockLoader {
     return fetch(`${spaPath}/css/${name}.css`);
   }
 
-  #createTemplate({name, html, css}) {
+  #loadBindCss(name, spaPath = this.#options?.spaPath) {
+    return fetch(`${spaPath}/css/${name}.bind.css`);
+  }
+
+  #createTemplate({name, html, css, bindCss}) {
     const template = document.createElement("template");
     template.innerHTML = html;
     if (css != null) {
       template.innerHTML = "<style>\n" + css + "\n</style>\n" + template.innerHTML;
+    }
+    if (bindCss != null) {
+      template.innerHTML = "<style data-x:rules=\"bind\">\n" + bindCss + "\n</style>\n" + template.innerHTML;
     }
     template.dataset[`block`] = name;
     return template;

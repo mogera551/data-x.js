@@ -25,12 +25,12 @@ export default class Block {
     return this.#context;
   }
 
-  async load(name, parentElement) {
+  async load(name, parentElement, withBindCss) {
     const context = this.createContext(name, parentElement);
     const dialog = this.#dialog;
     try {
       const loader = container.blockLoader;
-      const {template, module} = await loader.load(name);
+      const {template, module} = await loader.load(name, withBindCss);
   
       context.template = template;
       context.module = module;
