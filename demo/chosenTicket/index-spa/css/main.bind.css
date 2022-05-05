@@ -20,5 +20,5 @@ button[name='clear'] {
 }
 
 .ticketInfo .ticketPrice {
-  --bind-textContent: chosenTicket.price;
+  --bind-textContent: chosenTicket.price|number-value;
 }

@@ -9,12 +9,12 @@ class AppViewModel {
   "@tickets.*.id";
   "@tickets.*.name";
 
-  "@@chosenTicketId" = "";
-  "@chosenTicket#get" = () => this["tickets"].find(ticket => ticket.id == this["chosenTicketId"]);
+  "@@chosenTicketId" = null;
+  "@chosenTicket#get" = () => this["tickets"].find(ticket => ticket.id === this["chosenTicketId"]);
   "@chosenTicket.name";
   "@chosenTicket.price";
 
-  "@@eventClickClear#set" = event => this["chosenTicketId"] = "";
+  "@@eventClickClear#set" = event => this["chosenTicketId"] = null;
 }
 
 const dependencyRules = [
