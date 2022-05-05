@@ -2,7 +2,7 @@ const STORAGE_KEY = "members";
 
 export class Member {
   name = "";
-  age = "";
+  age = 0;
   address = { postalcode:"", prefecture:"", city:"", address:"" };
   phone = "";
 }
