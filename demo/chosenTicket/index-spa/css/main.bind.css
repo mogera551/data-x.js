@@ -2,7 +2,7 @@ template#tickets {
   --loop: tickets;
 }
 
-option.tickets {
+option.ticket {
   --bind-value: tickets.*.id;
   --bind-textContent: tickets.*.name;
 }
@@ -11,14 +11,14 @@ button[name='clear'] {
   --bind-disabled: chosenTicket|falsey;
 }
 
-.ticketInfo {
+.chosenTicketInfo {
   --bind-style-display: chosenTicket|style-display;
 }
 
-.ticketInfo .ticketName {
+.chosenTicketInfo .name {
   --bind-textContent: chosenTicket.name;
 }
 
-.ticketInfo .ticketPrice {
+.chosenTicketInfo .price {
   --bind-textContent: chosenTicket.price|number-value;
 }
