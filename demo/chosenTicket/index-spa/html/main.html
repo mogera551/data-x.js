@@ -10,30 +10,3 @@ Choose a ticket class:
   You have chosen <b class="ticketName"></b>
   ($<span class="ticketPrice"></span>)
 </p>
-
-<style data-x:rules="bind">
-template#tickets {
-  --loop: tickets;
-}
-
-option.tickets {
-  --bind-value: tickets.*.id;
-  --bind-textContent: tickets.*.name;
-}
-
-button[name='clear'] {
-  --bind-disabled: chosenTicket|falsey;
-}
-
-.ticketInfo {
-  --bind-style-display: chosenTicket|style-display;
-}
-
-.ticketInfo .ticketName {
-  --bind-textContent: chosenTicket.name;
-}
-
-.ticketInfo .ticketPrice {
-  --bind-textContent: chosenTicket.price;
-}
-</style>

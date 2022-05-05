@@ -1,0 +1,42 @@
+template#regions {
+  --loop: regions;
+}
+
+option.regions {
+  --bind-value: regions.*;
+  --bind-textContent: regions.*;
+}
+
+template#filteredPrefectures {
+  --loop: filteredPrefectures;
+}
+
+tr.filteredPrefectures td[data-name='no'] {
+  --bind-textContent: filteredPrefectures.*.no;
+}
+
+tr.filteredPrefectures td[data-name='name'] {
+  --bind-textContent: filteredPrefectures.*.name;
+}
+
+tr.filteredPrefectures td[data-name='capital'] {
+  --bind-textContent: filteredPrefectures.*.capital;
+}
+
+tr.filteredPrefectures td[data-name='population'] {
+  --bind-textContent: filteredPrefectures.*.population|locale-string;
+  --bind-class-under-million: filteredPrefectures.*.population|lt:1000000;
+  --bind-class-over-5million: filteredPrefectures.*.population|ge:5000000;
+}
+
+tr.filteredPrefectures td[data-name='sharePopulation'] {
+  --bind-textContent: filteredPrefectures.*.sharePopulation|fixed:2;
+}
+
+tr.summary td[data-name='title'] {
+  --bind-textContent: sumTitle;
+}
+
+tr.summary td[data-name='population'] {
+  --bind-textContent: sumPopulation|locale-string;
+}
