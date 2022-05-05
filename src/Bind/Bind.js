@@ -154,8 +154,8 @@ export default class Bind {
     DomPropertyType.updateViewModel(this);
   }
   
-  attachEvent(dom = this.#dom, viewUpdator = this.#context.viewUpdator) {
-    const handler = e => viewUpdator.updateProcess(() => this.updateViewModel());
+  attachEvent(dom = this.#dom, viewUpdater = this.#context.viewUpdater) {
+    const handler = e => viewUpdater.updateProcess(() => this.updateViewModel());
     dom.addEventListener("input", handler);
   }
 }

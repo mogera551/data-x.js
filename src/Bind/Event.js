@@ -47,8 +47,8 @@ export default class Event {
     });
   }
 
-  attachEvent(dom = this.#dom, event = this.#event, viewUpdator = this.#context.viewUpdator) {
-    const handler = e => viewUpdator.updateProcess(async () => await this.eventHandler(e));
+  attachEvent(dom = this.#dom, event = this.#event, viewUpdater = this.#context.viewUpdater) {
+    const handler = e => viewUpdater.updateProcess(async () => await this.eventHandler(e));
     dom.addEventListener(event, handler);
   }
 }

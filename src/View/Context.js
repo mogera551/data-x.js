@@ -13,7 +13,7 @@ export default class Context {
   #view;
   #viewModel;
   #viewBuilder;
-  #viewUpdator;
+  #viewUpdater;
   #bindRules = [];
   #dependencyRules = [];
   #dependencies;
@@ -42,7 +42,7 @@ export default class Context {
     this.#container = ViewContainer.create(this);
     this.#view = this.#container.view;
     this.#viewBuilder = ViewBuilder;
-    this.#viewUpdator = this.#container.viewUpdator;
+    this.#viewUpdater = this.#container.viewUpdater;
     this.#dependencies = this.#container.dependencies;
     this.#properties = this.#container.properties;
     this.#notifier = this.#container.notifier;
@@ -59,7 +59,7 @@ export default class Context {
   get view() { return this.#view; }
   get viewModel() { return this.#viewModel; }
   get viewBuilder() { return this.#viewBuilder; }
-  get viewUpdator() { return this.#viewUpdator; }
+  get viewUpdater() { return this.#viewUpdater; }
   get bindRules() { return this.#bindRules; }
   get dependencyRules() { return this.#dependencyRules; }
   get dependencies() { return this.#dependencies; }
