@@ -5,9 +5,9 @@
 ・ユーティリティ呼び出し（ダイアログ表示、更新通知）
 で使用する
 
-ViewModelClass内では、this.$contextで参照できる
+AppViewModel内では、this.$contextで参照できる
 
-class ViewModelClass {
+class AppViewModel {
   get "names.*"() {
     const { $1 } = this.$context.indexes; // ループ展開時のインデックス参照
     return this["names"][$1];
@@ -18,11 +18,11 @@ class ViewModelClass {
   }
 }
 
-context変数をViewModelClassクラスの外部で定義し、コンテクストとすることができる
+context変数をAppViewModelクラスの外部で定義し、コンテクストとすることができる
 export defaultにcontext変数を含む必要がある
 
 const context = {};
-class ViewModelClass {
+class AppViewModel {
   get "names.*"() {
     const { $1 } = context.indexes; // ループ展開時のインデックス参照
     return this["names"][$1];
@@ -33,7 +33,7 @@ class ViewModelClass {
   }
 }
 
-export default { ViewModelClass, context }; // context変数を含む
+export default { AppViewModel, context }; // context変数を含む
 
 2.ループ展開
 リストなどの繰り返し構造を表現する
@@ -51,7 +51,7 @@ data-x:loop属性にループするviewModelのプロパティを入れる
 ループするプロパティ("list.*")を定義する
 アクセサプロパティは、コンテクストからインデックスを取得し、listから対応する要素を返す
 
-class ViewModelClass {
+class AppViewModel {
   $$list = [10, 20, 30];
   get "list"() { return this.$$list; }
   get "list.*"() {

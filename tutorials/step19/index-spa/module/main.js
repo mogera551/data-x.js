@@ -1,6 +1,6 @@
-class ViewModelClass {
+class AppViewModel {
   "@@message" = "message";
 
 }
 
-export default { ViewModelClass }
+export default { AppViewModel }

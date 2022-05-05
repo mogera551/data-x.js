@@ -36,7 +36,7 @@ export default class Block {
       context.module = module;
       context.viewModel = 
         module.default?.viewModel ?? 
-        (module.default?.ViewModelClass != null ? Reflect.construct(module.default.ViewModelClass, []) : {});
+        (module.default?.AppViewModel != null ? Reflect.construct(module.default.AppViewModel, []) : {});
       //context.bindRules.push(...module.default?.bindRules ?? []);
       context.dependencyRules.push(...module.default?.dependencyRules ?? []);
       const reflectContext = module.default?.context ?? module.default?._;

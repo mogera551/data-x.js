@@ -1,4 +1,4 @@
-class ViewModelClass {
+class AppViewModel {
   "@member#init" = async data => fetch(data.url).then(response => response.json());
   "@@member.name";
   "@@member.age";
@@ -7,4 +7,4 @@ class ViewModelClass {
   "@@member.address.city";
 }
 
-export default { ViewModelClass };
+export default { AppViewModel };

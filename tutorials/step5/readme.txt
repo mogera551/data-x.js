@@ -25,7 +25,7 @@ on + イベント名 + 識別名
 event + イベント名 + 識別名
 ※イベント名、識別名はイベントハンドラの命名に従う
 
-class ViewModelClass {
+class AppViewModel {
     // イベントハンドラ
     onClickRegist() {
         alert("click regist button");

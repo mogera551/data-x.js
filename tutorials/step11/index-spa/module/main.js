@@ -6,9 +6,9 @@ const fruits = [
   "strawberry",
 ];
 
-class ViewModelClass {
+class AppViewModel {
   "@fruits" = fruits;
   "@fruits.*";
 }
 
-export default { ViewModelClass };
+export default { AppViewModel };

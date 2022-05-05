@@ -45,7 +45,7 @@ HTML要素のdata-x:bind属性にバインドするViewModelのプロパティ�
 ViewModelクラスの定義をする
 バインドするプロパティを定義する
 
-class ViewModelClass {
+class AppViewModel {
   get message() { return "welcome to data-x.js"; }
 }
 
@@ -53,5 +53,5 @@ class ViewModelClass {
 
 ViewModelクラスをエクスポートする
 
-export default { ViewModelClass };
+export default { AppViewModel };
 

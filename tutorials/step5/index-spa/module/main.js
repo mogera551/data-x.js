@@ -1,4 +1,4 @@
-class ViewModelClass {
+class AppViewModel {
   // event handler
   onClickRegist() {
     alert("click regist button");
@@ -15,4 +15,4 @@ class ViewModelClass {
   }
 }
 
-export default { ViewModelClass };
+export default { AppViewModel };

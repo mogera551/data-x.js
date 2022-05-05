@@ -1,4 +1,4 @@
-class ViewModelClass {
+class AppViewModel {
   "@@member";
   "@@member.name";
   "@@member.age";
@@ -10,4 +10,4 @@ class ViewModelClass {
   }
 }
 
-export default { ViewModelClass };
+export default { AppViewModel };

@@ -1,13 +1,13 @@
 1.ViewModelのアクセサプロパティの省略記法（ループの場合）
 
-class ViewModelClass {
+class AppViewModel {
   "@list" = [10, 20, 30];
   "@list.*";
 }
 
 "@ワイルドカードを含むプロパティ名"をViewModelクラスで定義すると、下記のように展開される
 
-class ViewModelClass {
+class AppViewModel {
   $$list = [10, 20, 30];
   get "list"() { return this.$$list; }
   get "list.*"() {

@@ -1,5 +1,5 @@
 
-class ViewModelClass {
+class AppViewModel {
   "@@name" = "yamada taro";
   get "upperName"() {
     return this["name"].toUpperCase();
@@ -10,4 +10,4 @@ const dependencyRules = [
   ["upperName", ["name"]],
 ]
 
-export default { ViewModelClass, dependencyRules };
+export default { AppViewModel, dependencyRules };

@@ -7,7 +7,7 @@ const fruits = [
 ];
 
 const context = {};
-class ViewModelClass {
+class AppViewModel {
   "@fruits" = fruits;
   "@fruits.*";
   "@@newFruits" = "";
@@ -25,4 +25,4 @@ const dependencyRules = [
   ["isEmpty", ["newFruits"]],
 ];
 
-export default { ViewModelClass, dependencyRules, context }
+export default { AppViewModel, dependencyRules, context }

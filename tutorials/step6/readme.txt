@@ -27,7 +27,7 @@ const member = {
 プロパティ名はドット記法のまま（""で括る）
 アクセサメソッド内でプロパティを参照する場合、ブラケット記法で行う
 
-class ViewModelClass {
+class AppViewModel {
   $$member = member;
   get "member"() { return this.$$member; }
   get "member.name"() { return this["member"]["name"]; }
@@ -38,4 +38,4 @@ class ViewModelClass {
   get "member.address.city"() { return this["member.address"]["city"]; }
 }
 
-export default { ViewModelClass }
+export default { AppViewModel }

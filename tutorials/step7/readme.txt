@@ -1,22 +1,22 @@
 1.ViewModelのアクセサプロパティの省略記法（ドットを含むプロパティの場合）
 
-class ViewModelClass {
+class AppViewModel {
   "@member.name";
 }
 
 "@ドットを含むプロパティ名"をViewModelクラスで定義すると、下記のように展開される
 
-class ViewModelClass {
+class AppViewModel {
   get "member.name"() { return this["member"]["name"]; };
 }
 
 ３階層ある場合
 
-class ViewModelClass {
+class AppViewModel {
   "@member.address.postalcode";
 }
 
-class ViewModelClass {
+class AppViewModel {
   get "member.address.postalcode"() { return this["member.address"]["postalcode"]; };
 }
 
@@ -24,14 +24,14 @@ class ViewModelClass {
 
 下記のような場合、
 
-class ViewModelClass {
+class AppViewModel {
   "@member" = member;
   "@member.address.postalcode";
 }
 
 @member.addressが補完される
 
-class ViewModelClass {
+class AppViewModel {
   "@member" = member;
   "@member.address";
   "@member.address.postalcode";

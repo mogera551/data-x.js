@@ -8,7 +8,7 @@ const member = {
   }
 }
 
-class ViewModelClass {
+class AppViewModel {
   "@member" = member;
   "@@member.name";
   "@@member.age";
@@ -17,4 +17,4 @@ class ViewModelClass {
   "@@member.address.city";
 }
 
-export default { ViewModelClass }
+export default { AppViewModel }

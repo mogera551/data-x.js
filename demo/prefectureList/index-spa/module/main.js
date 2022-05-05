@@ -1,5 +1,5 @@
 const context = {};
-class ViewModelClass {
+class AppViewModel {
   "@prefectures#init" = async data => fetch(data.apiGetList).then(response => response.json());
   "@prefectures.*.region";
 
@@ -25,4 +25,4 @@ const dependencyRules = [
   [ "sumTitle", [ "chosenRegion" ] ],
 ];
 
-export default { ViewModelClass, dependencyRules, context }
+export default { AppViewModel, dependencyRules, context }

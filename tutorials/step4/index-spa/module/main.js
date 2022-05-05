@@ -1,5 +1,5 @@
-class ViewModelClass {
+class AppViewModel {
   "@@message" = "welcome to data-x.js";
 }
 
-export default { ViewModelClass };
+export default { AppViewModel };

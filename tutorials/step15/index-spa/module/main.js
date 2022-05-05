@@ -1,6 +1,6 @@
 
 const context = {};
-class ViewModelClass {
+class AppViewModel {
   $$name = "";
   get "name"() { return this.$$name; }
   set "name"(value) { 
@@ -16,4 +16,4 @@ class ViewModelClass {
   }
 }
 
-export default { ViewModelClass, context };
+export default { AppViewModel, context };

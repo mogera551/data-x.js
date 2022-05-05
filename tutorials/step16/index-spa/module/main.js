@@ -1,5 +1,5 @@
 
-class ViewModelClass {
+class AppViewModel {
   "@@name" = "";
   get "isEmpty"() {
     return !this["name"];
@@ -14,4 +14,4 @@ const dependencyRules = [
   ["isEmpty", ["name"]],
 ]
 
-export default { ViewModelClass, dependencyRules };
+export default { AppViewModel, dependencyRules };

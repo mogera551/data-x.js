@@ -7,7 +7,7 @@ const fruits = [
 ];
 
 const context = {};
-class ViewModelClass {
+class AppViewModel {
   $$fruits = fruits;
   get "fruits"() { return this.$$fruits; }
   get "fruits.*"() {
@@ -16,4 +16,4 @@ class ViewModelClass {
   }
 }
 
-export default { ViewModelClass, context };
+export default { AppViewModel, context };

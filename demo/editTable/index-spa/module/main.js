@@ -1,6 +1,6 @@
 
 const context = {};
-class ViewModelClass {
+class AppViewModel {
   "@members#init" = data => { 
     data.members.load();
     (data.members.length == 0) && data.members.push(data.members.createMember());
@@ -39,4 +39,4 @@ class ViewModelClass {
   };
 }
 
-export default { ViewModelClass, context }
+export default { AppViewModel, context }

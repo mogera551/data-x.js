@@ -4,7 +4,7 @@ const tickets = [
   { id:3, name:"First Class", price: 1199.99 },
 ];
 
-class ViewModelClass {
+class AppViewModel {
   "@tickets" = tickets;
   "@tickets.*.id";
   "@tickets.*.name";
@@ -23,4 +23,4 @@ const dependencyRules = [
   ["chosenTicket.price", ["chosenTicket"]],
 ]
 
-export default { ViewModelClass, dependencyRules };
+export default { AppViewModel, dependencyRules };

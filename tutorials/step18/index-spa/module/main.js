@@ -6,7 +6,7 @@ const fruits = [
   "strawberry",
 ];
 
-class ViewModelClass {
+class AppViewModel {
   "@fruits" = fruits;
   "@fruits.*";
   "@@newFruits" = "";
@@ -24,4 +24,4 @@ const dependencyRules = [
   ["fruits", ["eventClickAdd"]],
 ];
 
-export default { ViewModelClass, dependencyRules }
+export default { AppViewModel, dependencyRules }

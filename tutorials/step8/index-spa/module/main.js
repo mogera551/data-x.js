@@ -8,7 +8,7 @@ const member = {
   }
 }
 
-class ViewModelClass {
+class AppViewModel {
   $$member = member;
   get "member"() { return this.$$member; }
   get "member.name"() { return this["member"]["name"]; }
@@ -24,4 +24,4 @@ class ViewModelClass {
   set "member.address.city"(value) { this["member.address"]["city"] = value; }
 }
 
-export default { ViewModelClass }
+export default { AppViewModel }

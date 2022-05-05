@@ -3,7 +3,7 @@
 
 値を入れるためのアクセサメソッドを追加する
 
-class ViewModelClass {
+class AppViewModel {
   $$member = member;
   get "member"() { return this.$$member; }
   get "member.name"() { return this["member"]["name"]; }
