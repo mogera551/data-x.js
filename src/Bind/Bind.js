@@ -1,5 +1,4 @@
 import Filter from "./Filter.js";
-
 class DomPropertyType {
   static VALUE = 1;
   static CLASS = 2;
@@ -29,19 +28,16 @@ class DomPropertyType {
   static updateDomByClassType(bind) {
     const className = bind.domProperty.slice(this.matchClass.length);
     const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-//    const value = bind.viewModel[bind.path];
     value ? bind.dom.classList.add(className) : bind.dom.classList.remove(className);
   }
 
   static updateDomByRadioType(bind) {
     const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-//    const value = bind.viewModel[bind.path];
     bind.dom.checked = (bind.dom.value == value);
   }
 
   static updateDomByCheckboxType(bind) {
     const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-//    const value = bind.viewModel[bind.path];
     bind.dom.checked = (value ?? []).includes(bind.dom.value);
   }
 
@@ -75,7 +71,7 @@ class DomPropertyType {
   static #updateDomProcs = {};
   static #updateViewModelProcs = {};
 
-  static {
+  static init() {
     this.#updateDomProcs[this.VALUE] = this.updateDomByValueType;
     this.#updateDomProcs[this.CLASS] = this.updateDomByClassType;
     this.#updateDomProcs[this.RADIO] = this.updateDomByRadioType;
@@ -159,3 +155,5 @@ export default class Bind {
     dom.addEventListener("input", handler);
   }
 }
+
+DomPropertyType.init();

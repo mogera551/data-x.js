@@ -1,4 +1,6 @@
 import Root from "./Block/Root.js"
+import Filter from "./Filter/Filter.js";
+import Filters from "./Filter/Filters.js";
 
 export default class App {
   static root;
@@ -39,7 +41,7 @@ export default class App {
   }
 
   static async getFilter() {
-    const module = await import("./Filter/Filter.js");
-    return module.default;
+    await Filter.registLocalFilter(App?.options?.localFilter, App?.options?.filterPath);
+    return Filters;
   }
 }
