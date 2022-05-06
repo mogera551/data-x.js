@@ -155,7 +155,8 @@ export class PlainProperty extends Property {
     if (desc.set != null) {
       desc.set = async function(v) {
         const result = Reflect.apply(setter, this, [v]);
-        notifier.notify(name);
+        const notify = (value) => (value !== false) && notifier.notify(name);
+        (result instanceof Promise) ? result.then(notify) : notify(result);
         return result;       
       };
       this.desc = desc;

@@ -15,28 +15,28 @@ class AppViewModel {
   "@@members.*.phone";
   "@memberCount#get" = () => this["members"].length;
 
-  "@@eventClickDelete#set" = args => {
-    if (confirm("削除しますか？")) {
-      this["members"].splice(context.$1, 1);
-      context.notify("members"); 
-    }
+  "@@eventClickDelete#set" = () => {
+    if (!confirm("削除しますか？")) return false;
+    this["members"].splice(context.$1, 1);
   };
-  "@@eventClickAdd#set" = args => { 
+  "@@eventClickAdd#set" = () => { 
     this["members"].push(this["members"].createMember()); 
-    context.notify("members"); 
   };
-  "@@eventClickSave#set" = args => {
-    if (confirm("保存しますか？")) {
-      this["members"].save();
-    } 
+  "@@eventClickSave#set" = () => {
+    if (!confirm("保存しますか？")) return false;
+    this["members"].save();
   }; 
-  "@@eventClickClear#set" = args => {
-    if (confirm("クリアしますか？")) {
-      this["members"].clear();
-      this["members"].push(this["members"].createMember());
-      context.notify("members"); 
-    } 
+  "@@eventClickClear#set" = () => {
+    if (!confirm("クリアしますか？")) return false;
+    this["members"].clear();
+    this["members"].push(this["members"].createMember());
   };
 }
 
-export default { AppViewModel, context }
+const dependencyRules = [
+  [ "members", [ "eventClickDelete" ] ],
+  [ "members", [ "eventClickAdd" ] ],
+  [ "members", [ "eventClickSave" ] ],
+  [ "members", [ "eventClickClear" ] ],
+];
+export default { AppViewModel, context, dependencyRules }
