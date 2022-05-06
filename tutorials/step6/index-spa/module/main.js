@@ -9,8 +9,8 @@ const member = {
 }
 
 class AppViewModel {
-  $$member = member;
-  get "member"() { return this.$$member; }
+  __member = member;
+  get "member"() { return this.__member; }
   get "member.name"() { return this["member"]["name"]; }
   get "member.age"() { return this["member"]["age"]; }
   get "member.address"() { return this["member"]["address"]; }

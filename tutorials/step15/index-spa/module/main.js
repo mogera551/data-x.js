@@ -1,10 +1,10 @@
 
 const context = {};
 class AppViewModel {
-  $$name = "";
-  get "name"() { return this.$$name; }
+  __name = "";
+  get "name"() { return this.__name; }
   set "name"(value) { 
-    this.$$name = value;
+    this.__name = value;
     context.notify("isEmpty", []);
   }
   get "isEmpty"() {

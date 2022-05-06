@@ -1,7 +1,8 @@
 import PropertyName from "./PropertyName.js"
 import {PropertyType, Property} from "./Property.js"
 
-const NOT_FOUND = `property "%name%" is not found `
+const NOT_FOUND = `property "%name%" is not found `;
+const PREFIX_PRIVATE = "__";
 export default class Properties {
   #context;
   #propertyByName = new Map;
@@ -49,7 +50,7 @@ export default class Properties {
           const info = (infoByBaseName.has(baseName)) ? infoByBaseName.get(baseName) : createInfo();
           info.baseName = info.baseName ?? baseName;
           info.originalName = info.originalName ?? originalName;
-          info.privateName = info.privateName ?? `$$${baseName}`;
+          info.privateName = info.privateName ?? `${PREFIX_PRIVATE}${baseName}`;
           info.get = method === "get" ? desc.value : info.get;
           info.set = method === "set" ? desc.value : info.set;
           info.init = method === "init" ? desc.value : info.init;
@@ -63,7 +64,7 @@ export default class Properties {
     });
 
     Array.from(infoByBaseName.entries()).forEach(([baseName, info]) => {
-      // private property $$name
+      // private property name
       if (!(info.privateName in viewModel) && !info.baseName.includes(".")) {
         Reflect.defineProperty(viewModel, info.privateName, toPrivateDesc({value:info.privateValue}));
       }

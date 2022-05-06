@@ -52,8 +52,8 @@ data-x:loop属性にループするviewModelのプロパティを入れる
 アクセサプロパティは、コンテクストからインデックスを取得し、listから対応する要素を返す
 
 class AppViewModel {
-  $$list = [10, 20, 30];
-  get "list"() { return this.$$list; }
+  __list = [10, 20, 30];
+  get "list"() { return this.__list; }
   get "list.*"() {
     const $1 = this.$context.$1;
     return this["list"][$1];

@@ -4,8 +4,8 @@
 値を入れるためのアクセサメソッドを追加する
 
 class AppViewModel {
-  $$member = member;
-  get "member"() { return this.$$member; }
+  __member = member;
+  get "member"() { return this.__member; }
   get "member.name"() { return this["member"]["name"]; }
   set "member.name"(value) { this["member"]["name"] = value; }
   get "member.age"() { return this["member"]["age"]; }

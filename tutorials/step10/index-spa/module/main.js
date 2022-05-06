@@ -8,8 +8,8 @@ const fruits = [
 
 const context = {};
 class AppViewModel {
-  $$fruits = fruits;
-  get "fruits"() { return this.$$fruits; }
+  __fruits = fruits;
+  get "fruits"() { return this.__fruits; }
   get "fruits.*"() {
     const { $1 } = context;
     return this["fruits"][$1];

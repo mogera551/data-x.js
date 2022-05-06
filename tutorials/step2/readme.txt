@@ -13,11 +13,11 @@ HTML要素のvalueとViewModelのプロパティがバインドされる
 
 1-2.ブロック、JSファイル
 アクセサメソッドsetを定義する
-値を保存するためのデータプロパティ$$messageを用意する
+値を保存するためのデータプロパティ__messageを用意する
 
 class ViewModel {
-  $$message = "welcome to data-x.js";
-  get message() { return this.$$message; }
-  set message(value) { this.$$message = value; }
+  __message = "welcome to data-x.js";
+  get message() { return this.__message; }
+  set message(value) { this.__message = value; }
 }
 

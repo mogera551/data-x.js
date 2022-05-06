@@ -1,5 +1,6 @@
 import PropertyName from "./PropertyName.js"
 
+const PREFIX_PRIVATE = "__";
 export class PropertyType {
   static PLAIN = 1;
   static PATTERN = 2;
@@ -122,7 +123,7 @@ export class PlainProperty extends Property {
     const pathParent = this.pathParent;
     const pathLastElement = this.pathLastElement;
     const hasParent = this.name.includes(".");
-    const privateName = `$$${this.name}`;
+    const privateName = `${PREFIX_PRIVATE}${this.name}`;
     const name = this.name;
     const getter = hasParent 
       ? function() { 
