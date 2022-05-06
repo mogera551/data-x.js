@@ -11,8 +11,15 @@ export default class ViewUpdator {
     this.#processQueue.push(callback);
   }
 
-  postProcess() {
-    this.#processQueue.forEach(process => process());
+  async postProcess() {
+    const processes = this.#processQueue.slice();
+    if (processes.length > 0) {
+      this.updateProcess(async () => {
+        for(const procsess of processes) {
+          procsess();
+        }
+      });
+    }
   }
 
   clearPostProcess() {
@@ -44,6 +51,7 @@ export default class ViewUpdator {
     notifier = this.#context.notifier, 
     properties = this.#context.properties
   ) {
+//    console.log(`${context.block.name} updateProcess`);
     this.clearPostProcess();
     notifier.clear();
     properties.clearStatus();
@@ -54,6 +62,6 @@ export default class ViewUpdator {
     this.updateDom();
     properties.isUpdate && context.buildBinds();
 
-    this.postProcess();
+    await this.postProcess();
   }
 } 

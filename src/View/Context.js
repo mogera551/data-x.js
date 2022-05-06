@@ -32,6 +32,7 @@ export default class Context {
   #block;
   #eventHandler;
   #initializer;
+  #data;
 
   constructor(block, parentElement) { 
     this.#block = block;
@@ -51,6 +52,7 @@ export default class Context {
     this.#rootBlock = App.root;
     this.#eventHandler = EventHandler;
     this.#initializer = Initializer;
+    this.#data = App.data;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -89,6 +91,7 @@ export default class Context {
   get block() { return this.#block; }
   get eventHandler() { return this.#eventHandler; }
   get initializer() { return this.#initializer; }
+  get data() { return this.#data; }
 
   set rootElement(v) { this.#rootElement = v; }
   set viewModel(v) { 
@@ -177,6 +180,7 @@ export default class Context {
       ["$notifyAll", "notifyAll"],
       ["$inquiryAll", "inquiryAll"],
       ["$openDialog", "openDialog"],
+      ["$postUpdate", "postUpdate"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
       const value = isAsync 
@@ -214,6 +218,9 @@ export default class Context {
 
   $notify(pattern, indexes = []) {
     this.notifier.notify(pattern, indexes);
+  }
+  $postUpdate(callback) {
+    this.viewUpdater.registPostProcess(callback);
   }
   async $notifyAll(pattern, indexes = []) {
     this.rootBlock.notifyAll(pattern, indexes, this.block);

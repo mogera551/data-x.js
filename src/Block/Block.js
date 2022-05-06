@@ -66,18 +66,24 @@ export default class Block {
   async notifyAll(pattern, indexes, fromBlock) {
     const viewModel = this.#context.viewModel;
     const eventHandler = this.#context.eventHandler;
+    const viewUpdater = this.#context.viewUpdater;
     for(const block of this.#blocks) {
       block.notifyAll(pattern, indexes, fromBlock);
     }
-    (fromBlock !== this) && eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
+    (fromBlock !== this) && viewUpdater.updateProcess(
+      async () => eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock)
+    );
   }
 
   async inquiryAll(message, param1, param2, fromBlock) {
     const viewModel = this.#context.viewModel;
     const eventHandler = this.#context.eventHandler;
+    const viewUpdater = this.#context.viewUpdater;
     for(const block of this.#blocks) {
       block.inquiryAll(message, param1, param2, fromBlock);
     }
-    eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock);
+    (fromBlock !== this) && viewUpdater.updateProcess(
+      async () => eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock)
+    );
   }
 }
