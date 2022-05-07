@@ -1,5 +1,4 @@
 
-const context = {};
 class AppViewModel {
   "@members#init" = data => { 
     data.members.load();
@@ -15,9 +14,9 @@ class AppViewModel {
   "@@members.*.phone";
   "@memberCount#get" = () => this["members"].length;
 
-  "#eventClickDelete" = () => {
+  "#eventClickDelete" = ([, $1]) => {
     if (!confirm("削除しますか？")) return false;
-    this["members"].splice(context.$1, 1);
+    this["members"].splice($1, 1);
   };
   "#eventClickAdd" = () => { 
     this["members"].push(this["members"].createMember()); 
@@ -39,4 +38,5 @@ const dependencyRules = [
   [ "members", [ "eventClickSave" ] ],
   [ "members", [ "eventClickClear" ] ],
 ];
-export default { AppViewModel, context, dependencyRules }
+
+export default { AppViewModel, dependencyRules }
