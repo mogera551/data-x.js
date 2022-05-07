@@ -1,7 +1,7 @@
 
 class AppViewModel {
-  "@@eventClickDashboard#set" = () => this.$content = "dashboard";
-  "@@eventClickUsers#set" = () => this.$content = "users";
+  "#eventClickDashboard" = () => this.$content = "dashboard";
+  "#eventClickUsers" = () => this.$content = "users";
 }
 
 export default { AppViewModel };

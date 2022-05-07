@@ -14,7 +14,7 @@ class AppViewModel {
   "@chosenTicket.name";
   "@chosenTicket.price";
 
-  "@@eventClickClear#set" = event => this["chosenTicketId"] = null;
+  "#eventClickClear" = event => this["chosenTicketId"] = null;
 }
 
 const dependencyRules = [

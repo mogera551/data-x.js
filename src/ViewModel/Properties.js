@@ -24,7 +24,8 @@ export default class Properties {
     // "aaa", "aaa.bbb", "aaa.*.bbb"
     const toPrivateDesc = desc => ({configurable: true, enumerable: false, writable: true, value: desc?.value});
     const isPropertyName = name => /^\@\@?([a-zA-Z0-9_\.\*])+(#(get|set|init))?$/.test(name);
-    const isPrivateName = name => /^\$\$([a-zA-Z0-9_])+$/.test(name);
+    const isEventName = name => /^#(event[a-zA-Z0-9_]+)$/.test(name);
+    const isPrivateName = name => /^__([a-zA-Z0-9_])+$/.test(name);
 
     const createInfo = () => ({
       baseName: null,
@@ -40,7 +41,7 @@ export default class Properties {
     const infoByBaseName = new Map();
     [viewModel].forEach(o => {
       Object.entries(Object.getOwnPropertyDescriptors(o)).forEach(([name, desc]) => {
-        if (!isPropertyName(name) && !isPrivateName(name)) return;
+        if (!isPropertyName(name) && !isPrivateName(name) && !isEventName(name)) return;
         if (isPrivateName(name)) {
           Reflect.defineProperty(viewModel, name, toPrivateDesc(desc));
         } else if (isPropertyName(name))  {
@@ -54,6 +55,21 @@ export default class Properties {
           info.get = method === "get" ? desc.value : info.get;
           info.set = method === "set" ? desc.value : info.set;
           info.init = method === "init" ? desc.value : info.init;
+          info.requireGet = (method == null) ? true : info.requireGet;
+          info.requireSet = requireSet;
+          info.privateValue = (method == null) ? desc.value : info.privateValue;
+          infoByBaseName.set(baseName, info);
+          Reflect.deleteProperty(viewModel, name);
+        } else if (isEventName(name))  {
+          const originalName = name;
+          const method = "set";
+          const requireSet = true;
+          const baseName = originalName.slice(1);
+          const info = (infoByBaseName.has(baseName)) ? infoByBaseName.get(baseName) : createInfo();
+          info.baseName = info.baseName ?? baseName;
+          info.originalName = info.originalName ?? originalName;
+          info.privateName = info.privateName ?? `${PREFIX_PRIVATE}${baseName}`;
+          info.set = method === "set" ? desc.value : info.set;
           info.requireGet = (method == null) ? true : info.requireGet;
           info.requireSet = requireSet;
           info.privateValue = (method == null) ? desc.value : info.privateValue;

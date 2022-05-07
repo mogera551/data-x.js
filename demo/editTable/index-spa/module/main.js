@@ -15,18 +15,18 @@ class AppViewModel {
   "@@members.*.phone";
   "@memberCount#get" = () => this["members"].length;
 
-  "@@eventClickDelete#set" = () => {
+  "#eventClickDelete" = () => {
     if (!confirm("削除しますか？")) return false;
     this["members"].splice(context.$1, 1);
   };
-  "@@eventClickAdd#set" = () => { 
+  "#eventClickAdd" = () => { 
     this["members"].push(this["members"].createMember()); 
   };
-  "@@eventClickSave#set" = () => {
+  "#eventClickSave" = () => {
     if (!confirm("保存しますか？")) return false;
     this["members"].save();
   }; 
-  "@@eventClickClear#set" = () => {
+  "#eventClickClear" = () => {
     if (!confirm("クリアしますか？")) return false;
     this["members"].clear();
     this["members"].push(this["members"].createMember());
