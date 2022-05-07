@@ -21,22 +21,19 @@ export default class Dependencies {
   build(map = this.#map, dependencyRules = this.#context.dependencyRules) {
     map.clear();
     this.#dependencyRules = this.#context.dependencyRules.slice();
-    dependencyRules.forEach(([ property, refProperties ]) => this.add(map, property, refProperties));
+    dependencyRules.forEach(([ property, refProperties, func ]) => this.add(map, property, refProperties, func));
   }
 
-  add(map, property, refProperties) {
+  add(map, property, refProperties, func) {
     map.has(property) || map.set(property, new DepNode(property));
     const node = map.get(property);
-    if (typeof refProperties === "function") {
-      node.func = refProperties;
-    } else {
-      refProperties.forEach(refProperty => {
-        map.has(refProperty) || map.set(refProperty, new DepNode(refProperty));
-        const refNode = map.get(refProperty);
-        node.childNodes.push(refNode);
-        refNode.parentNodes.push(node);
-      });
-    }
+    node.func = func;
+    refProperties.forEach(refProperty => {
+      map.has(refProperty) || map.set(refProperty, new DepNode(refProperty));
+      const refNode = map.get(refProperty);
+      node.childNodes.push(refNode);
+      refNode.parentNodes.push(node);
+    });
   }
 
   getReferedProperties(property, indexes, map = this.#map) {
@@ -46,15 +43,11 @@ export default class Dependencies {
       list.push({
         name: PropertyName.expand(node.name, indexes ?? []),
         pattern: node.name,
-        indexes
+        indexes: node.func ? node.func(indexes) : indexes
       });
-      if (node.func != null) {
-        list.push(node.func(...indexes));
-      } else {
-        node.parentNodes.forEach(parentNode => {
-          list = walk(parentNode, list);
-        });
-      }
+      node.parentNodes.forEach(parentNode => {
+        list = walk(parentNode, list);
+      });
       return list;
     };
     const list = walk(node, []);
