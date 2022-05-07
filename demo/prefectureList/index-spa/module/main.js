@@ -21,7 +21,7 @@ class AppViewModel {
 
 const dependencyRules = [
   [ "filteredPrefectures", [ "chosenRegion" ] ],
-  [ "sumPopulation", [ "chosenRegion" ] ],
+  [ "sumPopulation", [ "filteredPrefectures" ] ],
   [ "sumTitle", [ "chosenRegion" ] ],
 ];
 
