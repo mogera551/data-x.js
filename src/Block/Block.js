@@ -54,6 +54,7 @@ export default class Block {
   async build(context = this.#context, data = this.#data) {
     context.properties.build();
     context.dependencies.build();
+    context.dataReflecter.reflect(context, this.#data, context.viewModel);
 
     const initializer = context.initializer;
     await initializer.init(context, data);
@@ -64,6 +65,7 @@ export default class Block {
   }
 
   async notifyAll(pattern, indexes, fromBlock) {
+    const notifier = this.#context.notifier;
     const viewModel = this.#context.viewModel;
     const eventHandler = this.#context.eventHandler;
     const viewUpdater = this.#context.viewUpdater;
@@ -71,7 +73,12 @@ export default class Block {
       block.notifyAll(pattern, indexes, fromBlock);
     }
     (fromBlock !== this) && viewUpdater.updateProcess(
-      async () => eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock)
+      async () => {
+        const result = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
+        const notify = () => notifier.notify(pattern);
+        (result instanceof Promise) ? result.then(notify) : notify();
+        return result;
+      }
     );
   }
 

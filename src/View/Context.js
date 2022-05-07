@@ -5,6 +5,7 @@ import Dialog from "../Dialog/Dialog.js"
 import PropertyName from "../ViewModel/PropertyName.js"
 import EventHandler from "../ViewModel/EventHandler.js"
 import Initializer from "../ViewModel/Initializer.js"
+import Reflecter from "../Shared/Reflecter.js"
 
 export default class Context {
   #parentElement;
@@ -33,6 +34,7 @@ export default class Context {
   #eventHandler;
   #initializer;
   #data;
+  #dataReflecter;
 
   constructor(block, parentElement) { 
     this.#block = block;
@@ -53,6 +55,7 @@ export default class Context {
     this.#eventHandler = EventHandler;
     this.#initializer = Initializer;
     this.#data = App.data;
+    this.#dataReflecter = Reflecter;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -92,6 +95,7 @@ export default class Context {
   get eventHandler() { return this.#eventHandler; }
   get initializer() { return this.#initializer; }
   get data() { return this.#data; }
+  get dataReflecter() { return this.#dataReflecter; }
 
   set rootElement(v) { this.#rootElement = v; }
   set viewModel(v) { 
@@ -226,7 +230,7 @@ export default class Context {
     this.rootBlock.notifyAll(pattern, indexes, this.block);
   }
   async $inquiryAll(message, param1, param2) {
-    this.rootBlock.inquiryAll(message, param1, param2, this.block);
+    this.$postUpdate(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
   }
 
   async $openDialog(name, data = {}) {
