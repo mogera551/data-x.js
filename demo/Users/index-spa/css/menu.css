@@ -1,0 +1,12 @@
+* {
+  background-color: #ddd;
+}
+li {
+  display: inline-block;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+li:hover {
+  color:red;
+}

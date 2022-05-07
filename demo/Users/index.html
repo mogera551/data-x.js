@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.header {
+  background-color: #000;
+  color: #fff;
+}
+.content {
+  padding: 4px;
+}
+</style>
+
+<div class="header">data-x Sample Console</div>
+<div>
+  <div data-x:block="menu" data-x:with-bind-css></div>
+  <div class="content">
+    <div data-x:block="dashboard" data-x:with-bind-css></div>
+    <div data-x:block="users" data-x:with-bind-css></div>
+    <div data-x:block="edit" data-x:with-bind-css></div>
+  </div>
+</div>
+
+<script type="module">
+import App from "../../src/App.js"
+import Users from "./models/Users.js"
+
+const userList = new Users();
+
+App.boot({ content:"dashboard", userList });
+</script>
+

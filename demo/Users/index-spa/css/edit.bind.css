@@ -1,0 +1,7 @@
+div.main {
+  --bind-style-display: show|style-display;
+}
+
+[data-name='id'] {
+  --bind-textContent: user.id|number-value;
+}

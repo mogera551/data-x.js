@@ -1,0 +1,23 @@
+div.main {
+  --bind-style-display: show|style-display;
+}
+
+template#users {
+  --loop: users;
+}
+
+tr.user td[data-name='id'] {
+  --bind-textContent: users.*.id|number-value;
+}
+
+tr.user td[data-name='name'] {
+  --bind-textContent: users.*.name;
+}
+
+tr.user td[data-name='email'] {
+  --bind-textContent: users.*.email;
+}
+
+tr.user td[data-name] {
+  --events: click;
+}

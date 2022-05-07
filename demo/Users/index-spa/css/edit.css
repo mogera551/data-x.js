@@ -1,0 +1,19 @@
+table {
+  border-collapse: collapse;
+  margin: 4px 0;
+}
+table th,
+table td {
+  padding: 4px;
+  border: 1px solid #888;
+}
+table th {
+  background-color: #ddd;
+}
+input[type="text"] {
+  width: 320px;
+}
+button {
+  min-width: 120px;
+  margin-right: 4px;
+}
