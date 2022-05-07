@@ -33,10 +33,7 @@ class AppViewModel {
 }
 
 const dependencyRules = [
-  [ "members", [ "eventClickDelete" ] ],
-  [ "members", [ "eventClickAdd" ] ],
-  [ "members", [ "eventClickSave" ] ],
-  [ "members", [ "eventClickClear" ] ],
+  [ "members", [ "eventClickDelete", "eventClickAdd", "eventClickSave", "eventClickClear" ] ],
 ];
 
 export default { AppViewModel, dependencyRules }
