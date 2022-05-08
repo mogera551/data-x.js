@@ -1,6 +1,6 @@
 const context = {};
 class AppViewModel {
-  "@prefectures#init" = async data => fetch(data.apiGetList).then(response => response.json());
+  "@prefectures#init" = data => data.prefectures;
   "@prefectures.*.region";
 
   "@regions#get" = () => Array.from(new Set(this["prefectures"].map((p, i) => this[`prefectures.${i}.region`])));
