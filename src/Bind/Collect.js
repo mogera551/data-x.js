@@ -184,9 +184,9 @@ export default class Collect {
   }
   static collect(context, rootElement, bindRules = []) {
     const binds = [], loops = [], events = [];
+    this.collectByRule(context, rootElement, bindRules, binds, loops, events);
     this.collectByAttribute(context, rootElement, binds, loops, events);
     this.collectByImplicit(context, rootElement, binds, loops, events);
-    this.collectByRule(context, rootElement, bindRules, binds, loops, events);
     binds.forEach(bind => bind.dom.dataset[DATA_PROCESSED] = "");
     loops.forEach(loop => loop.dom.dataset[DATA_PROCESSED] = "");
     events.forEach(event => event.dom.dataset[DATA_PROCESSED] = "");
