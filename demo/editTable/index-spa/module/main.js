@@ -12,23 +12,23 @@ class AppViewModel {
   "@@members.*.address.city";
   "@@members.*.address.address";
   "@@members.*.phone";
-  "@memberCount#get" = () => this["members"].length;
+  "@memberCount#get" = () => this.members.length;
 
   "#eventClickDelete" = ([, $1]) => {
     if (!confirm("削除しますか？")) return false;
-    this["members"].splice($1, 1);
+    this.members.splice($1, 1);
   };
   "#eventClickAdd" = () => { 
-    this["members"].push(this["members"].createMember()); 
+    this.members.push(this.members.createMember()); 
   };
   "#eventClickSave" = () => {
     if (!confirm("保存しますか？")) return false;
-    this["members"].save();
+    this.members.save();
   }; 
   "#eventClickClear" = () => {
     if (!confirm("クリアしますか？")) return false;
-    this["members"].clear();
-    this["members"].push(this["members"].createMember());
+    this.members.clear();
+    this.members.push(this.members.createMember());
   };
 }
 
