@@ -184,17 +184,16 @@ export class PatternProperty extends Property {
     const viewModel = this.context.viewModel;
     const pathParent = this.pathParent;
     const pathLastElement = this.pathLastElement;
+    const loopLevel = this.pattern.split("").filter(c => c === "*").length;
     const getter = function() {
       const indexes = context?.indexes ?? [];
-      const realPathParent = PropertyName.expand(pathParent, indexes);
-      const prop = (pathLastElement === "*") ? indexes.at(-1) : pathLastElement;
-      return this[realPathParent]?.[prop];
+      const prop = (pathLastElement === "*") ? indexes.at(loopLevel - 1) : pathLastElement;
+      return this[pathParent]?.[prop];
     };
     const setter = function(v) {
       const indexes = context?.indexes ?? [];
-      const realPathParent = PropertyName.expand(pathParent, indexes);
-      const prop = (pathLastElement === "*") ? indexes.at(-1) : pathLastElement;
-      this[realPathParent][prop] = v;
+      const prop = (pathLastElement === "*") ? indexes.at(loopLevel - 1) : pathLastElement;
+      this[pathParent][prop] = v;
       this.isUpdate = true;
     };
     const desc = this.desc;
