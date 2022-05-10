@@ -5,22 +5,22 @@ const tickets = [
 ];
 
 class AppViewModel {
-  "@tickets" = tickets;
+  "@tickets#get" = () => tickets;
   "@tickets.*.id";
   "@tickets.*.name";
 
-  "@@chosenTicketId" = null;
-  "@chosenTicket#get" = () => this["tickets"].find(ticket => ticket.id === this["chosenTicketId"]);
-  "@chosenTicket.name";
-  "@chosenTicket.price";
+  "@@ticketId" = null;
+  "@ticket#get" = () => tickets.find(ticket => ticket.id === this.ticketId);
+  "@ticket.name";
+  "@ticket.price";
 
-  "#eventClickClear" = event => this["chosenTicketId"] = null;
+  "#eventClickClear" = () => this.ticketId = null;
 }
 
 const dependencyRules = [
-  ["chosenTicket", ["chosenTicketId"]],
-  ["chosenTicket.name", ["chosenTicket"]],
-  ["chosenTicket.price", ["chosenTicket"]],
-]
+  ["ticket", ["ticketId"]],
+  ["ticket.name", ["ticket"]],
+  ["ticket.price", ["ticket"]],
+];
 
 export default { AppViewModel, dependencyRules };

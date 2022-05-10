@@ -8,17 +8,17 @@ option.ticket {
 }
 
 button[name='clear'] {
-  --bind-disabled: chosenTicket|falsey;
+  --bind-disabled: ticket|falsey;
 }
 
-.chosenTicketInfo {
-  --bind-style-display: chosenTicket|style-display;
+.ticketDetail {
+  --bind-style-display: ticket|style-display;
 }
 
-.chosenTicketInfo .name {
-  --bind-textContent: chosenTicket.name;
+.ticketDetail .name {
+  --bind-textContent: ticket.name;
 }
 
-.chosenTicketInfo .price {
-  --bind-textContent: chosenTicket.price|number-value;
+.ticketDetail .price {
+  --bind-textContent: ticket.price|number-value;
 }

@@ -9,12 +9,12 @@ class AppViewModel {
   "#eventInquiryAll" = ([message, userId]) => {
     if (message !== "edit") return false;
     const {id, name, email} = this.$userList.getUser(userId);
-    this["user"] = {id, name, email};
+    this.user = {id, name, email};
     this.$content = "edit";
-  }
+  };
 
   "#eventClickOk" = () => {
-    this.$userList.setUser(this["user"]);
+    this.$userList.setUser(this.user);
     this.$content = "users";
   };
 
