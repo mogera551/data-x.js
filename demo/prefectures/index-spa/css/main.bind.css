@@ -7,30 +7,30 @@ option.region {
   --bind-textContent: regions.*;
 }
 
-template#filteredPrefectures {
-  --loop: filteredPrefectures;
+template#prefectures {
+  --loop: prefectures;
 }
 
-tr.filteredPrefecture td[data-name='no'] {
-  --bind-textContent: filteredPrefectures.*.no;
+tr.prefecture td[data-name='no'] {
+  --bind-textContent: prefectures.*.no;
 }
 
-tr.filteredPrefecture td[data-name='name'] {
-  --bind-textContent: filteredPrefectures.*.name;
+tr.prefecture td[data-name='name'] {
+  --bind-textContent: prefectures.*.name;
 }
 
-tr.filteredPrefecture td[data-name='capital'] {
-  --bind-textContent: filteredPrefectures.*.capital;
+tr.prefecture td[data-name='capital'] {
+  --bind-textContent: prefectures.*.capital;
 }
 
-tr.filteredPrefecture td[data-name='population'] {
-  --bind-textContent: filteredPrefectures.*.population|locale-string;
-  --bind-class-under-million: filteredPrefectures.*.population|lt:1000000;
-  --bind-class-over-5million: filteredPrefectures.*.population|ge:5000000;
+tr.prefecture td[data-name='population'] {
+  --bind-textContent: prefectures.*.population|locale-string;
+  --bind-class-under-million: prefectures.*.population|lt:1000000;
+  --bind-class-over-5million: prefectures.*.population|ge:5000000;
 }
 
-tr.filteredPrefecture td[data-name='sharePopulation'] {
-  --bind-textContent: filteredPrefectures.*.sharePopulation|fixed:2;
+tr.prefecture td[data-name='share'] {
+  --bind-textContent: prefectures.*.share|fixed:2;
 }
 
 tr.summary td[data-name='title'] {

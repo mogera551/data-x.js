@@ -1,28 +1,25 @@
 const context = {};
 class AppViewModel {
-  "@prefectures#init" = data => data.prefectures;
-  "@prefectures.*.region";
-
-  "@regions#get" = () => Array.from(new Set(this["prefectures"].map((p, i) => this[`prefectures.${i}.region`])));
+  "@regions#get" = () => Array.from(new Set(this.$prefectures.map(pref => pref.region)));
   "@regions.*";
   
-  "@@chosenRegion" = "";
+  "@@region" = "";
   
-  "@filteredPrefectures#get" = () => this["prefectures"].filter((p, i) => this["chosenRegion"] ? this["chosenRegion"] === this[`prefectures.${i}.region`] : true);
-  "@filteredPrefectures.*.no#get" = () => Number(context.$1) + 1;
-  "@filteredPrefectures.*.name";
-  "@filteredPrefectures.*.capital";
-  "@filteredPrefectures.*.population";
-  "@filteredPrefectures.*.sharePopulation#get" = () => this["filteredPrefectures.*.population"] / this["sumPopulation"] * 100;
+  "@prefectures#get" = () => this.$prefectures.filter((pref) => this.region ? this.region === pref.region : true);
+  "@prefectures.*.no#get" = () => Number(context.$1) + 1;
+  "@prefectures.*.name";
+  "@prefectures.*.capital";
+  "@prefectures.*.population";
+  "@prefectures.*.share#get" = () => this["prefectures.*.population"] / this.sumPopulation * 100;
   
-  "@sumPopulation#get" = () => this["filteredPrefectures"].reduce((sum, p, i) => sum + this[`filteredPrefectures.${i}.population`], 0);
-  "@sumTitle#get" = () => this["chosenRegion"] ? `${this["chosenRegion"]}合計`: "全国合計";
+  "@sumTitle#get" = () => this.region ? `${this.region}合計`: "全国合計";
+  "@sumPopulation#get" = () => this.prefectures.reduce((sum, pref) => sum + pref.population, 0);
 }
 
 const dependencyRules = [
-  [ "filteredPrefectures", [ "chosenRegion" ] ],
-  [ "sumPopulation", [ "filteredPrefectures" ] ],
-  [ "sumTitle", [ "chosenRegion" ] ],
+  [ "prefectures", [ "region" ] ],
+  [ "sumTitle", [ "region" ] ],
+  [ "sumPopulation", [ "prefectures" ] ],
 ];
 
 export default { AppViewModel, dependencyRules, context }
