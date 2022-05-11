@@ -71,12 +71,16 @@ export default class BlockLoader {
   }
 
   #loadScript(name, spaPath = this.#options?.spaPath) {
-    const index = document.baseURI.lastIndexOf("/");
-    if (index >= 0) {
-      const base = document.baseURI.slice(0, index + 1);
-      return import(`${base}${spaPath}/module/${name}.js`);
+    if (spaPath != null && (spaPath.startsWith("https://") || spaPath.startsWith("http://"))) {
+      return import(`${spaPath}/module/${name}.js`);
+    } else {
+      const index = document.baseURI.lastIndexOf("/");
+      if (index >= 0) {
+        const base = document.baseURI.slice(0, index + 1);
+        return import(`${base}${spaPath}/module/${name}.js`);
+      }
+      return import(`${spaPath}/module/${name}.js`);
     }
-    return import(`${spaPath}/module/${name}.js`);
   }
 
   #loadParts(name, spaPath = this.#options?.spaPath) {
