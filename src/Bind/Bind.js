@@ -21,19 +21,20 @@ class DomPropertyType {
   static updateDomByValueType(bind) {
     const properties = bind.domProperty.split(".");
     const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-    const walk = (props, o, name = props.shift()) => (props.length === 0) ? (o[name] = value) : walk(props, o[name]);
+    const walk = (props, o, name = props.shift()) => (props.length === 0) ? ((o[name] !== value) && (o[name] = value)) : walk(props, o[name]);
     walk(properties, bind.dom);
   }
 
   static updateDomByClassType(bind) {
     const className = bind.domProperty.slice(this.matchClass.length);
     const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-    value ? bind.dom.classList.add(className) : bind.dom.classList.remove(className);
+    value ? !bind.dom.classList.contains(className) && bind.dom.classList.add(className) 
+          : bind.dom.classList.contains(className) && bind.dom.classList.remove(className);
   }
 
   static updateDomByRadioType(bind) {
     const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-    bind.dom.checked = (bind.dom.value == value);
+    bind.dom.checked = (bind.dom.value === value);
   }
 
   static updateDomByCheckboxType(bind) {
