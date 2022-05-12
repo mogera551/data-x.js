@@ -1,17 +1,15 @@
+import Data from "../Data.js"
 import Context from "../View/Context.js";
-import container from "./Container.js"
-import BlockBuilder from "../Block/BlockBuilder.js";
+import BlockLoader from "../Block/BlockLoader.js";
 import Rules from "../Bind/Rules.js"
 
-export default class Block {
+export class Block {
   #name;
   #context;
   #blocks = [];
-  #data;
   #dialog;
 
-  constructor(data, dialog = null) {
-    this.#data = data;
+  constructor(dialog = null) {
     this.#dialog = dialog;
   }
 
@@ -29,15 +27,13 @@ export default class Block {
     const context = this.createContext(name, parentElement);
     const dialog = this.#dialog;
     try {
-      const loader = container.blockLoader;
-      const {template, module} = await loader.load(name, withBindCss);
+      const {template, module} = await BlockLoader.load(name, withBindCss);
   
       context.template = template;
       context.module = module;
       context.viewModel = 
         module.default?.viewModel ?? 
         (module.default?.AppViewModel != null ? Reflect.construct(module.default.AppViewModel, []) : {});
-      //context.bindRules.push(...module.default?.bindRules ?? []);
       context.dependencyRules.push(...module.default?.dependencyRules ?? []);
       const reflectContext = module.default?.context ?? module.default?._;
       (reflectContext != null) && context.reflect(reflectContext, dialog);
@@ -51,10 +47,10 @@ export default class Block {
     }
   }
 
-  async build(context = this.#context, data = this.#data) {
+  async buildView(data = Data.data, context = this.#context) {
     context.properties.build();
     context.dependencies.build();
-    context.dataReflecter.reflect(context, this.#data, context.viewModel);
+    context.dataReflecter.reflect(context, data, context.viewModel);
 
     const initializer = context.initializer;
     await initializer.init(context, data);
@@ -62,6 +58,13 @@ export default class Block {
     context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));
     context.view.appear();
+  }
+
+  static async build(name, parentElement, withBindCss, data = Data.data, dialog = null) {
+    const block = new Block(dialog);
+    await block.load(name, parentElement, withBindCss);
+    await block.buildView(data);
+    return block;
   }
 
   async notifyAll(pattern, indexes, fromBlock) {
@@ -92,5 +95,21 @@ export default class Block {
     (fromBlock !== this) && viewUpdater.updateProcess(
       async () => eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock)
     );
+  }
+}
+
+export class BlockBuilder {
+  static async build(rootElement) {
+    const QUERY_BLOCK = "[data-x\\:block]";
+    const DATASET_BLOCK = "x:block";
+    const DATASET_WITH_BIND_CSS = "x:withBindCss"; // notice: camel case
+
+    const collect = (rootElement) => Array.from(rootElement.querySelectorAll(QUERY_BLOCK));
+    const createBlock = async (element) => {
+      const blockName = element.dataset[DATASET_BLOCK];
+      const withBindCss = DATASET_WITH_BIND_CSS in element.dataset;
+      return Block.build(blockName, element, withBindCss);
+    };
+    return await Promise.all(collect(rootElement).map(element => createBlock(element)));
   }
 }

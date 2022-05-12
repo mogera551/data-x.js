@@ -1,16 +1,22 @@
-import ViewContainer from "./Container.js"
-import App from "../App.js"
+import Filters from "../Filter/Filters.js"
+import Data from "../Data.js"
+import Root from "../Root.js"
 import ViewBuilder from "./ViewBuilder.js"
 import Dialog from "../Dialog/Dialog.js"
 import PropertyName from "../ViewModel/PropertyName.js"
 import EventHandler from "../ViewModel/EventHandler.js"
 import Initializer from "../ViewModel/Initializer.js"
 import Reflecter from "../Shared/Reflecter.js"
+import View from "./View.js";
+import ViewUpdater from "./ViewUpdater.js";
+import Dependencies from "../ViewModel/Dependency.js";
+import Properties from "../ViewModel/Properties.js";
+import Notifier from "./Notifier.js";
+import Cache from "../ViewModel/Cache.js";
 
 export default class Context {
   #parentElement;
   #rootElement;
-  #container;
   #view;
   #viewModel;
   #viewBuilder;
@@ -42,25 +48,23 @@ export default class Context {
   }
 
   build() {
-    this.#container = ViewContainer.create(this);
-    this.#view = this.#container.view;
+    this.#view = new View(this);
     this.#viewBuilder = ViewBuilder;
-    this.#viewUpdater = this.#container.viewUpdater;
-    this.#dependencies = this.#container.dependencies;
-    this.#properties = this.#container.properties;
-    this.#notifier = this.#container.notifier;
-    this.#cache = this.#container.cache;
-    this.#filter = App.filter;
-    this.#rootBlock = App.root;
+    this.#viewUpdater = new ViewUpdater(this);
+    this.#dependencies = new Dependencies(this);
+    this.#properties = new Properties(this);
+    this.#notifier = new Notifier(this);
+    this.#cache = new Cache(this);
+    this.#filter = Filters;
+    this.#rootBlock = Root.root;
     this.#eventHandler = EventHandler;
     this.#initializer = Initializer;
-    this.#data = App.data;
+    this.#data = Data.data;
     this.#dataReflecter = Reflecter;
   }
 
   get parentElement() { return this.#parentElement; }
   get rootElement() { return this.#rootElement; }
-  get container() { return this.#container; }
   get view() { return this.#view; }
   get viewModel() { return this.#viewModel; }
   get viewBuilder() { return this.#viewBuilder; }
@@ -100,8 +104,6 @@ export default class Context {
   set rootElement(v) { this.#rootElement = v; }
   set viewModel(v) { 
     this.#viewModel = v;
-    const Container = this.#container.constructor;
-    Container.regist(this.#container, "viewModel", this.#viewModel)
   }
   set template(v) { this.#template = v; }
   set module(v) { this.#module = v; }

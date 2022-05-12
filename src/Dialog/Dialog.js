@@ -1,4 +1,4 @@
-import Block from "../Block/Block.js";
+import { Block } from "../Block/Block.js";
 
 const DATA_DIALOG = "x:dialog"
 
@@ -52,13 +52,10 @@ export default class Dialog {
     return { root, bg, fg };
   }
   
-  async create(name = this.#name, data = this.#data) {
+  async create(name = this.#name, data = this.#data, withBindCss = false) {
     const { root, bg, fg } = this.createBackLayer(name);
 
-    const block = new Block(data, this);
-    await block.load(name, fg);
-    await block.build();
-//    block.context.attachDialog(this);
+    const block = await Block.build(name, fg, withBindCss, data, this);
 
     document.body.appendChild(root);
 

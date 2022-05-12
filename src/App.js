@@ -1,18 +1,18 @@
 import Root from "./Block/Root.js"
+import Options from "./Options.js"
+import Data from "./Data.js"
 import Filter from "./Filter/Filter.js";
-import Filters from "./Filter/Filters.js";
+import saveRoot from "./Root.js"
 
 export default class App {
   static root;
-  static options;
-  static filter;
-  static data;
   static async boot(data = {}, options = {}) {
-    this.data = data;
-    this.options = this.getOptions(options);
-    this.filter = await this.getFilter();
+    Data.setData(data);
+    Options.setOptions(this.getBaseName(), options);
+    await Filter.registLocalFilter();
 
     this.root = new Root(this);
+    saveRoot.setRoot(this.root);
     await this.root.build();
   }
 
@@ -26,22 +26,5 @@ export default class App {
     } else {
       return scriptName;
     }
-  }
-
-  static getOptions(options) {
-    /**
-     * spaPath {string} spa folder path, default "(html)-spa"
-     * localFilter {boolean} use local filter, default false
-     * filterPath {string} local filter path, default "(html)-spa/module/filter, require localFilter"
-     */
-    const baseName = this.getBaseName();
-    options.spaPath = options.spaPath ?? `${baseName}-spa`;
-    options.filterPath = options.localFilter ? (options.filterPath ?? `${options.spaPath}/module/filter`) : null;
-    return options;
-  }
-
-  static async getFilter() {
-    await Filter.registLocalFilter(App?.options?.localFilter, App?.options?.filterPath);
-    return Filters;
   }
 }

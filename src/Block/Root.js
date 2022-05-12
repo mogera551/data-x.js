@@ -1,15 +1,7 @@
-import container from "./Container.js"
-import BlockBuilder from "../Block/BlockBuilder.js";
+import { BlockBuilder } from "../Block/Block.js";
 
 export default class Root {
   #blocks = [];
-  #app;
-  constructor(app) {
-    this.#app = app;
-    const Container = container.constructor;
-    Container.regist(container, "options", this.#app.options);
-    Container.regist(container, "data", this.#app.data);
-  }
   
   async build() {
     this.#blocks.push(...await BlockBuilder.build(document.body));

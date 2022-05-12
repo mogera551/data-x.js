@@ -1,11 +1,6 @@
+import options from "../Options.js"
 export default class BlockLoader {
-  #options;
-
-  constructor(options) {
-    this.#options = options;
-  }
-
-  async load(name, withBindCss) {
+  static async load(name, withBindCss) {
     const [html, css, module, bindCss] = await Promise.all([
       this.#loadParts(name)
       .then(res => {
@@ -70,7 +65,7 @@ export default class BlockLoader {
     return { template, module};
   }
 
-  #loadScript(name, spaPath = this.#options?.spaPath) {
+  static async #loadScript(name, spaPath = options?.spaPath) {
     if (spaPath != null && (spaPath.startsWith("https://") || spaPath.startsWith("http://"))) {
       return import(`${spaPath}/module/${name}.js`);
     } else {
@@ -83,19 +78,19 @@ export default class BlockLoader {
     }
   }
 
-  #loadParts(name, spaPath = this.#options?.spaPath) {
+  static async #loadParts(name, spaPath = options?.spaPath) {
     return fetch(`${spaPath}/html/${name}.html`);
   }
 
-  #loadCss(name, spaPath = this.#options?.spaPath) {
+  static async #loadCss(name, spaPath = options?.spaPath) {
     return fetch(`${spaPath}/css/${name}.css`);
   }
 
-  #loadBindCss(name, spaPath = this.#options?.spaPath) {
+  static async #loadBindCss(name, spaPath = options?.spaPath) {
     return fetch(`${spaPath}/css/${name}.bind.css`);
   }
 
-  #createTemplate({name, html, css, bindCss}) {
+  static #createTemplate({name, html, css, bindCss}) {
     const template = document.createElement("template");
     template.innerHTML = html;
     if (css != null) {
