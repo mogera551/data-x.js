@@ -255,7 +255,6 @@ export class ExpandedProperty extends Property {
     desc.configurable = true;
     desc.enumerable = true;
     desc.get = () => {
-      const self = this;
       return context.pushIndexes(patternIndexes, () => {
         return cache.has(name) ? cache.get(name) : cache.set(name, viewModel[patternProperty.pattern]);
       });
@@ -263,11 +262,14 @@ export class ExpandedProperty extends Property {
 
     if (patternProperty.desc.set != null) {
       desc.set = (v) => {
-        const self = this;
-        context.pushIndexes(patternIndexes, () => {
-          viewModel[patternProperty.pattern] = v;
+        const result = context.pushIndexes(patternIndexes, () => {
+          const desc = Object.getOwnPropertyDescriptor(viewModel, patternProperty.pattern);
+          const result = Reflect.apply(desc.set, viewModel, [v]);
           notifier.notify(patternProperty.pattern, patternIndexes);
+          cache.delete(name);
+          return result;
         });
+        return result;
       };
     }
     this.desc = desc;
