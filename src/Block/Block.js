@@ -1,7 +1,6 @@
 import Data from "../Data.js"
 import Context from "../View/Context.js";
-import BlockLoader from "../Block/BlockLoader.js";
-import Rules from "../Bind/Rules.js"
+import Module from "./Module.js"
 
 export class Block {
   #name;
@@ -25,23 +24,11 @@ export class Block {
 
   async load(name, parentElement, withBindCss) {
     const context = this.createContext(name, parentElement);
-    const dialog = this.#dialog;
     try {
-      const {template, module} = await BlockLoader.load(name, withBindCss);
-  
-      context.template = template;
+      const module = await Module.load(name, withBindCss);
+      module.dialog = this.#dialog;
       context.module = module;
-      context.viewModel = 
-        module.default?.viewModel ?? 
-        (module.default?.AppViewModel != null ? Reflect.construct(module.default.AppViewModel, []) : {});
-      context.dependencyRules.push(...module.default?.dependencyRules ?? []);
-      const reflectContext = module.default?.context ?? module.default?._;
-      (reflectContext != null) && context.reflect(reflectContext, dialog);
-
-      context.rootElement = template.content.cloneNode(true);
-      context.bindRules.push(...Rules.collect(context.rootElement));
-
-      console.log(module.default);
+//      console.log(context.module);
     } catch(e) {
       throw e;
     }

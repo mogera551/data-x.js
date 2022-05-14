@@ -21,8 +21,6 @@ export default class Context {
   #viewModel;
   #viewBuilder;
   #viewUpdater;
-  #bindRules = [];
-  #dependencyRules = [];
   #dependencies;
   #bindTree = { binds:[], loops:[] }
   #allBinds = [];
@@ -32,8 +30,6 @@ export default class Context {
   #properties;
   #notifier;
   #cache;
-  #template;
-  #module;
   #filter;
   #rootBlock;
   #block;
@@ -41,6 +37,7 @@ export default class Context {
   #initializer;
   #data;
   #dataReflecter;
+  #module;
 
   constructor(block, parentElement) { 
     this.#block = block;
@@ -69,8 +66,6 @@ export default class Context {
   get viewModel() { return this.#viewModel; }
   get viewBuilder() { return this.#viewBuilder; }
   get viewUpdater() { return this.#viewUpdater; }
-  get bindRules() { return this.#bindRules; }
-  get dependencyRules() { return this.#dependencyRules; }
   get dependencies() { return this.#dependencies; }
   get bindTree() { return this.#bindTree; }
   get allBinds() { return this.#allBinds; }
@@ -91,8 +86,6 @@ export default class Context {
   get notifier() { return this.#notifier; }
   get cache() { return this.#cache; }
   get context() { return this; }
-  get template() { return this.#template; }
-  get module() { return this.#module; }
   get filter() { return this.#filter; }
   get rootBlock() { return this.#rootBlock; }
   get block() { return this.#block; }
@@ -100,13 +93,21 @@ export default class Context {
   get initializer() { return this.#initializer; }
   get data() { return this.#data; }
   get dataReflecter() { return this.#dataReflecter; }
+  get template() { return this.#module.template; }
+  get module() { return this.#module; }
+  get bindRules() { return this.#module.bindRules; }
+  get dependencyRules() { return this.#module.dependencyRules; }
 
-  set rootElement(v) { this.#rootElement = v; }
-  set viewModel(v) { 
-    this.#viewModel = v;
+  set module(module) {
+    this.#module = module;
+    this.#viewModel = 
+      module.viewModel !== undefined ? module.viewModel : 
+      (module.AppViewModel !== undefined ? Reflect.construct(module.AppViewModel, []) : {});
+    this.#rootElement = module.template.content.cloneNode(true);
+    const reflectContext = module?.context ?? module?._;
+    (reflectContext != null) && this.reflect(reflectContext, module.dialog);
   }
-  set template(v) { this.#template = v; }
-  set module(v) { this.#module = v; }
+  set rootElement(value) { this.#rootElement = value; }
 
   pushIndexes(indexes, callback) {
     this.#indexesStack.push(indexes);
