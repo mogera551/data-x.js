@@ -125,24 +125,36 @@ export class PlainProperty extends Property {
     const hasParent = this.name.includes(".");
     const privateName = `${PREFIX_PRIVATE}${this.name}`;
     const name = this.name;
+    const desc = this.desc;
     const getter = hasParent 
       ? function() { 
-        return cache.has(name) ? cache.get(name) : cache.set(name, this[pathParent]?.[pathLastElement]);
+        return cache.has(name) ? cache.get(name) : cache.set(name, desc.get ? Reflect.apply(desc.get, this, []) : this[pathParent]?.[pathLastElement]);
       } 
       : function() { 
-        return cache.has(name) ? cache.get(name) : cache.set(name, this[privateName]);
+        return cache.has(name) ? cache.get(name) : cache.set(name, desc.get ? Reflect.apply(desc.get, this, []) : this[privateName]);
       };
     const setter = hasParent 
-      ? function(v) { this[pathParent][pathLastElement] = v; cache.delete(name); } 
-      : function(v) { this[privateName] = v; this.isUpdate = true; cache.delete(name); };
-    const desc = this.desc;
+      ? function(v) { 
+        const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[pathParent][pathLastElement] = v);
+        this.isUpdate = true; 
+        cache.delete(name);
+        return result;
+      } 
+      : function(v) {
+        const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[privateName] = v); 
+        this.isUpdate = true; 
+        cache.delete(name);
+        return result;
+      };
     const defaultDesc = {
       configurable: true,
       enumerable: true,
-      get: desc.get ? desc.get : getter,
+//      get: desc.get ? desc.get : getter,
+      get: getter,
     };
     if (requireSetter) {
-      defaultDesc.set = desc.set ? desc.set : setter;
+//      defaultDesc.set = desc.set ? desc.set : setter;
+      defaultDesc.set = setter;
     }
     this.desc = defaultDesc;
   }
