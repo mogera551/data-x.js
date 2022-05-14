@@ -2,7 +2,7 @@ const URL_API = "https://api.zipaddress.net/";
 
 class AppViewModel {
   "@@inputZip"  = "";
-  "@zipcode#get" = () => !isNaN(this.inputZip) && this.inputZip.length === 7 ? this.inputZip : null;
+  "@zipcode#get" = () => /^[0-9]{7}$/.test(this.inputZip) ? this.inputZip : null;
   "@address#get" = async() => {
     if (this.zipcode == null) return "";
     const params = new URLSearchParams({ zipcode: this.zipcode });
