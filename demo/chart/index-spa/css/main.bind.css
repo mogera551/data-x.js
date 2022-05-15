@@ -1,0 +1,15 @@
+template#datas {
+  --loop: datas;
+}
+
+li.data .label {
+  --bind-textContent: datas.*.label;
+}
+
+li.data .value {
+  --bind-textContent: datas.*.value|number-value;
+}
+
+button[name='addItem'] {
+  --bind-disabled: label|falsey;
+}
