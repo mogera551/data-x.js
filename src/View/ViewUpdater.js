@@ -13,13 +13,15 @@ export default class ViewUpdator {
 
   async postProcess() {
     const processes = this.#processQueue.slice();
+    const promises = [];
     if (processes.length > 0) {
-      this.updateProcess(async () => {
+      this.updateProcess(() => {
         for(const procsess of processes) {
-          procsess();
+          promises.push(procsess());
         }
       });
     }
+    return Promise.all(promises);
   }
 
   clearPostProcess() {

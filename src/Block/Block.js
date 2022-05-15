@@ -39,12 +39,12 @@ export class Block {
     context.dependencies.build();
     context.dataReflecter.reflect(context, data, context.viewModel);
 
-    const initializer = context.initializer;
-    await initializer.init(context, data);
+    await context.initializer.init(context, data);
     context.properties.expandAll();
     context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));
     context.view.appear();
+    await context.viewUpdater.postProcess();
   }
 
   static async build(name, parentElement, withBindCss, data = Data.data, dialog = null) {
