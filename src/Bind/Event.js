@@ -28,8 +28,8 @@ export default class Event {
     const toFirstUpper = (string) => (string?.length > 0) ? (string.at(0).toUpperCase() + string.slice(1)) : "";
     const dom = this.#dom;
     const event = this.#event.toLowerCase();
-    const domName = (DATASET_NAME in dom?.dataset) ? dom?.dataset[DATASET_NAME] : (dom?.name?.length > 0) ? dom.name : dom.tagName;
-    return `${event}${toFirstUpper(domName.toLowerCase())}`;
+    const domName = (DATASET_NAME in dom?.dataset) ? dom?.dataset[DATASET_NAME] : (dom?.name?.length > 0) ? dom.name : dom.tagName.toLowerCase();
+    return `${event}${toFirstUpper(domName)}`;
   }
 
   async eventHandler(
