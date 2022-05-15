@@ -18,13 +18,23 @@ export default class Dependencies {
     this.#context = context;
   }
 
+  get map() { return this.#map; }
+
   build(map = this.#map, dependencyRules = this.#context.dependencyRules) {
     map.clear();
     this.#dependencyRules = this.#context.dependencyRules.slice();
-    dependencyRules.forEach(([ property, refProperties, func ]) => this.add(map, property, refProperties, func));
+    dependencyRules.forEach(([ property, refProperties, func ]) => this.add(property, refProperties, func));
+    this.implicitDependency();
   }
 
-  add(map, property, refProperties, func) {
+  implicitDependency(properties = this.#context.properties) {
+    // implicit dependency
+    for(const name of properties.names) {
+      properties.getDependencyNames(name).forEach(depName => this.add(depName, [name]));
+    }
+  }
+
+  add(property, refProperties, func, map = this.#map) {
     map.has(property) || map.set(property, new DepNode(property));
     const node = map.get(property);
     node.func = func;

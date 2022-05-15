@@ -176,7 +176,6 @@ export default class Properties {
         this.removeProperty(removeProperty.name);
       });
     });
-
   }
 
   contract(name) {
@@ -227,6 +226,15 @@ export default class Properties {
     const mapper = name => this.getProperty(name);
     const typeFilter = property => property.type === PropertyType.PATTERN;
     return this.names.filter(search).map(mapper).filter(typeFilter);
+  }
+
+  getDependencyNames(name) {
+    const searchPattern = `${name}.`;
+    const search = name => name.startsWith(searchPattern) && !name.slice(searchPattern.length).includes(".");
+    const mapper = name => this.getProperty(name);
+    const typeFilter = property => property.type === PropertyType.PATTERN || PropertyType.PLAIN;
+    const getName = property => property.name;
+    return this.names.filter(search).map(mapper).filter(typeFilter).map(getName);
   }
 
   getExpandedPropertiesByPatternProperty(patternProperty) {
