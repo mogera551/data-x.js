@@ -46,20 +46,28 @@ class DomPropertyType {
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
+  static setValue = (bind, value) => {
+    const desc = Object.getOwnPropertyDescriptor(bind.viewModel, bind.path);
+    return desc?.set ? Reflect.apply(desc.set, bind.viewModel, [value]) : (bind.viewModel[path] = value);
+  }
+
   static updateViewModelByValueType(bind) {
     const properties = bind.domProperty.split(".");
     const walk = (props, o, name = props.shift()) => (props.length === 0) ? o[name] : walk(props, o[name]);
-    bind.viewModel[bind.path] = bind.filter.backward(bind.backwardFilters, walk(properties, bind.dom));
+    const value = bind.filter.backward(bind.backwardFilters, walk(properties, bind.dom));
+    return this.setValue(bind, value);
   }
 
   static updateViewModelByClassType(bind) {
     const className = bind.domProperty.slice(this.matchClass.length);
-    bind.viewModel[bind.path] = bind.dom.classList.contains(className);
+    const value = bind.dom.classList.contains(className);
+    return this.setValue(bind, value);
   }
 
   static updateViewModelByRadioType(bind) {
     if (bind.dom.checked) {
-      bind.viewModel[bind.path] = bind.dom.value;
+      const value = bind.dom.value;
+      return this.setValue(bind, value);
     }
   }
 
@@ -70,7 +78,8 @@ class DomPropertyType {
     } else {
       setOfValues.delete(bind.dom.value);
     }
-    bind.viewModel[bind.path] = Array.from(setOfValues);
+    const value = Array.from(setOfValues);
+    return this.setValue(bind, value);
   }
 
   static #updateDomProcs = {};
@@ -93,7 +102,7 @@ class DomPropertyType {
   }
 
   static updateViewModel(bind, type = bind.domPropertyType) {
-    Reflect.apply(this.#updateViewModelProcs[type], this, [bind]);
+    return Reflect.apply(this.#updateViewModelProcs[type], this, [bind]);
   }
 }
 

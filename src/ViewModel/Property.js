@@ -112,13 +112,13 @@ export class PlainProperty extends Property {
   constructor(context, name, desc, requireSetter, init) {
     super(context, PropertyType.PLAIN, name, name, desc, init);
     this.#buildDesc(requireSetter);
-    this.#addNotifiable();
   }
   testIsArray(name = this.name, properties = this.context.properties) {
     return properties.testIsArray(name);
   }
   #buildDesc(requireSetter) {
     const viewModel = this.context.viewModel;
+    const notifier = this.context.notifier;
     const cache = this.context.cache;
     const pathParent = this.pathParent;
     const pathLastElement = this.pathLastElement;
@@ -138,41 +138,27 @@ export class PlainProperty extends Property {
         const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[pathParent][pathLastElement] = v);
         this.isUpdate = true; 
         cache.delete(name);
+        const notify = (result) => (result !== false) && notifier.notify(name);
+        (result instanceof Promise) ? result.then(notify) : notify(result);
         return result;
       } 
       : function(v) {
         const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[privateName] = v); 
         this.isUpdate = true; 
         cache.delete(name);
+        const notify = (result) => (result !== false) && notifier.notify(name);
+        (result instanceof Promise) ? result.then(notify) : notify(result);
         return result;
       };
     const defaultDesc = {
       configurable: true,
       enumerable: true,
-//      get: desc.get ? desc.get : getter,
       get: getter,
     };
     if (requireSetter) {
-//      defaultDesc.set = desc.set ? desc.set : setter;
       defaultDesc.set = setter;
     }
     this.desc = defaultDesc;
-  }
-  #addNotifiable() {
-    const notifier = this.context.notifier;
-    const properties = this.context.properties;
-    const setter = this.desc.set;
-    const desc = this.desc;
-    const name = this.name;
-    if (desc.set != null) {
-      desc.set = async function(v) {
-        const result = Reflect.apply(setter, this, [v]);
-        const notify = (value) => (value !== false) && notifier.notify(name);
-        (result instanceof Promise) ? result.then(notify) : notify(result);
-        return result;       
-      };
-      this.desc = desc;
-    }
   }
   getReferedPatternPeoperties(properties = this.context.properties, name = this.name) {
     return properties.getReferedPatternPeoperties(name);
@@ -263,10 +249,11 @@ export class ExpandedProperty extends Property {
     if (patternProperty.desc.set != null) {
       desc.set = (v) => {
         const result = context.pushIndexes(patternIndexes, () => {
-          const desc = Object.getOwnPropertyDescriptor(viewModel, patternProperty.pattern);
-          const result = Reflect.apply(desc.set, viewModel, [v]);
-          notifier.notify(patternProperty.pattern, patternIndexes);
+          const result = Reflect.apply(patternProperty.desc.set, viewModel, [v]);
+          this.isUpdate = true;
           cache.delete(name);
+          const notify = (result) => (result !== false) && notifier.notify(patternProperty.pattern, patternIndexes);
+          (result instanceof Promise) ? result.then(notify) : notify(result);
           return result;
         });
         return result;
