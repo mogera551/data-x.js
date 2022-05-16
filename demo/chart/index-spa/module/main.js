@@ -32,7 +32,7 @@ class AppViewModel {
     this.chart.update();
   }
   "#eventInit" = () => {
-    context.postUpdate(() => this.initChart());
+    context.postProcess(() => this.initChart());
   }
 }
 

@@ -187,7 +187,7 @@ export default class Context {
       ["$notifyAll", "notifyAll"],
       ["$inquiryAll", "inquiryAll"],
       ["$openDialog", "openDialog"],
-      ["$postUpdate", "postUpdate"],
+      ["$postProcess", "postProcess"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
       const value = isAsync 
@@ -226,14 +226,14 @@ export default class Context {
   $notify(pattern, indexes = []) {
     this.notifier.notify(pattern, indexes);
   }
-  $postUpdate(callback) {
+  $postProcess(callback) {
     this.viewUpdater.registPostProcess(callback);
   }
   async $notifyAll(pattern, indexes = []) {
     this.rootBlock.notifyAll(pattern, indexes, this.block);
   }
   async $inquiryAll(message, param1, param2) {
-    this.$postUpdate(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
+    this.$postProcess(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
   }
 
   async $openDialog(name, data = {}) {
