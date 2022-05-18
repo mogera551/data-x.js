@@ -40,8 +40,8 @@ export class Block {
     context.dataReflecter.reflect(context, data, context.viewModel);
 
     await context.initializer.init(context, data);
-    context.properties.expandAll();
-    context.view.build();
+    await context.properties.expandAll();
+    await context.view.build();
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));
     context.view.appear();
     await context.viewUpdater.postProcess();
@@ -65,8 +65,8 @@ export class Block {
     (fromBlock !== this) && viewUpdater.updateProcess(
       async () => {
         const result = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
-        const notify = () => notifier.notify(pattern);
-        (result instanceof Promise) ? result.then(notify) : notify();
+        const notify = async () => notifier.notify(pattern);
+        (result instanceof Promise) ? result.then(() => await notify()) : await notify();
         return result;
       }
     );

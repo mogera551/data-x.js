@@ -32,17 +32,17 @@ export default class Loop {
   get pattern() { return this.#pattern; }
   get children() { return this.#children; }
   
-  createChild(key, dom = this.#dom, context = this.#context) {
-    return context.pushLoop({ loop:this, key }, () => {
+  async createChild(key, dom = this.#dom, context = this.#context) {
+    return context.pushLoop({ loop:this, key }, async () => {
       const indexes = context.loopStack.map(loop => loop.key);
-      return context.pushIndexes(indexes, () => {
+      return context.pushIndexes(indexes, async () => {
         const fragment = document.createDocumentFragment();
         const child = new LoopChild;
         child.key = key;
 
         const clone = dom.content.cloneNode(true);
 
-        const info = context.viewBuilder.build(context, clone);
+        const info = await context.viewBuilder.build(context, clone);
         child.binds = info.binds;
         child.loops = info.loops;
         fragment.appendChild(clone);
@@ -52,10 +52,10 @@ export default class Loop {
     });
   }
 
-  expand() {
-    Object.keys(this.viewModel[this.path]).forEach(key => {
-      this.#children.push(this.createChild(key));
-    });
+  async expand() {
+    const values = await this.viewModel[this.path];
+    const children = await Promise.all(Object.keys(values).map(key => this.createChild(key)));
+    this.#children.push(...children);
 
     const fragment = document.createDocumentFragment();
     const appendNode = node => fragment.appendChild(node);
@@ -73,7 +73,7 @@ export default class Loop {
       const loop = stack.pop();
       return context.pushLoop(loop, walk);
     };
-    walk(loopStack);
+    return walk(loopStack);
   }
 
   removeChild(child) {
@@ -88,9 +88,9 @@ export default class Loop {
     children.splice(0);
   }
 
-  update() {
-    const expand = () => this.expand();
+  async update() {
+    const expand = async () => this.expand();
     this.contract();
-    this.restoreStack(expand);
+    await this.restoreStack(expand);
   }
 }

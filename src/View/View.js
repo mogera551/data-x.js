@@ -4,8 +4,8 @@ export default class View {
     this.#context = context;
   }
 
-  build(context = this.#context, builder = this.#context.viewBuilder, rootElement = this.#context.rootElement) {
-    const info = builder.build(context, rootElement);
+  async build(context = this.#context, builder = this.#context.viewBuilder, rootElement = this.#context.rootElement) {
+    const info = await builder.build(context, rootElement);
     context.setBindTree(info);
     context.buildBinds();
   }

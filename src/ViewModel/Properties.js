@@ -143,13 +143,13 @@ export default class Properties {
     propertyByName.set(property.name, property);
   }
 
-  #expand(property) {
+  async #expand(property) {
     const indexes = (property.type === PropertyType.EXPANDED) ? property.patternIndexes : [];
-    const value = property.value;
+    const value = await property.value;
     const context = this.#context;
-    property.referedPatternProperties.forEach(patternProperty => {
+    await Promise.all(property.referedPatternProperties.map(async patternProperty => {
       const pattern = patternProperty.pattern;
-      (Object.keys(value) ?? []).forEach(key => {
+      await Promise.all((Object.keys(value) ?? []).map(async key => {
         const patternIndexes = indexes.concat(key);
         const path = PropertyName.expand(pattern, patternIndexes);
         if (!path.includes("*")) {
@@ -159,13 +159,13 @@ export default class Properties {
             this.#expand(expandedProperty);
           }
         }
-      });
-    });
+      }));
+    }));
   }
 
-  expand(name, indexes = null) {
+  async expand(name, indexes = null) {
     const property = this.getProperty(name);
-    property != null && this.#expand(property);
+    property != null && await this.#expand(property);
   }
 
   #contract(property) {
@@ -187,7 +187,7 @@ export default class Properties {
     return propertyByName.has(`${name}.*`);
   }
 
-  #update(name, cache = this.#context.cache) {
+  async #update(name, cache = this.#context.cache) {
     cache.delete(name);
     const property = this.getProperty(name);
     if (property != null && property.isArray) {
@@ -196,24 +196,24 @@ export default class Properties {
     }
   }
 
-  updateByName(name, cache = this.#context.cache) {
-    this.#update(name);
+  async updateByName(name, cache = this.#context.cache) {
+    await tthis.#update(name);
 
     const updateInfos = this.#context.dependencies.getReferedProperties(name);
     updateInfos.forEach(info => (name != info.name) && this.#update(info.name));
   }
 
-  updateByPatternIndexes({ name, indexes }) {
+  async updateByPatternIndexes({ name, indexes }) {
     const propName = PropertyName.expand(name, indexes);
-    this.updateByName(propName);
+    await this.updateByName(propName);
   }
 
-  expandAll(propertyByName = this.#propertyByName) {
-    Array.from(propertyByName.entries()).forEach(([key, property]) => {
+  async expandAll(propertyByName = this.#propertyByName) {
+    await Promise.all(Array.from(propertyByName.entries()).map(async ([key, property]) => {
       if (!key.includes("*") && property.isArray) {
         this.#expand(property);
       }
-    });
+    }));
   }
 
   has(name, propertyByName = this.#propertyByName) {

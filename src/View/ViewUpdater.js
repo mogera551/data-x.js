@@ -28,7 +28,7 @@ export default class ViewUpdator {
     this.#processQueue.splice(0);
   }
 
-  updateDom(
+  async updateDom(
     notifier = this.#context.notifier, 
     allBinds = this.#context.allBinds, 
     allLoops = this.#context.allLoops, 
@@ -40,8 +40,8 @@ export default class ViewUpdator {
     notifier.queue.forEach(getUpdatePaths);
     const setOfUpdatePaths = new Set(updatePaths.map(info => info.name));
 
-    const updateLoop = loop => loop.update();
-    allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).forEach(updateLoop);
+    const updateLoop = async loop => loop.update();
+    await Promise.all(allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).map(updateLoop));
 
     const updateBind = bind => bind.updateDom();
     allBinds.filter(bind => setOfUpdatePaths.has(bind.path)).forEach(updateBind);
@@ -61,7 +61,7 @@ export default class ViewUpdator {
     await updateCallback();
 //    console.log("call updateDom()");
 
-    this.updateDom();
+    await this.updateDom();
     properties.isUpdate && context.buildBinds();
 
     await this.postProcess();

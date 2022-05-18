@@ -138,16 +138,16 @@ export class PlainProperty extends Property {
         const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[pathParent][pathLastElement] = v);
         this.isUpdate = true; 
         cache.delete(name);
-        const notify = (result) => (result !== false) && notifier.notify(name);
-        (result instanceof Promise) ? result.then(notify) : notify(result);
+        const notify = async result => (result !== false) && notifier.notify(name);
+        (result instanceof Promise) ? result.then(async () => await notify()) : await notify(result);
         return result;
       } 
       : function(v) {
         const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[privateName] = v); 
         this.isUpdate = true; 
         cache.delete(name);
-        const notify = (result) => (result !== false) && notifier.notify(name);
-        (result instanceof Promise) ? result.then(notify) : notify(result);
+        const notify = async result => (result !== false) && notifier.notify(name);
+        (result instanceof Promise) ? result.then(async () => await notify()) : await notify(result);
         return result;
       };
     const defaultDesc = {
@@ -252,8 +252,8 @@ export class ExpandedProperty extends Property {
           const result = Reflect.apply(patternProperty.desc.set, viewModel, [v]);
           this.isUpdate = true;
           cache.delete(name);
-          const notify = (result) => (result !== false) && notifier.notify(patternProperty.pattern, patternIndexes);
-          (result instanceof Promise) ? result.then(notify) : notify(result);
+          const notify = async result => (result !== false) && notifier.notify(patternProperty.pattern, patternIndexes);
+          (result instanceof Promise) ? result.then(() => await notify()) : await notify(result);
           return result;
         });
         return result;
