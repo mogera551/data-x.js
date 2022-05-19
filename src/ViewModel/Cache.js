@@ -12,12 +12,19 @@ export default class Cache {
 
   get(name) {
     //console.log("get", name);
-    return this.#cache.get(name);
+    const result = this.#cache.get(name);
+    console.log("cache.get = ", name, result);
+    return result;
   }
 
   set(name, value) {
     //console.log("set", name, value);
-    this.#cache.set(name, value);
+    if (value instanceof Promise) {
+      this.#cache.set(name, value);
+      value.then(v => this.#cache.set(name, v));
+    } else {
+      this.#cache.set(name, value);
+    }
     return value;
   }
 

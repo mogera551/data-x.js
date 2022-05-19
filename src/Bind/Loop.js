@@ -33,7 +33,7 @@ export default class Loop {
   get children() { return this.#children; }
   
   async createChild(key, dom = this.#dom, context = this.#context) {
-    return context.pushLoop({ loop:this, key }, async () => {
+    return context.pushLoop({ loop:this, key }, () => {
       const indexes = context.loopStack.map(loop => loop.key);
       return context.pushIndexes(indexes, async () => {
         const fragment = document.createDocumentFragment();
@@ -42,26 +42,29 @@ export default class Loop {
 
         const clone = dom.content.cloneNode(true);
 
-        const info = await context.viewBuilder.build(context, clone);
-        child.binds = info.binds;
-        child.loops = info.loops;
+        const { binds, loops } = await context.viewBuilder.build(context, clone);
+        Object.assign(child, { binds, loops });
+
         fragment.appendChild(clone);
-        Array.from(fragment.childNodes).forEach(node => child.nodes.push(node));
+        child.nodes.push(...Array.from(fragment.childNodes));
         return child;
       });
     });
   }
 
   async expand() {
+console.log("Loop.expand start");
     const values = await this.viewModel[this.path];
-    const children = await Promise.all(Object.keys(values).map(key => this.createChild(key)));
-    this.#children.push(...children);
+    for(const key of Object.keys(values)) {
+      this.#children.push(await this.createChild(key));
+    }
 
     const fragment = document.createDocumentFragment();
     const appendNode = node => fragment.appendChild(node);
     const appendChildNodes = child => child.nodes.forEach(appendNode);
     this.#children.forEach(appendChildNodes);
     this.#dom.after(fragment);
+console.log("Loop.expand complete");
   }
 
   restoreStack(callback) {
@@ -89,8 +92,10 @@ export default class Loop {
   }
 
   async update() {
+    console.log("Loop.update start");
     const expand = async () => this.expand();
     this.contract();
     await this.restoreStack(expand);
+    console.log("Loop.update end");
   }
 }

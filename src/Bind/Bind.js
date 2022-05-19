@@ -18,60 +18,64 @@ class DomPropertyType {
     );
   }
 
-  static updateDomByValueType(bind) {
+  static async getValue(viewModel, path) {
+    const desc = Object.getOwnPropertyDescriptor(viewModel, path);
+    return desc?.get ? await Reflect.apply(desc.get, viewModel, []) : viewModel[path];
+  }
+  static async updateDomByValueType(bind) {
     const properties = bind.domProperty.split(".");
-    const value = bind.viewModel[bind.path];
+    const value = await this.getValue(bind.viewModel, bind.path);
     const walk = (props, o, v, name = props.shift()) => (props.length === 0) ? ((o[name] !== v) && (o[name] = v)) : walk(props, o[name], v);
     const assignValue = value => walk(properties, bind.dom, bind.filter.forward(bind.forwardFilters, value));
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
-  static updateDomByClassType(bind) {
+  static async updateDomByClassType(bind) {
     const className = bind.domProperty.slice(this.matchClass.length);
-    const value = bind.viewModel[bind.path];
+    const value = await this.getValue(bind.viewModel, bind.path);
     const assignValue = value => bind.filter.forward(bind.forwardFilters, value) ? !bind.dom.classList.contains(className) && bind.dom.classList.add(className) 
           : bind.dom.classList.contains(className) && bind.dom.classList.remove(className);
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
-  static updateDomByRadioType(bind) {
-    const value = bind.viewModel[bind.path];
+  static async updateDomByRadioType(bind) {
+    const value = await this.getValue(bind.viewModel, bind.path);
     const assignValue = value => bind.dom.checked = (bind.dom.value === bind.filter.forward(bind.forwardFilters, value));
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
-  static updateDomByCheckboxType(bind) {
-    const value = bind.viewModel[bind.path];
+  static async updateDomByCheckboxType(bind) {
+    const value = await this.getValue(bind.viewModel, bind.path);
     const assignValue = value => bind.dom.checked = (bind.filter.forward(bind.forwardFilters, value) ?? []).includes(bind.dom.value);
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
-  static setValue = (bind, value) => {
-    const desc = Object.getOwnPropertyDescriptor(bind.viewModel, bind.path);
-    return desc?.set ? Reflect.apply(desc.set, bind.viewModel, [value]) : (bind.viewModel[path] = value);
+  static async setValue(viewModel, path, value) {
+    const desc = Object.getOwnPropertyDescriptor(viewModel, path);
+    desc?.set ? await Reflect.apply(desc.set, viewModel, [value]) : (bind.viewModel[path] = value);
   }
 
-  static updateViewModelByValueType(bind) {
+  static async updateViewModelByValueType(bind) {
     const properties = bind.domProperty.split(".");
     const walk = (props, o, name = props.shift()) => (props.length === 0) ? o[name] : walk(props, o[name]);
     const value = bind.filter.backward(bind.backwardFilters, walk(properties, bind.dom));
-    return this.setValue(bind, value);
+    await this.setValue(bind.viewModel, bind.path, value);
   }
 
-  static updateViewModelByClassType(bind) {
+  static async updateViewModelByClassType(bind) {
     const className = bind.domProperty.slice(this.matchClass.length);
     const value = bind.dom.classList.contains(className);
-    return this.setValue(bind, value);
+    await this.setValue(bind.viewModel, bind.path, value);
   }
 
-  static updateViewModelByRadioType(bind) {
+  static async updateViewModelByRadioType(bind) {
     if (bind.dom.checked) {
       const value = bind.dom.value;
-      return this.setValue(bind, value);
+      await this.setValue(bind.viewModel, bind.path, value);
     }
   }
 
-  static updateViewModelByCheckboxType(bind) {
+  static async updateViewModelByCheckboxType(bind) {
     const setOfValues = new Set(bind.viewModel[bind.path] ?? []);
     if (bind.dom.checked) {
       setOfValues.add(bind.dom.value);
@@ -79,7 +83,7 @@ class DomPropertyType {
       setOfValues.delete(bind.dom.value);
     }
     const value = Array.from(setOfValues);
-    return this.setValue(bind, value);
+    await this.setValue(bind.viewModel, bind.path, value);
   }
 
   static #updateDomProcs = {};
@@ -97,12 +101,12 @@ class DomPropertyType {
     this.#updateViewModelProcs[this.CHECKBOX] = this.updateViewModelByCheckboxType;
   }
 
-  static updateDom(bind, type = bind.domPropertyType) {
-    Reflect.apply(this.#updateDomProcs[type], this, [bind]);
+  static async updateDom(bind, type = bind.domPropertyType) {
+    await Reflect.apply(this.#updateDomProcs[type], this, [bind]);
   }
 
-  static updateViewModel(bind, type = bind.domPropertyType) {
-    return Reflect.apply(this.#updateViewModelProcs[type], this, [bind]);
+  static async updateViewModel(bind, type = bind.domPropertyType) {
+    await Reflect.apply(this.#updateViewModelProcs[type], this, [bind]);
   }
 }
 
@@ -149,23 +153,23 @@ export default class Bind {
   get backwardFilters() { return this.#backwardFilters; }
   get filter() { return this.#context.filter; }
 
-  init(inputable = this.#inputable) {
+  async init(inputable = this.#inputable) {
     if (inputable) {
       this.attachEvent();
     }
-    this.updateDom();
+    await this.updateDom();
   }
 
-  updateDom() {
-    DomPropertyType.updateDom(this);
+  async updateDom() {
+    await DomPropertyType.updateDom(this);
   }
 
-  updateViewModel() {
-    DomPropertyType.updateViewModel(this);
+  async updateViewModel() {
+    await DomPropertyType.updateViewModel(this);
   }
   
   attachEvent(dom = this.#dom, viewUpdater = this.#context.viewUpdater) {
-    const handler = e => viewUpdater.updateProcess(() => this.updateViewModel());
+    const handler = async e => await viewUpdater.updateProcess(() => this.updateViewModel());
     dom.addEventListener("input", handler);
   }
 }

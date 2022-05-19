@@ -5,12 +5,12 @@
     <button typ="button" name="search">search</button>
   </div>
   <table>
-    <tr>
-      <template data-x:loop="animes">
+    <template data-x:loop="animes">
+      <tr>
         <td data-x:bind="animes.*.anime"></td>
         <td data-x:bind="animes.*.character"></td>
         <td data-x:bind="animes.*.quote"></td>
-      </template>
-    </tr>
+      </tr>
+    </template>
   </table>
 </main>

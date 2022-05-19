@@ -152,6 +152,21 @@ console.log(value);
     const keys = Object.keys(value) ?? [];
 console.log(keys);
     const context = this.#context;
+    for(const patternProperty of property.referedPatternProperties) {
+      const pattern = patternProperty.pattern;
+      for(const key of keys) {
+        const patternIndexes = indexes.concat(key);
+        const path = PropertyName.expand(pattern, patternIndexes);
+        if (!path.includes("*")) {
+          const expandedProperty = Property.create(context, {patternProperty, patternIndexes, requireSetter:patternProperty.hasSetter });
+          this.setProperty(expandedProperty);
+          if (patternProperty.isArray) {
+            await this.#expand(expandedProperty);
+          }
+        }
+      }
+    }
+/*
     await Promise.all(property.referedPatternProperties.map(async patternProperty => {
       const pattern = patternProperty.pattern;
 console.log(Object.keys(value));
@@ -170,6 +185,7 @@ console.log("path = ", path);
         }
       }));
     }));
+*/
 console.log("#expand end", property.name);
   }
 
@@ -209,11 +225,19 @@ console.log("#update complete", name);
   }
 
   async updateByName(name, cache = this.#context.cache) {
+console.log("updateByName start", name);
     await this.#update(name);
 
+    for(const info of this.#context.dependencies.getReferedProperties(name)) {
+console.log("updateInfo = ", info);
+      (name !== info.name) && await this.#update(info.name);
+    }
+console.log("updateByName complete", name);
+    /*    
     const updateInfos = this.#context.dependencies.getReferedProperties(name);
 console.log("updateInfos = ", updateInfos);
     updateInfos.forEach(info => (name != info.name) && this.#update(info.name));
+*/
   }
 
   async updateByPatternIndexes({ name, indexes }) {

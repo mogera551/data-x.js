@@ -40,15 +40,16 @@ export default class Event {
     indexes = this.#indexes,
     context = this.#context
   ) {
-    return context.pushIndexes(indexes, async () => {
+    return context.pushIndexes(indexes, () => {
+      console.log("eventHandler start");
       const result = eventHandler.exec(viewModel, handlerName, event, ...indexes);
-//      console.log("end eventHandler");
+      console.log("eventHandler end");
       return result;
     });
   }
 
   attachEvent(dom = this.#dom, event = this.#event, viewUpdater = this.#context.viewUpdater) {
-    const handler = e => viewUpdater.updateProcess(async () => await this.eventHandler(e));
+    const handler = e => viewUpdater.updateProcess(() => this.eventHandler(e));
     dom.addEventListener(event, handler);
   }
 }

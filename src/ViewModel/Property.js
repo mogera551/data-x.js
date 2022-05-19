@@ -135,20 +135,24 @@ export class PlainProperty extends Property {
       };
     const setter = hasParent 
       ? function(v) { 
-        const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[pathParent][pathLastElement] = v);
+        const asyncResult = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[pathParent][pathLastElement] = v);
         this.isUpdate = true; 
         cache.delete(name);
-        const notify = result => (result !== false) && notifier.notify(name);
-        (result instanceof Promise) ? result.then(() => notify()) : notify(result);
-        return result;
+        const notify = async () => {
+          const result = await asyncResult;
+          (result !== false) && await notifier.notify(name);
+        };
+        return notify();
       } 
       : function(v) {
-        const result = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[privateName] = v); 
+        const asyncResult = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[privateName] = v); 
         this.isUpdate = true; 
         cache.delete(name);
-        const notify = result => (result !== false) && notifier.notify(name);
-        (result instanceof Promise) ? result.then(() => notify()) : notify(result);
-        return result;
+        const notify = async () => {
+          const result = await asyncResult;
+          (result !== false) && await notifier.notify(name);
+        };
+        return notify();
       };
     const defaultDesc = {
       configurable: true,
@@ -249,12 +253,14 @@ export class ExpandedProperty extends Property {
     if (patternProperty.desc.set != null) {
       desc.set = (v) => {
         const result = context.pushIndexes(patternIndexes, () => {
-          const result = Reflect.apply(patternProperty.desc.set, viewModel, [v]);
+          const asyncResult = Reflect.apply(patternProperty.desc.set, viewModel, [v]);
           this.isUpdate = true;
           cache.delete(name);
-          const notify = result => (result !== false) && notifier.notify(patternProperty.pattern, patternIndexes);
-          (result instanceof Promise) ? result.then(() => notify()) : notify(result);
-          return result;
+          const notify = async () => {
+            const result = await asyncResult;
+            (result !== false) && await notifier.notify(patternProperty.pattern, patternIndexes);
+          };
+          return notify();
         });
         return result;
       };
