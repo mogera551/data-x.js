@@ -1,0 +1,16 @@
+<main class="container">
+  <h1>search anime</h1>
+  <div class="grid">
+    <input type="text" name="title" />
+    <button typ="button" name="search">search</button>
+  </div>
+  <table>
+    <tr>
+      <template data-x:loop="animes">
+        <td data-x:bind="animes.*.anime"></td>
+        <td data-x:bind="animes.*.character"></td>
+        <td data-x:bind="animes.*.quote"></td>
+      </template>
+    </tr>
+  </table>
+</main>

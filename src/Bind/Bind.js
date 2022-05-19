@@ -20,29 +20,29 @@ class DomPropertyType {
 
   static updateDomByValueType(bind) {
     const properties = bind.domProperty.split(".");
-    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
+    const value = bind.viewModel[bind.path];
     const walk = (props, o, v, name = props.shift()) => (props.length === 0) ? ((o[name] !== v) && (o[name] = v)) : walk(props, o[name], v);
-    const assignValue = value => walk(properties, bind.dom, value);
+    const assignValue = value => walk(properties, bind.dom, bind.filter.forward(bind.forwardFilters, value));
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
   static updateDomByClassType(bind) {
     const className = bind.domProperty.slice(this.matchClass.length);
-    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-    const assignValue = value => value ? !bind.dom.classList.contains(className) && bind.dom.classList.add(className) 
+    const value = bind.viewModel[bind.path];
+    const assignValue = value => bind.filter.forward(bind.forwardFilters, value) ? !bind.dom.classList.contains(className) && bind.dom.classList.add(className) 
           : bind.dom.classList.contains(className) && bind.dom.classList.remove(className);
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
   static updateDomByRadioType(bind) {
-    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-    const assignValue = value => bind.dom.checked = (bind.dom.value === value);
+    const value = bind.viewModel[bind.path];
+    const assignValue = value => bind.dom.checked = (bind.dom.value === bind.filter.forward(bind.forwardFilters, value));
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
   static updateDomByCheckboxType(bind) {
-    const value = bind.filter.forward(bind.forwardFilters, bind.viewModel[bind.path]);
-    const assignValue = value => bind.dom.checked = (value ?? []).includes(bind.dom.value);
+    const value = bind.viewModel[bind.path];
+    const assignValue = value => bind.dom.checked = (bind.filter.forward(bind.forwardFilters, value) ?? []).includes(bind.dom.value);
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 

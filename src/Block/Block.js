@@ -65,8 +65,8 @@ export class Block {
     (fromBlock !== this) && viewUpdater.updateProcess(
       async () => {
         const result = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
-        const notify = async () => notifier.notify(pattern);
-        (result instanceof Promise) ? result.then(() => await notify()) : await notify();
+        const notify = () => notifier.notify(pattern);
+        (result instanceof Promise) ? result.then(() => notify()) : notify();
         return result;
       }
     );
