@@ -6,25 +6,16 @@ export default class Cache {
   }
 
   has(name) {
-    //console.log("has", name);
     return this.#cache.has(name);
   }
 
   get(name) {
-    //console.log("get", name);
-    const result = this.#cache.get(name);
-    console.log("cache.get = ", name, result);
-    return result;
+    return this.#cache.get(name);
   }
 
   set(name, value) {
-    //console.log("set", name, value);
-    if (value instanceof Promise) {
-      this.#cache.set(name, value);
-      value.then(v => this.#cache.set(name, v));
-    } else {
-      this.#cache.set(name, value);
-    }
+    this.#cache.set(name, value);
+    (value instanceof Promise) && value.then(v => this.#cache.set(name, v));
     return value;
   }
 

@@ -20,7 +20,7 @@ class BindRule {
   viewModel = { };
   filters = [];
 
-  static createBind(selectorText, domProp, vmProp, filters) {
+  static #createBind(selectorText, domProp, vmProp, filters) {
     const rule = new BindRule();
     rule.dom.selector = selectorText;
     rule.dom.property = domProp;
@@ -29,14 +29,14 @@ class BindRule {
     return rule;
   }
 
-  static createEvent(selectorText, event) {
+  static #createEvent(selectorText, event) {
     const rule = new BindRule();
     rule.dom.selector = selectorText;
     rule.dom.event = event;
     return rule;
   }
 
-  static createLoop(selectorText, vmProp) {
+  static #createLoop(selectorText, vmProp) {
     const rule = new BindRule();
     rule.dom.selector = selectorText;
     rule.viewModel.property = vmProp;
@@ -50,14 +50,14 @@ class BindRule {
       const value = cssRule.style.getPropertyValue(key).trim();
       if (key === KEY_EVENTS) {
         for(const event of value.split(",")) {
-          const eventRule = BindRule.createEvent(
+          const eventRule = BindRule.#createEvent(
             cssRule.selectorText,
             event
           );
           rules.push(eventRule);
         }
       } else if (key === KEY_LOOP) {
-        const loopRule = BindRule.createLoop(
+        const loopRule = BindRule.#createLoop(
           cssRule.selectorText,
           value
         );
@@ -66,7 +66,7 @@ class BindRule {
         const values = value.split("|");
         const vmProp = values.shift();
         const filters = values;
-        const bindRule = BindRule.createBind(
+        const bindRule = BindRule.#createBind(
           cssRule.selectorText,
           "class." + key.slice(PREFIX_CLASS.length),
           vmProp, 
@@ -77,7 +77,7 @@ class BindRule {
         const values = value.split("|");
         const vmProp = values.shift();
         const filters = values;
-        const bindRule = BindRule.createBind(
+        const bindRule = BindRule.#createBind(
           cssRule.selectorText,
           key.slice(PREFIX_BIND.length).replaceAll("-", "."),
           vmProp, 

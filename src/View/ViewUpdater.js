@@ -34,22 +34,16 @@ export default class ViewUpdator {
     allLoops = this.#context.allLoops, 
     dependencies = this.#context.dependencies
   ) {
-    console.log("start updateDom");
     const updatePaths = [];
     const conv = ({name, indexes}) => ({ name: PropertyName.expand(name, indexes), pattern:name, indexes });
     const getUpdatePaths = ({name, indexes}) => updatePaths.push(...dependencies.getReferedProperties(name, indexes), conv({name, indexes}));
     notifier.queue.forEach(getUpdatePaths);
     const setOfUpdatePaths = new Set(updatePaths.map(info => info.name));
-console.log("setOfUpdatePaths = ", setOfUpdatePaths)
     const updateLoop = loop => loop.update();
     await Promise.all(allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).map(updateLoop));
-console.log("loop end");
 
     const updateBind = bind => bind.updateDom();
     await Promise.all(allBinds.filter(bind => setOfUpdatePaths.has(bind.path)).map(updateBind));
-console.log("bind end");
-
-    console.log("complete updateDom");
   }
 
   async updateProcess(
@@ -58,15 +52,11 @@ console.log("bind end");
     notifier = this.#context.notifier, 
     properties = this.#context.properties
   ) {
-//    console.log(`${context.block.name} updateProcess`);
     this.clearPostProcess();
     notifier.clear();
     properties.clearStatus();
 
-    const result = await updateCallback();
-    console.log("updateCallback() = ", result);
-    await result;
-//    console.log("call updateDom()");
+    await updateCallback();
 
     await this.updateDom();
     properties.isUpdate && context.buildBinds();

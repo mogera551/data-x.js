@@ -15,7 +15,7 @@ export class Block {
   get context() { return this.#context; }
   get name() { return this.#name; }
 
-  createContext(name, parentElement) {
+  #createContext(name, parentElement) {
     this.#name = name;
     this.#context = new Context(this, parentElement);
     this.#context.build();
@@ -23,12 +23,11 @@ export class Block {
   }
 
   async load(name, parentElement, withBindCss) {
-    const context = this.createContext(name, parentElement);
+    const context = this.#createContext(name, parentElement);
     try {
       const module = await Module.load(name, withBindCss);
       module.dialog = this.#dialog;
       context.module = module;
-//      console.log(context.module);
     } catch(e) {
       throw e;
     }

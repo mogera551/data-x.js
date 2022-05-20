@@ -5,11 +5,11 @@
     <button typ="button" name="search">search</button>
   </div>
   <table>
-    <template data-x:loop="animes">
-      <tr>
-        <td data-x:bind="animes.*.anime"></td>
-        <td data-x:bind="animes.*.character"></td>
-        <td data-x:bind="animes.*.quote"></td>
+    <template id="animes">
+      <tr class="anime">
+        <td data-name="anime"></td>
+        <td data-name="character"></td>
+        <td data-name="quote"></td>
       </tr>
     </template>
   </table>

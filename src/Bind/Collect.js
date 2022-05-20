@@ -73,11 +73,6 @@ export default class Collect {
       const rules = values.map(value => {
         const rule = {dom:{}, viewModel:{}, filters:[]};
         return assignRule(value, rule);
-/*
-        const [domProperty, vmProperty] = s.split("=");
-        const { property, filters } = this.parsePropertyName(vmProperty);
-        return { dom:{ property:domProperty }, viewModel:{ property: property }, filters };
-*/
       });
       return rules;
     }

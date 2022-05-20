@@ -5,8 +5,8 @@ export default class View {
   }
 
   async build(context = this.#context, builder = this.#context.viewBuilder, rootElement = this.#context.rootElement) {
-    const info = await builder.build(context, rootElement);
-    context.setBindTree(info);
+    const bindTree = await builder.build(context, rootElement);
+    context.setBindTree(bindTree);
     context.buildBinds();
   }
 

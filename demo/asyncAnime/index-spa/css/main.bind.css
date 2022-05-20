@@ -1,0 +1,15 @@
+template#animes {
+  --loop: animes;
+}
+
+tr.anime td[data-name='anime'] {
+  --bind-textContent: animes.*.anime;
+}
+
+tr.anime td[data-name='character'] {
+  --bind-textContent: animes.*.character;
+}
+
+tr.anime td[data-name='quote'] {
+  --bind-textContent: animes.*.quote;
+}
