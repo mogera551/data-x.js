@@ -1,26 +1,24 @@
 import Filters from "../Filter/Filters.js"
 import Data from "../Data.js"
 import Root from "../Root.js"
-import ViewBuilder from "./ViewBuilder.js"
 import Dialog from "../Dialog/Dialog.js"
 import PropertyName from "../ViewModel/PropertyName.js"
 import EventHandler from "../ViewModel/EventHandler.js"
 import Initializer from "../ViewModel/Initializer.js"
 import Reflecter from "../Shared/Reflecter.js"
 import View from "./View.js";
-import ViewUpdater from "./ViewUpdater.js";
 import Dependencies from "../ViewModel/Dependency.js";
 import Properties from "../ViewModel/Properties.js";
 import Notifier from "./Notifier.js";
 import Cache from "../ViewModel/Cache.js";
+import PostProcess from "./PostProcess.js";
 
 export default class Context {
   #parentElement;
   #rootElement;
   #view;
   #viewModel;
-  #viewBuilder;
-  #viewUpdater;
+  #postProcess;
   #dependencies;
   #bindTree = { binds:[], loops:[] }
   #allBinds = [];
@@ -45,9 +43,8 @@ export default class Context {
   }
 
   build() {
-    this.#view = new View(this);
-    this.#viewBuilder = ViewBuilder;
-    this.#viewUpdater = new ViewUpdater(this);
+    this.#view = View;
+    this.#postProcess = new PostProcess(this);
     this.#dependencies = new Dependencies(this);
     this.#properties = new Properties(this);
     this.#notifier = new Notifier(this);
@@ -64,8 +61,7 @@ export default class Context {
   get rootElement() { return this.#rootElement; }
   get view() { return this.#view; }
   get viewModel() { return this.#viewModel; }
-  get viewBuilder() { return this.#viewBuilder; }
-  get viewUpdater() { return this.#viewUpdater; }
+  get postProcess() { return this.#postProcess; }
   get dependencies() { return this.#dependencies; }
   get bindTree() { return this.#bindTree; }
   get allBinds() { return this.#allBinds; }
@@ -227,7 +223,7 @@ export default class Context {
     this.notifier.notify(pattern, indexes);
   }
   $postProcess(callback) {
-    this.viewUpdater.registPostProcess(callback);
+    this.postProcess.regist(callback);
   }
   async $notifyAll(pattern, indexes = []) {
     this.rootBlock.notifyAll(pattern, indexes, this.block);

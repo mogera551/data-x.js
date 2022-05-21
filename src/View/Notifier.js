@@ -6,12 +6,12 @@ export default class Notifier {
   }
   get queue() { return this.#queue; }
   
-  async notify(name, indexes = []) {
-    this.#queue.push({name, indexes});
-    await this.#context.properties.updateByPatternIndexes({name, indexes});
+  async notify(name, indexes = [], queue = this.#queue, properties = this.#context.properties) {
+    queue.push({name, indexes});
+    await properties.updateByPatternIndexes({name, indexes});
   }
 
-  clear() {
-    this.#queue.splice(0);
+  clear(queue = this.#queue) {
+    queue.splice(0);
   }
 }

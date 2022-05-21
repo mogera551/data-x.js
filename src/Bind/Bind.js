@@ -168,8 +168,8 @@ export default class Bind {
     await DomPropertyType.updateViewModel(this);
   }
   
-  attachEvent(dom = this.#dom, viewUpdater = this.#context.viewUpdater) {
-    const handler = e => viewUpdater.updateProcess(() => this.#updateViewModel());
+  attachEvent(dom = this.#dom, context = this.#context, view = context.view) {
+    const handler = e => view.updateProcess(context, () => this.#updateViewModel());
     dom.addEventListener("input", handler);
   }
 }

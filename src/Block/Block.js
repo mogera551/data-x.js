@@ -40,10 +40,10 @@ export class Block {
 
     await context.initializer.init(context, data);
     await context.properties.expandAll();
-    await context.view.build();
+    await context.view.build(context);
     this.#blocks.push(...await BlockBuilder.build(context.rootElement));
-    context.view.appear();
-    await context.viewUpdater.postProcess();
+    context.view.appear(context);
+    await context.postProcess.exec();
   }
 
   static async build(name, parentElement, withBindCss, data = Data.data, dialog = null) {
@@ -54,31 +54,35 @@ export class Block {
   }
 
   async notifyAll(pattern, indexes, fromBlock) {
-    const notifier = this.#context.notifier;
-    const viewModel = this.#context.viewModel;
-    const eventHandler = this.#context.eventHandler;
-    const viewUpdater = this.#context.viewUpdater;
+    const context = this.#context;
+    const notifier = context.notifier;
+    const viewModel = context.viewModel;
+    const eventHandler = context.eventHandler;
+    const view = context.view;
     for(const block of this.#blocks) {
       block.notifyAll(pattern, indexes, fromBlock);
     }
-    (fromBlock !== this) && viewUpdater.updateProcess(
+    (fromBlock !== this) && view.updateProcess(
+      context,
       async () => {
-        const result = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
-        const notify = () => notifier.notify(pattern);
-        (result instanceof Promise) ? result.then(() => notify()) : notify();
+        const asyncResult = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
+        const result = (asyncResult instanceof Promise) ? await asyncResult : asyncResult;
+        notifier.notify(pattern, indexes);
         return result;
       }
     );
   }
 
   async inquiryAll(message, param1, param2, fromBlock) {
-    const viewModel = this.#context.viewModel;
-    const eventHandler = this.#context.eventHandler;
-    const viewUpdater = this.#context.viewUpdater;
+    const context = this.#context;
+    const viewModel = context.viewModel;
+    const eventHandler = context.eventHandler;
+    const view = context.view;
     for(const block of this.#blocks) {
       block.inquiryAll(message, param1, param2, fromBlock);
     }
-    (fromBlock !== this) && viewUpdater.updateProcess(
+    (fromBlock !== this) && view.updateProcess(
+      context,
       async () => eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock)
     );
   }

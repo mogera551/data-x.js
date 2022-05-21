@@ -92,6 +92,7 @@ class BindRule {
 
 export default class Rules {
   static collect(textCss) {
+    if (textCss == null || textCss === "") return [];
     const dummy = document.createElement("div");
     document.body.appendChild(dummy);
     const shadow = dummy.attachShadow({mode:"open"});

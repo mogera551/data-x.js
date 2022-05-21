@@ -37,7 +37,7 @@ export default class Loop {
         const child = new LoopChild;
         const clone = dom.content.cloneNode(true);
 
-        const { binds, loops } = await context.viewBuilder.build(context, clone);
+        const { binds, loops } = await context.view.createBindTree(context, clone);
         Object.assign(child, { key, binds, loops });
 
         fragment.appendChild(clone);
