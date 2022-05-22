@@ -16,10 +16,15 @@ export default class View {
     context.buildBinds();
   }
 
-  static appear(context) {
-    const shadow = context.parentElement.attachShadow({mode: 'open'});
-    shadow.appendChild(context.rootElement);
+  static appear(context, fragment = context.fragment, parentElement = context.parentElement) {
+    const shadow = parentElement.attachShadow({mode: 'open'});
+    shadow.appendChild(fragment);
     context.rootElement = shadow;
+  }
+
+  static attachTo(context, parentElement) {
+    context.parentElement = parentElement;
+    this.appear(context);
   }
 
   static async updateDom(

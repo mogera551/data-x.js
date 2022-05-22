@@ -33,7 +33,7 @@ export class Block {
     }
   }
 
-  async buildView(data = Data.data, context = this.#context) {
+  async build(data = Data.data, context = this.#context) {
     context.properties.build();
     context.dependencies.build();
     context.dataReflecter.reflect(context, data, context.viewModel);
@@ -46,10 +46,10 @@ export class Block {
     await context.postProcess.exec();
   }
 
-  static async build(name, parentElement, withBindCss, data = Data.data, dialog = null) {
+  static async create({ name, parentElement = null, withBindCss = false, data = Data.data, dialog = null}) {
     const block = new Block(dialog);
     await block.load(name, parentElement, withBindCss);
-    await block.buildView(data);
+    await block.build(data);
     return block;
   }
 
@@ -95,10 +95,10 @@ export class BlockBuilder {
     const DATASET_WITH_BIND_CSS = "x:withBindCss"; // notice: camel case
 
     const collect = (rootElement) => Array.from(rootElement.querySelectorAll(QUERY_BLOCK));
-    const createBlock = async (element) => {
-      const blockName = element.dataset[DATASET_BLOCK];
-      const withBindCss = DATASET_WITH_BIND_CSS in element.dataset;
-      return Block.build(blockName, element, withBindCss);
+    const createBlock = async (parentElement) => {
+      const name = parentElement.dataset[DATASET_BLOCK];
+      const withBindCss = DATASET_WITH_BIND_CSS in parentElement.dataset;
+      return Block.create({ name, parentElement, withBindCss });
     };
     return await Promise.all(collect(rootElement).map(element => createBlock(element)));
   }

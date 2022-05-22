@@ -15,6 +15,7 @@ import PostProcess from "./PostProcess.js";
 
 export default class Context {
   #parentElement;
+  #fragment; // template clone
   #rootElement;
   #view;
   #viewModel;
@@ -58,7 +59,8 @@ export default class Context {
   }
 
   get parentElement() { return this.#parentElement; }
-  get rootElement() { return this.#rootElement; }
+  get fragment() { return this.#fragment; }
+  get rootElement() { return this.#rootElement ?? this.#fragment; }
   get view() { return this.#view; }
   get viewModel() { return this.#viewModel; }
   get postProcess() { return this.#postProcess; }
@@ -99,11 +101,12 @@ export default class Context {
     this.#viewModel = 
       module.viewModel !== undefined ? module.viewModel : 
       (module.AppViewModel !== undefined ? Reflect.construct(module.AppViewModel, []) : {});
-    this.#rootElement = module.template.content.cloneNode(true);
+    this.#fragment = module.template.content.cloneNode(true);
     const reflectContext = module?.context ?? module?._;
     (reflectContext != null) && this.reflect(reflectContext, module.dialog);
   }
   set rootElement(value) { this.#rootElement = value; }
+  set parentElement(value) { this.#parentElement = value; }
 
   pushIndexes(indexes, callback) {
     this.#indexesStack.push(indexes);

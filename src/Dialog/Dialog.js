@@ -52,15 +52,20 @@ export default class Dialog {
     return { root, bg, fg };
   }
   
-  async create(name = this.#name, data = this.#data, withBindCss = false) {
+  async build(name = this.#name, data = this.#data, withBindCss = false) {
     const { root, bg, fg } = this.createBackLayer(name);
 
-    const block = await Block.build(name, fg, withBindCss, data, this);
+    const block = await Block.create({name, parentElement:fg, withBindCss, data, dialog:this});
 
     document.body.appendChild(root);
 
     this.#block = block;
     this.#root = root;
+  }
+
+  static async create(name = this.#name, data = this.#data, withBindCss = false) {
+    const dialog = new Dialog(name, data);
+    return dialog.build();
   }
 
   cancelDialog() {
@@ -81,8 +86,7 @@ export default class Dialog {
   }
 
   static async open(name, data = {}) {
-    const dialog = new Dialog(name, data);
-    dialog.create();
+    const dialog = await Dialog.create(name, data);
     return dialog.main();
   }
 }
