@@ -1,6 +1,4 @@
 import Filters from "../Filter/Filters.js"
-import Data from "../Data.js"
-import Root from "../Root.js"
 import Dialog from "../Dialog/Dialog.js"
 import PropertyName from "../ViewModel/PropertyName.js"
 import EventHandler from "../ViewModel/EventHandler.js"
@@ -34,13 +32,13 @@ export default class Context {
   #block;
   #eventHandler;
   #initializer;
-  #data;
   #dataReflecter;
   #module;
 
-  constructor(block, parentElement) { 
+  constructor(block, parentElement, rootBlock) { 
     this.#block = block;
     this.#parentElement = parentElement;
+    this.#rootBlock = rootBlock;
   }
 
   build() {
@@ -51,10 +49,8 @@ export default class Context {
     this.#notifier = new Notifier(this);
     this.#cache = new Cache(this);
     this.#filter = Filters;
-    this.#rootBlock = Root.root;
     this.#eventHandler = EventHandler;
     this.#initializer = Initializer;
-    this.#data = Data.data;
     this.#dataReflecter = Reflecter;
   }
 
@@ -89,12 +85,14 @@ export default class Context {
   get block() { return this.#block; }
   get eventHandler() { return this.#eventHandler; }
   get initializer() { return this.#initializer; }
-  get data() { return this.#data; }
+  get data() { return this.#rootBlock.data; }
   get dataReflecter() { return this.#dataReflecter; }
   get template() { return this.#module.template; }
   get module() { return this.#module; }
+  get modules() { return this.#module.modules; }
   get bindRules() { return this.#module.bindRules; }
   get dependencyRules() { return this.#module.dependencyRules; }
+  get isBlockModule() { return this.#module.useModule; }
 
   set module(module) {
     this.#module = module;

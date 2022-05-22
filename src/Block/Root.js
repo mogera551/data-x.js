@@ -1,7 +1,11 @@
 import { BlockBuilder } from "../Block/Block.js";
+import Data from "../Data.js";
 
 export default class Root {
   #blocks = [];
+  get data() {
+    return Data.data;
+  }
   
   async build() {
     this.#blocks.push(...await BlockBuilder.build(document.body));

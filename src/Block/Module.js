@@ -2,6 +2,7 @@ import Rules from "../Bind/Rules.js";
 import Options from "../Options.js"
 
 export default class Module {
+  name;
   viewModel;
   AppViewModel;
   html;
@@ -13,26 +14,42 @@ export default class Module {
   context;
   _;
   dialog;
+  useModule;
 
-  static async load(name, withBindCss, spaPath = Options.spaPath, module = new Module) {
+  static async load({
+    name, 
+    useModule, 
+    withBindCss, 
+    module = new Module
+  }) {
+    const spaCssPath = (!useModule) ? Options.spaCssPath : null;
+    const spaHtmlPath = (!useModule) ? Options.spaHtmlPath : null; 
+    const spaModulePath = (!useModule) ? Options.spaModulePath : null; 
+    const modulePath = useModule ? Options.modulePath : null;
+    module.name = name;
+    module.useModule = useModule;
     // scriptをロード
-    const scriptModule = await this.loadScript(name, spaPath);
+    const scriptModule = await this.loadScript(name, modulePath ?? spaModulePath);
     Object.assign(module, scriptModule?.default ?? {});
     // htmlをロード
-    if (module.html === undefined) {
-      const html = await this.loadHtml(name, spaPath);
+    if (module.html === undefined && spaHtmlPath !== null) {
+      const html = await this.loadHtml(name, spaHtmlPath);
       Object.assign(module, { html });
     } 
     // cssをロード
-    if (module.css === undefined) {
-      const css = await this.loadCss(name, spaPath);
+    if (module.css === undefined && spaCssPath !== null) {
+      const css = await this.loadCss(name, spaCssPath);
       Object.assign(module, { css });
     }
     // bindCssをロード
-    if (withBindCss && module.bindCss === undefined && module.bindRules === undefined) {
-      const bindCss = await this.loadBindCss(name, spaPath);
+    if (withBindCss && module.bindCss === undefined && spaCssPath !== null && module.bindRules === undefined) {
+      const bindCss = await this.loadBindCss(name, spaCssPath);
       Object.assign(module, { bindCss });
     }
+    return this.build(name, module);
+  }
+
+  static build(name, module) {
     // templateの生成
     const template = this.buildTemplate(name, module.html, module.css);
     Object.assign(module, { template });
@@ -50,19 +67,19 @@ export default class Module {
     return module;
   }
 
-  static async loadScript(name, spaPath = Options.spaPath) {
-    const isExternal = (spaPath.startsWith("https://") || spaPath.startsWith("http://"));
+  static async loadScript(name, path) {
+    const isExternal = (path.startsWith("https://") || path.startsWith("http://") || path[0] === "/");
     const index = document.baseURI.lastIndexOf("/");
     const base = (index >= 0) ? document.baseURI.slice(0, index + 1) : "";
-    const path = (isExternal) ? `${spaPath}/module/${name}.js` : `${base}${spaPath}/module/${name}.js`;
-    return import(/* webpackIgnore: true */path).catch(e => {
+    const importPath = (isExternal) ? `${path}/${name}.js` : `${base}${path}/${name}.js`;
+    return import(/* webpackIgnore: true */importPath).catch(e => {
       console.error(e);
       throw e;
     });
   }
 
-  static async loadHtml(name, spaPath = Options.spaPath) {
-    return fetch(`${spaPath}/html/${name}.html`).then(response => {
+  static async loadHtml(name, path) {
+    return fetch(`${path}/${name}.html`).then(response => {
       if (!response.ok) {
         console.error('response.ok:', response.ok);
         console.error('esponse.status:', response.status);
@@ -76,8 +93,8 @@ export default class Module {
     });
   }
 
-  static async loadCss(name, spaPath = Options.spaPath) {
-    return fetch(`${spaPath}/css/${name}.css`).then(response => {
+  static async loadCss(name, path) {
+    return fetch(`${path}/${name}.css`).then(response => {
       if (!response.ok) {
         console.error('response.ok:', response.ok);
         console.error('esponse.status:', response.status);
@@ -91,8 +108,8 @@ export default class Module {
     });
   }
 
-  static async loadBindCss(name, spaPath = Options.spaPath) {
-    return fetch(`${spaPath}/css/${name}.bind.css`).then(response => {
+  static async loadBindCss(name, path) {
+    return fetch(`${path}/${name}.bind.css`).then(response => {
       if (!response.ok) {
         console.error('response.ok:', response.ok);
         console.error('esponse.status:', response.status);

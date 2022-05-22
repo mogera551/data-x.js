@@ -1,8 +1,10 @@
 import Root from "./Block/Root.js"
+import ModuleRoot from "./Block/ModuleRoot.js"
 import Options from "./Options.js"
 import Data from "./Data.js"
 import Filter from "./Filter/Filter.js";
 import saveRoot from "./Root.js"
+import { Block } from "./Block/Block.js"
 
 export default class App {
   static root;
@@ -11,7 +13,7 @@ export default class App {
     Options.setOptions(this.getBaseName(), options);
     await Filter.registLocalFilter();
 
-    this.root = new Root(this);
+    this.root = new Root();
     saveRoot.setRoot(this.root);
     await this.root.build();
   }
@@ -26,5 +28,11 @@ export default class App {
     } else {
       return scriptName;
     }
+  }
+
+  static async createBlockModule(name, { data = {}, path = null, callback = null }) {
+    const rootBlock = new ModuleRoot(data, callback);
+    const useModule = true;
+    return Block.create({name, useModule, rootBlock });
   }
 }
