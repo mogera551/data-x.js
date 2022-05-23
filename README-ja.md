@@ -42,7 +42,7 @@ export default { AppViewModel, html, css:"" }
 ```
 
 ### 宣言的に記述できる
-ViewModelクラスにアクセサプロパティを使用することで、宣言的な記述を実現
+ViewModelクラスにアクセサプロパティを使用することで、宣言的な記述を実現。
 配列表現もアスタリスク（\*）を用いて宣言的に記述
 
 "@@region"、"@prefs"、"@prefs.*.name"は、アクセサプロパティ
