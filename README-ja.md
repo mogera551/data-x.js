@@ -49,9 +49,10 @@ ViewModelクラスにアクセサプロパティを使用することで、宣�
 ```JS
 const prefectures = [ ... ];
 class AppViewModel {
+  // 選択した地方
   "@@region" = "四国";
   // 選択した地方（region）に一致する都道府県の一覧を取得
-  "@prefs#get" = prefectures.find(pref => pref.region === this.region);
+  "@prefs#get" = () => prefectures.find(pref => pref.region === this.region);
   "@prefs.*.name";
 }
 
