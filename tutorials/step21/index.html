@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<script src="../../dist/data-x.js"></script>
 
 <div data-x:block="main"></div>
 
 <script type="module">
-import App from "../../src/App.js"
 
 const member = {
   name: "Yamada Taro",
@@ -16,6 +16,6 @@ const member = {
   }
 }
 
-App.boot({ member });
+datax.boot({ data: { member } });
 </script>
 

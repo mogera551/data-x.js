@@ -8,14 +8,22 @@ import { Block } from "./Block/Block.js"
 
 export default class App {
   static root;
-  static async boot(data = {}, options = {}) {
-    Data.setData(data);
-    Options.setOptions(this.getBaseName(), options);
-    await Filter.registLocalFilter();
-
-    this.root = new Root();
-    saveRoot.setRoot(this.root);
-    await this.root.build();
+  static booting = false;
+  static booted = false;
+  static async boot({ data = {}, options = {} } = {}) {
+    this.booting = true;
+    try {
+      Data.setData(data);
+      Options.setOptions(this.getBaseName(), options);
+      await Filter.registLocalFilter();
+  
+      this.root = new Root();
+      saveRoot.setRoot(this.root);
+      await this.root.build();
+    } finally {
+      this.booting = false;
+      this.booted = true;
+    }
   }
 
   static getBaseName() {
@@ -36,3 +44,9 @@ export default class App {
     return Block.create({name, useModule, rootBlock });
   }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!App.booted && !App.booting) {
+    App.boot();
+  }
+});
