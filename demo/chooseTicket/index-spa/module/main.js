@@ -19,8 +19,6 @@ class AppViewModel {
 
 const dependencyRules = [
   ["ticket", ["ticketId"]],
-  ["ticket.name", ["ticket"]],
-  ["ticket.price", ["ticket"]],
 ];
 
 export default { AppViewModel, dependencyRules };
