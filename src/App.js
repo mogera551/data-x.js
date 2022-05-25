@@ -38,10 +38,23 @@ export default class App {
     }
   }
 
-  static async createBlockModule(name, { data = {}, path = null, callback = null }) {
-    const rootBlock = new ModuleRoot(data, callback);
+  static async createBlockModule(nameOrModuleData, { 
+    alias = null, data = {}, path = null, handler = null, parentElement = null 
+  }) {
+    const rootBlock = new ModuleRoot(data, handler);
     const useModule = true;
-    return Block.create({name, useModule, rootBlock });
+    const blockData = { useModule, rootBlock };
+    if ((typeof nameOrModuleData) === "object") {
+      blockData.moduleData = nameOrModuleData;
+      blockData.name = alias ?? "__blockModule";
+    } else if (nameOrModuleData[0] === "." || nameOrModuleData[0] === "/") {
+      blockData.path = nameOrModuleData;
+      blockData.name = alias ?? "__blockModule";
+    } else {
+      blockData.name = nameOrModuleData;
+    }
+    blockData.parentElement = parentElement;
+    return Block.create(blockData);
   }
 }
 

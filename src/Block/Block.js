@@ -23,14 +23,16 @@ export class Block {
     return this.#context;
   }
 
-  async load({name, parentElement, useModule, withBindCss, rootBlock}) {
+  async load({name, parentElement, useModule, moduleData, withBindCss, rootBlock}) {
     const context = this.#createContext(name, parentElement, rootBlock);
     try {
       const buildBlockModule = (name) => {
-        const module = rootBlock.block.context.modules[name];
+        const module = rootBlock.block.context.moduleDatas[name];
         return Module.build(name, module);
       };
-      const module = (useModule && rootBlock?.block) ? buildBlockModule(name) : await Module.load({name, useModule, withBindCss})
+      const module = (useModule && rootBlock?.block) ? buildBlockModule(name) : (
+        moduleData != null ? Module.build(name, moduleData, useModule) : await Module.load({name, useModule, withBindCss})
+      );
       useModule && (rootBlock.block ?? (rootBlock.block = this));
       module.dialog = this.#dialog;
       context.module = module;
@@ -48,7 +50,7 @@ export class Block {
     await context.properties.expandAll();
     await context.view.build(context);
     this.#blocks.push(...await BlockBuilder.build(context.rootElement, useModule, rootBlock));
-    !context.isBlockModule && context.view.appear(context);
+    (!context.isBlockModule || context.parentElement != null) && context.view.appear(context);
     await context.postProcess.exec();
   }
 
@@ -56,13 +58,14 @@ export class Block {
     name, 
     parentElement = null, 
     useModule = false, 
+    moduleData = null,
     withBindCss = false, 
     rootBlock = Root.root,
     data = rootBlock.data, 
     dialog = null
   }) {
     const block = new Block(dialog);
-    await block.load({name, parentElement, useModule, withBindCss, rootBlock});
+    await block.load({name, parentElement, useModule, moduleData, withBindCss, rootBlock});
     await block.build({data, useModule, rootBlock });
     return block;
   }

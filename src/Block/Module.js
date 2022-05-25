@@ -15,6 +15,7 @@ export default class Module {
   _;
   dialog;
   useModule;
+  moduleDatas;
 
   static async load({
     name, 
@@ -46,10 +47,11 @@ export default class Module {
       const bindCss = await this.loadBindCss(name, spaCssPath);
       Object.assign(module, { bindCss });
     }
-    return this.build(name, module);
+    return this.build(name, module, useModule);
   }
 
-  static build(name, module) {
+  static build(name, module, useModule = false) {
+    module.useModule = useModule;
     // templateの生成
     const template = this.buildTemplate(name, module.html, module.css);
     Object.assign(module, { template });

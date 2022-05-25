@@ -89,7 +89,7 @@ export default class Context {
   get dataReflecter() { return this.#dataReflecter; }
   get template() { return this.#module.template; }
   get module() { return this.#module; }
-  get modules() { return this.#module.modules; }
+  get moduleDatas() { return this.#module.moduleDatas; }
   get bindRules() { return this.#module.bindRules; }
   get dependencyRules() { return this.#module.dependencyRules; }
   get isBlockModule() { return this.#module.useModule; }
