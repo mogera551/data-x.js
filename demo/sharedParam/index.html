@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../dist/data-x.js"></script>
+
+<div class="container">
+  <div data-x:block="menu" data-x:with-bind-css></div>
+  <div class="content">
+    <div data-x:block="content1" data-x:with-bind-css></div>
+    <div data-x:block="content2" data-x:with-bind-css></div>
+    <div data-x:block="content3" data-x:with-bind-css></div>
+  </div>
+</div>
+
+<script type="module">
+datax.boot({ data: { content:"content1" } });
+</script>

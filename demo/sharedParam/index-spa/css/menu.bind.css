@@ -1,0 +1,9 @@
+template#contents {
+  --loop: contents;
+}
+
+li.menuItem {
+  --bind-textContent: contents.*;
+  --bind-class-selected: contents.*.selected;
+  --events: click;
+}
