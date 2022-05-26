@@ -1,0 +1,12 @@
+<div>
+  Price:<input type="text" name="price|number-value|fixed:0">
+</div>
+<div>
+  Price(with tax):<input type="text" name="priceWithTax|number-value|fixed:0">
+</div>
+<div>
+  <label><input type="checkbox" name="all" data-x:bind="checked=all">すべて</label><br>
+  <template data-x:loop="lints">
+    <label><input type="checkbox" data-x:bind="checked=lints.*.state"><span data-x:bind="lints.*.name"></span></label><br>
+  </template>
+</div>
