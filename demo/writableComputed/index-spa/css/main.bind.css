@@ -1,0 +1,15 @@
+input[name='all'] {
+  --bind-checked: all;
+}
+
+template#lints {
+  --loop: lints; 
+}
+
+label.lint input[type='checkbox']{
+  --bind-checked: lints.*.state;
+}
+
+label.lint span{
+  --bind-textContent: lints.*.name;
+}
