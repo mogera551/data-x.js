@@ -1,4 +1,5 @@
 import PropertyName from "./PropertyName.js"
+import sym from "../Symbols.js"
 
 const PREFIX_PRIVATE = "__";
 export class PropertyType {
@@ -140,7 +141,7 @@ export class PlainProperty extends Property {
         cache.delete(name);
         const notify = async () => {
           const result = await asyncResult;
-          (result !== false) && await notifier.notify(name);
+          (result !== sym.suspend) && await notifier.notify(name);
         };
         return notify();
       } 
@@ -150,7 +151,7 @@ export class PlainProperty extends Property {
         cache.delete(name);
         const notify = async () => {
           const result = await asyncResult;
-          (result !== false) && await notifier.notify(name);
+          (result !== sym.suspend) && await notifier.notify(name);
         };
         return notify();
       };
@@ -258,7 +259,7 @@ export class ExpandedProperty extends Property {
           cache.delete(name);
           const notify = async () => {
             const result = await asyncResult;
-            (result !== false) && await notifier.notify(patternProperty.pattern, patternIndexes);
+            (result !== sym.suspend) && await notifier.notify(patternProperty.pattern, patternIndexes);
           };
           return notify();
         });

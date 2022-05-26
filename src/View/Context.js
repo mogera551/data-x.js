@@ -10,6 +10,7 @@ import Properties from "../ViewModel/Properties.js";
 import Notifier from "./Notifier.js";
 import Cache from "../ViewModel/Cache.js";
 import PostProcess from "./PostProcess.js";
+import sym from "../Symbols.js";
 
 export default class Context {
   #parentElement;
@@ -93,6 +94,7 @@ export default class Context {
   get bindRules() { return this.#module.bindRules; }
   get dependencyRules() { return this.#module.dependencyRules; }
   get isBlockModule() { return this.#module.useModule; }
+  get symbols() { return sym; }
 
   set module(module) {
     this.#module = module;
@@ -223,12 +225,15 @@ export default class Context {
   $notify(pattern, indexes = []) {
     this.notifier.notify(pattern, indexes);
   }
+
   $postProcess(callback) {
     this.postProcess.regist(callback);
   }
+
   async $notifyAll(pattern, indexes = []) {
     this.rootBlock.notifyAll(pattern, indexes, this.block);
   }
+
   async $inquiryAll(message, param1, param2) {
     this.$postProcess(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
   }
@@ -236,5 +241,4 @@ export default class Context {
   async $openDialog(name, data = {}) {
     return Dialog.open(name, data);
   }
-
 }

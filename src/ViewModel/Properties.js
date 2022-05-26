@@ -197,17 +197,13 @@ export default class Properties {
     }
   }
 
-  async updateByName(name, cache = this.#context.cache) {
-    await this.#update(name);
-
-    for(const info of this.#context.dependencies.getReferedProperties(name)) {
-      (name !== info.name) && await this.#update(info.name);
-    }
-  }
-
   async updateByPatternIndexes({ name, indexes }) {
     const propName = PropertyName.expand(name, indexes);
-    await this.updateByName(propName);
+    await this.#update(propName);
+
+    for(const info of this.#context.dependencies.getReferedProperties(name, indexes)) {
+      (propName !== info.name) && await this.#update(info.name);
+    }
   }
 
   async expandAll(propertyByName = this.#propertyByName) {

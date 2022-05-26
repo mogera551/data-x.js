@@ -54,8 +54,8 @@ export default class Collect {
         rule.dom.property = domProperty;
         rule.viewModel.property = property;
         rule.filters = filters;
-        const defaultProperty = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : "value") : "";
-        rule.inputable = defaultProperty === domProperty;
+        const setOfDefaultProperties = new Set(isInputable ? (isRadio ? ["radio"] : isCheckbox ? ["checked", "checkbox"] : ["value"]) : []);
+        rule.inputable = setOfDefaultProperties.has(domProperty);
       } else {
         const { property, filters } = this.parsePropertyName(value);
         rule.dom.property = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : "value") : "textContent";

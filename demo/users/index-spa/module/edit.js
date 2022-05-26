@@ -1,3 +1,4 @@
+const context = {};
 class AppViewModel {
   "@show#get" = () => this.$content === "edit";
 
@@ -7,7 +8,7 @@ class AppViewModel {
   "@@user.email";
 
   "#eventInquiryAll" = ([message, userId]) => {
-    if (message !== "edit") return false;
+    if (message !== "edit") return context.symbols["suspend"];
     const {id, name, email} = this.$userList.getUser(userId);
     this.user = {id, name, email};
     this.$content = "edit";
@@ -28,4 +29,4 @@ const dependencyRules = [
   [ "user.email", [ "user" ] ],
 ];
 
-export default { AppViewModel, dependencyRules };
+export default { AppViewModel, dependencyRules, context };

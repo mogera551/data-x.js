@@ -48,11 +48,14 @@ export default class Dependencies {
 
   getReferedProperties(property, indexes, map = this.#map) {
     const node = map.get(property);
+    const trace = new Set();
     const curIndex = indexes ?? [];
     const walk = (node, list) => {
       if (node == null) return list;
       const name = PropertyName.expand(node.name, curIndex);
       if (name !== null) {
+        if (trace.has(name)) return list;
+        trace.add(name);
         list.push({
           name,
           pattern: node.name,

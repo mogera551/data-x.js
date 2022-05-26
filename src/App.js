@@ -5,6 +5,7 @@ import Data from "./Data.js"
 import Filter from "./Filter/Filter.js";
 import saveRoot from "./Root.js"
 import { Block } from "./Block/Block.js"
+import sym from "./Symbols.js"
 
 export default class App {
   static root;
@@ -55,6 +56,10 @@ export default class App {
     }
     blockData.parentElement = parentElement;
     return Block.create(blockData);
+  }
+
+  static getSymbol(name) {
+    return sym[name];
   }
 }
 
