@@ -76,15 +76,17 @@ export class Block {
     const viewModel = context.viewModel;
     const eventHandler = context.eventHandler;
     const view = context.view;
+    const promises = [];
     for(const block of this.#blocks) {
-      block.notifyAll(pattern, indexes, fromBlock);
+      promises.push(block.notifyAll(pattern, indexes, fromBlock));
     }
+    await Promise.all(promises);
     (fromBlock !== this) && view.updateProcess(
       context,
       async () => {
         const asyncResult = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
         const result = (asyncResult instanceof Promise) ? await asyncResult : asyncResult;
-        notifier.notify(pattern, indexes);
+        await notifier.notify(pattern, indexes);
         return result;
       }
     );
@@ -95,9 +97,11 @@ export class Block {
     const viewModel = context.viewModel;
     const eventHandler = context.eventHandler;
     const view = context.view;
+    const promises = [];
     for(const block of this.#blocks) {
-      block.inquiryAll(message, param1, param2, fromBlock);
+      promises.push(block.inquiryAll(message, param1, param2, fromBlock));
     }
+    await Promise.all(promises);
     (fromBlock !== this) && view.updateProcess(
       context,
       async () => eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock)

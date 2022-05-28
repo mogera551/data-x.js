@@ -7,7 +7,10 @@ class AppViewModel {
   "@users.*.name";
   "@users.*.email";
 
-  "#eventClickTd" = () => context.inquiryAll("edit", this["users.*.id"]);
+  "#eventClickTd" = ([,$1]) => {
+    this.$user = this.$userList.getUser(this.users[$1].id);
+    this.$content = "edit";
+  }
 }
 
 const dependencyRules = [
