@@ -1,4 +1,3 @@
-const context = {};
 class AppViewModel {
   "@show#get" = () => this.$content === "edit";
 
@@ -20,4 +19,4 @@ const dependencyRules = [
   [ "user", [ "$user" ] ],
 ];
 
-export default { AppViewModel, dependencyRules, context };
+export default { AppViewModel, dependencyRules };
