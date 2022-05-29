@@ -38,3 +38,23 @@ table td, table th{
 .w200 {
   width: 200px;
 }
+
+input.w50 {
+  width: 42px;
+}
+
+input.w80 {
+  width: 72px;
+}
+
+input.w100 {
+  width: 92px;
+}
+
+input.w150 {
+  width: 142px;
+}
+
+input.w200 {
+  width: 192px;
+}

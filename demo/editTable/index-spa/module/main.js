@@ -2,9 +2,9 @@ const context = {};
 class AppViewModel {
   "@members#init" = data => { 
     data.members.load();
-    (data.members.length == 0) && data.members.push(data.members.createMember());
     return context.notifiable(data.members); 
   };
+
   "@@members.*.name";
   "@@members.*.age";
   "@@members.*.address.postalcode";
@@ -12,7 +12,6 @@ class AppViewModel {
   "@@members.*.address.city";
   "@@members.*.address.address";
   "@@members.*.phone";
-  "@memberCount#get" = () => this.members.length;
 
   "#eventClickDelete" = ([, $1]) => {
     if (!confirm("削除しますか？")) return;
@@ -28,7 +27,6 @@ class AppViewModel {
   "#eventClickClear" = () => {
     if (!confirm("クリアしますか？")) return;
     this.members.clear();
-    this.members.push(this.members.createMember());
   };
 }
 

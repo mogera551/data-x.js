@@ -1,7 +1,3 @@
 template#members {
   --loop: members;
 }
-
-tr.member button[name='delete'] {
-  --bind-style-display: memberCount|gt:1|style-display;
-}
