@@ -11,7 +11,7 @@ class AppViewModel {
   __list = [10, 20, 30];
   get "list"() { return this.__list; }
   get "list.*"() {
-    const $1 = this.$context.$1;
+    const $1 = this.$$context.$1;
     return this["list"][$1];
   }
 }

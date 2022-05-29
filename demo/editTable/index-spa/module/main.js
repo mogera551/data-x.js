@@ -3,7 +3,7 @@ class AppViewModel {
   "@members#init" = data => { 
     data.members.load();
     (data.members.length == 0) && data.members.push(data.members.createMember());
-    return data.members; 
+    return context.notifiable(data.members); 
   };
   "@@members.*.name";
   "@@members.*.age";
@@ -15,25 +15,21 @@ class AppViewModel {
   "@memberCount#get" = () => this.members.length;
 
   "#eventClickDelete" = ([, $1]) => {
-    if (!confirm("削除しますか？")) return context.symbols["suspend"];;
+    if (!confirm("削除しますか？")) return;
     this.members.splice($1, 1);
   };
   "#eventClickAdd" = () => { 
     this.members.push(this.members.createMember()); 
   };
   "#eventClickSave" = () => {
-    if (!confirm("保存しますか？")) return context.symbols["suspend"];;
+    if (!confirm("保存しますか？")) return;
     this.members.save();
   }; 
   "#eventClickClear" = () => {
-    if (!confirm("クリアしますか？")) return context.symbols["suspend"];;
+    if (!confirm("クリアしますか？")) return;
     this.members.clear();
     this.members.push(this.members.createMember());
   };
 }
 
-const dependencyRules = [
-  [ "members", [ "eventClickDelete", "eventClickAdd", "eventClickSave", "eventClickClear" ] ],
-];
-
-export default { AppViewModel, dependencyRules, context }
+export default { AppViewModel, context }

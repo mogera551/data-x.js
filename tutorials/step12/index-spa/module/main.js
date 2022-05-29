@@ -11,7 +11,7 @@ class AppViewModel {
   __fruits = fruits;
   get "fruits"() { return this.__fruits; }
   get "fruits.*"() {
-    const { $1 } = this.$context;
+    const { $1 } = this.$$context;
     return this["fruits"][$1];
   }
   set "fruits.*"(value) {

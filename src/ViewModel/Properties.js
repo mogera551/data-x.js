@@ -133,7 +133,7 @@ export default class Properties {
       this.setProperty(Property.create(context, {name:name, desc:defineDesc, requireSetter:true}));
     });
 
-    Object.defineProperty(viewModel, "$context", {
+    Object.defineProperty(viewModel, "$$context", {
       get: () => context,
     });
   }

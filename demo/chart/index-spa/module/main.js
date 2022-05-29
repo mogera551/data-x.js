@@ -12,8 +12,8 @@ class AppViewModel {
     } );
   };
 
-  "@labels" = ["red", "green", "blue"];
-  "@values" = [33, 55, 11];
+  "@labels#init" = () => context.notifiable(["red", "green", "blue"]);
+  "@values#init" = () => context.notifiable([33, 55, 11]);
 
   "@datas#get" = () => Array(this.labels.length).fill(undefined);
   "@datas.*.label#get" = () => this.labels[context.$1];
@@ -37,7 +37,7 @@ class AppViewModel {
 }
 
 const dependencyRules = [
-  [ "datas", [ "eventClickAddItem", "eventClickDeleteItem" ] ],
+  [ "datas", [ "labels", "values" ] ],
 ];
 
 export default { AppViewModel, context, dependencyRules }

@@ -16,8 +16,14 @@ export default class Cache {
 
   set(name, value) {
 //    console.log("cache.set = ", name);
-    this.#cache.set(name, value);
-    (value instanceof Promise) && value.then(v => this.#cache.set(name, v));
+    const setCache = value => {
+      if (typeof value === "object" && "__notifiable" in value) {
+        value.__name = name;
+      }
+      this.#cache.set(name, value);
+    }
+    setCache(value);
+    (value instanceof Promise) && value.then(v => setCache(v));
     return value;
   }
 

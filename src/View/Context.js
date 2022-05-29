@@ -11,6 +11,7 @@ import Notifier from "./Notifier.js";
 import Cache from "../ViewModel/Cache.js";
 import PostProcess from "./PostProcess.js";
 import sym from "../Symbols.js";
+import Notifiable from "../Notifiable/Notifiable.js";
 
 export default class Context {
   #parentElement;
@@ -97,6 +98,7 @@ export default class Context {
   get isBlockModule() { return this.#module.useModule; }
   get symbols() { return sym; }
   get updateQueue() { return this.#updateQueue; }
+  get notifiable() { return Notifiable; }
 
   set module(module) {
     this.#module = module;
@@ -194,6 +196,7 @@ export default class Context {
       ["$openDialog", "openDialog"],
       ["$postProcess", "postProcess"],
       ["$updateProcess", "updateProcess"],
+      ["$notifiable", "notifiable"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
       const value = isAsync 
@@ -239,6 +242,10 @@ export default class Context {
 
   $notifyAll(pattern, indexes = []) {
     this.rootBlock.notifyAll(pattern, indexes, this.block);
+  }
+
+  $notifiable(object) {
+    return this.notifiable.notifiable(this, object);
   }
 
   async $updateProcess(callback) {

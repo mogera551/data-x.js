@@ -5,15 +5,15 @@
 ・ユーティリティ呼び出し（ダイアログ表示、更新通知）
 で使用する
 
-AppViewModel内では、this.$contextで参照できる
+AppViewModel内では、this.$$contextで参照できる
 
 class AppViewModel {
   get "names.*"() {
-    const { $1 } = this.$context.indexes; // ループ展開時のインデックス参照
+    const { $1 } = this.$$context.indexes; // ループ展開時のインデックス参照
     return this["names"][$1];
   }
   get "values.*.*"() {
-    const { $1, $2 } = this.$context.indexes; // ループ展開時のインデックス参照
+    const { $1, $2 } = this.$$context.indexes; // ループ展開時のインデックス参照
     return this["values"][$1][$2];
   }
 }
@@ -55,7 +55,7 @@ class AppViewModel {
   __list = [10, 20, 30];
   get "list"() { return this.__list; }
   get "list.*"() {
-    const $1 = this.$context.$1;
+    const $1 = this.$$context.$1;
     return this["list"][$1];
   }
 }
