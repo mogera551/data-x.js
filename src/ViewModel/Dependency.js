@@ -46,7 +46,8 @@ export default class Dependencies {
     });
   }
 
-  getReferedProperties(property, indexes, map = this.#map) {
+  getReferedProperties(property, indexes, map = this.#map, viewModel = this.#context.viewModel) {
+//    console.log("getReferedProperties start ", property, indexes);
     const node = map.get(property);
     const trace = new Set();
     const curIndex = indexes ?? [];
@@ -56,11 +57,10 @@ export default class Dependencies {
       if (name !== null) {
         if (trace.has(name)) return list;
         trace.add(name);
-        list.push({
-          name,
-          pattern: node.name,
-          indexes: node.func ? node.func(curIndex) : curIndex
-        });
+        const resultIndexes = node.func ? Reflect.apply(node.func, viewModel, [curIndex]) : curIndex;
+        if (resultIndexes === false) return list;
+        const resultInfo = { name, pattern: node.name, indexes: resultIndexes };
+        list.push(resultInfo);
       }
       node.parentNodes.forEach(parentNode => {
         list = walk(parentNode, list);
@@ -68,13 +68,8 @@ export default class Dependencies {
       return list;
     };
     const list = walk(node, []);
-    const newList = [];
-    list.forEach(info => {
-      const setOfNames = new Set(newList.map(info => info.name));
-      if (setOfNames.has(info)) return;
-      newList.push(info);
-    });
-    return newList;
+//    console.log("getReferedProperties complete", list);
+    return list;
   }
 
 }

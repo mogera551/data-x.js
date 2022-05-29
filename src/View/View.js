@@ -29,21 +29,38 @@ export default class View {
 
   static async updateDom(
     context,
-    notifier = context.notifier, 
+    updateQueue = context.updateQueue, 
     allBinds = context.allBinds, 
     allLoops = context.allLoops, 
-    dependencies = context.dependencies
+    properties = context.properties,
+    viewModel = context.viewModel
   ) {
+//    console.log("updateDom start", context?.block?.name);
+    const queue = await Promise.all(updateQueue);
     const updatePaths = [];
-    const conv = ({name, indexes}) => ({ name: PropertyName.expand(name, indexes), pattern:name, indexes });
-    const getUpdatePaths = ({name, indexes}) => updatePaths.push(...dependencies.getReferedProperties(name, indexes), conv({name, indexes}));
-    notifier.queue.forEach(getUpdatePaths);
-    const setOfUpdatePaths = new Set(updatePaths.map(info => info.name));
+    for(const { name, indexes = [] } of queue.filter(q => q != null)) {
+      const paths = await properties.updateByPatternIndexes({name, indexes})
+//      console.log("paths = ", paths, {name, indexes});
+      updatePaths.push(...Array.from(paths));
+    }
+  
+    const setOfUpdatePaths = new Set((updatePaths).map(info => info.name));
+//    console.log("setOfUpdatePaths", setOfUpdatePaths);
+
+    await Promise.all(Array.from(setOfUpdatePaths).map(path => Reflect.get(viewModel, path)));
+
     const updateLoop = loop => loop.update();
     await Promise.all(allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).map(updateLoop));
 
     const updateBind = bind => bind.updateDom();
     await Promise.all(allBinds.filter(bind => setOfUpdatePaths.has(bind.path)).map(updateBind));
+
+    properties.isUpdate && context.buildBinds();
+//    console.log("updateDom complete", context?.block?.name);
+  }
+
+  static async postProcess(context, postProcess = context.postProcess) {
+    postProcess.exec();
   }
 
   static async updateProcess(
@@ -64,4 +81,5 @@ export default class View {
 
     await postProcess.exec();
   }
+
 }

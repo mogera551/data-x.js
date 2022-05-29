@@ -14,7 +14,7 @@ class AppViewModel {
 
 const dependencyRules = [
   [ "show", [ "$content" ] ],
-  [ "users", [ "$content" ] ],
+  [ "users", [ "show" ] ],
 ];
 
 export default { AppViewModel, dependencyRules };

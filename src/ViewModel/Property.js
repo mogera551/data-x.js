@@ -128,7 +128,7 @@ export class PlainProperty extends Property {
     const name = this.name;
     const desc = this.desc;
     const getter = hasParent 
-      ? function() { 
+      ? function() {
         return cache.has(name) ? cache.get(name) : cache.set(name, desc.get ? Reflect.apply(desc.get, this, []) : this[pathParent]?.[pathLastElement]);
       } 
       : function() { 
@@ -136,24 +136,26 @@ export class PlainProperty extends Property {
       };
     const setter = hasParent 
       ? function(v) { 
+//        console.log("PlainProperty.setter start", name);
         const asyncResult = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[pathParent][pathLastElement] = v);
         this.isUpdate = true; 
         cache.delete(name);
-        const notify = async () => {
+        notifier.notify(new Promise(async (resolve, reject) => {
+          const notifyInfo = { name };
           const result = await asyncResult;
-          (result !== sym.suspend) && await notifier.notify(name);
-        };
-        return notify();
+          resolve((result !== sym.suspend) ? notifyInfo : null);
+        }));
       } 
       : function(v) {
+//        console.log("PlainProperty.setter start", name);
         const asyncResult = desc.set ? Reflect.apply(desc.set, this, [v]) : (this[privateName] = v); 
         this.isUpdate = true; 
         cache.delete(name);
-        const notify = async () => {
+        notifier.notify(new Promise(async (resolve, reject) => {
+          const notifyInfo = { name };
           const result = await asyncResult;
-          (result !== sym.suspend) && await notifier.notify(name);
-        };
-        return notify();
+          resolve((result !== sym.suspend) ? notifyInfo : null);
+        }));
       };
     const defaultDesc = {
       configurable: true,
@@ -253,15 +255,16 @@ export class ExpandedProperty extends Property {
 
     if (patternProperty.desc.set != null) {
       desc.set = (v) => {
+//        console.log("ExpandedProperty.setter", name);
         const result = context.pushIndexes(patternIndexes, () => {
           const asyncResult = Reflect.apply(patternProperty.desc.set, viewModel, [v]);
           this.isUpdate = true;
           cache.delete(name);
-          const notify = async () => {
+          notifier.notify(new Promise(async (resolve, reject) => {
+            const notifyInfo = { name:patternProperty.pattern, indexes:patternIndexes };
             const result = await asyncResult;
-            (result !== sym.suspend) && await notifier.notify(patternProperty.pattern, patternIndexes);
-          };
-          return notify();
+            resolve((result !== sym.suspend) ? notifyInfo : null);
+          }));
         });
         return result;
       };

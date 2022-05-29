@@ -13,11 +13,9 @@ export default class PostProcess {
     const processes = queue.slice();
     const promises = [];
     if (processes.length > 0) {
-      view.updateProcess(context, () => {
-        for(const procsess of processes) {
-          promises.push(procsess());
-        }
-      });
+      for(const procsess of processes) {
+        promises.push(procsess());
+      }
     }
     return Promise.all(promises);
   }

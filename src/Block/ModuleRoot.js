@@ -22,8 +22,12 @@ export default class ModuleRoot {
     this.#block = value;
   }
 
-  async notifyAll(pattern, indexes, fromBlock) {
-    await this.#root.notifyAll(pattern, indexes, fromBlock);
+  async updateProcess(callback) {
+    this.#root.updateProcess(callback);
+  }
+
+  notifyAll(pattern, indexes, fromBlock) {
+    this.#root.notifyAll(pattern, indexes, fromBlock);
     this.callback && this.callback(this.data);
   }
 

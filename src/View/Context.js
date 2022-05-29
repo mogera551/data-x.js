@@ -35,6 +35,7 @@ export default class Context {
   #initializer;
   #dataReflecter;
   #module;
+  #updateQueue = [];
 
   constructor(block, parentElement, rootBlock) { 
     this.#block = block;
@@ -95,6 +96,7 @@ export default class Context {
   get dependencyRules() { return this.#module.dependencyRules; }
   get isBlockModule() { return this.#module.useModule; }
   get symbols() { return sym; }
+  get updateQueue() { return this.#updateQueue; }
 
   set module(module) {
     this.#module = module;
@@ -107,6 +109,10 @@ export default class Context {
   }
   set rootElement(value) { this.#rootElement = value; }
   set parentElement(value) { this.#parentElement = value; }
+
+  copyUpdateQueue() {
+    this.#updateQueue = this.#notifier.dequeue();
+  }
 
   pushIndexes(indexes, callback) {
     this.#indexesStack.push(indexes);
@@ -187,6 +193,7 @@ export default class Context {
       ["$inquiryAll", "inquiryAll"],
       ["$openDialog", "openDialog"],
       ["$postProcess", "postProcess"],
+      ["$updateProcess", "updateProcess"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
       const value = isAsync 
@@ -222,20 +229,24 @@ export default class Context {
     }
   }
 
-  $notify(pattern, indexes = []) {
-    this.notifier.notify(pattern, indexes);
+  $notify(name, indexes = []) {
+    this.notifier.notify({name, indexes});
   }
 
   $postProcess(callback) {
     this.postProcess.regist(callback);
   }
 
-  async $notifyAll(pattern, indexes = []) {
+  $notifyAll(pattern, indexes = []) {
     this.rootBlock.notifyAll(pattern, indexes, this.block);
   }
 
-  async $inquiryAll(message, param1, param2) {
-    this.$postProcess(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
+  async $updateProcess(callback) {
+    this.rootBlock.updateProcess(callback);
+  }
+
+  $inquiryAll(message, param1, param2) {
+    return this.$postProcess(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
   }
 
   async $openDialog(name, data = {}) {

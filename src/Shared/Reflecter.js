@@ -1,20 +1,20 @@
+import sym from "../Symbols.js";
+
 const PREFIX_SHARED = "$";
 export default class Reflecter {
-  static reflect(context, data, reflectData = {}) {
+  static reflect(context, data, reflectData = {}, notifier = context.notifier) {
     Object.keys(data).forEach(name => {
       const sharedName = `${PREFIX_SHARED}${name}`;
-      const notifyAll = result => (result !== false) && context.$postProcess(() => {
-        context.$notify(sharedName);
-        context.$notifyAll(sharedName);
-      });
       const desc = {
         configurable: false,
         enumerable: true,
         get: () => Reflect.get(data, name),
         set: value => {
-          const result = Reflect.set(data, name, value);
-          (result instanceof Promise) ? result.then(notifyAll) : notifyAll(result);
-          return result;
+          Reflect.set(data, name, value);
+          notifier.notify(new Promise((resolve, reject) => {
+            context.$notifyAll(sharedName);
+            resolve({ name: sharedName });
+          }));
         },
       };
       Object.defineProperty(reflectData, sharedName, desc);

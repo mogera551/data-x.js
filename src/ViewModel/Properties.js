@@ -132,6 +132,7 @@ export default class Properties {
   removeProperty(name, object = this.#context.viewModel, cache = this.#context.cache, propertyByName = this.#propertyByName) {
     delete object[name];
     propertyByName.delete(name);
+//    console.log("removeProperty", name);
     cache.delete(name);
   }
 
@@ -143,7 +144,7 @@ export default class Properties {
     propertyByName.set(property.name, property);
   }
 
-  async #expand(property) {
+  async #expand(property, updatePaths) {
     const indexes = (property.type === PropertyType.EXPANDED) ? property.patternIndexes : [];
     const value = await property.value;
     const keys = Object.keys(value) ?? [];
@@ -156,8 +157,9 @@ export default class Properties {
         if (!path.includes("*")) {
           const expandedProperty = Property.create(context, {patternProperty, patternIndexes, requireSetter:patternProperty.hasSetter });
           this.setProperty(expandedProperty);
+          updatePaths.add(this.#updatePathInfo(expandedProperty));
           if (patternProperty.isArray) {
-            await this.#expand(expandedProperty);
+            await this.#expand(expandedProperty, updatePaths);
           }
         }
       }
@@ -179,37 +181,44 @@ export default class Properties {
     });
   }
 
-  contract(name) {
-    const property = this.getProperty(name);
-    property != null && this.#contract(property);
-  }
-
   testIsArray(name, propertyByName = this.#propertyByName) {
     return propertyByName.has(`${name}.*`);
   }
 
-  async #update(name, cache = this.#context.cache) {
+  #updatePathInfo(property) {
+    if (property == null) return null
+    const { name, pattern, patternIndexes, indexes = patternIndexes ?? null } = property;
+    return { name, pattern, indexes };
+  }
+  async #update(name, updatePaths, cache = this.#context.cache) {
+//    console.log("#update", name);
     cache.delete(name);
     const property = this.getProperty(name);
+    updatePaths.add(this.#updatePathInfo(property) ?? { name:name, pattern:name, indexes:null });
     if (property != null && property.isArray) {
       this.#contract(property);
-      await this.#expand(property);
+      await this.#expand(property, updatePaths);
     }
+    return updatePaths;
   }
 
   async updateByPatternIndexes({ name, indexes }) {
+//    console.log("updateByPatternIndexes start ", this.#context?.block?.name, name, indexes);
     const propName = PropertyName.expand(name, indexes);
-    await this.#update(propName);
+    const updatePaths = new Set();
+    await this.#update(propName, updatePaths);
 
     for(const info of this.#context.dependencies.getReferedProperties(name, indexes)) {
-      (propName !== info.name) && await this.#update(info.name);
+      (propName !== info.name) && await this.#update(info.name, updatePaths);
     }
+//    console.log("updateByPatternIndexes complete ", this.#context?.block?.name, name, indexes, updatePaths);
+    return updatePaths;
   }
 
   async expandAll(propertyByName = this.#propertyByName) {
     await Promise.all(Array.from(propertyByName.entries()).map(async ([key, property]) => {
       if (!key.includes("*") && property.isArray) {
-        this.#expand(property);
+        this.#expand(property, new Set());
       }
     }));
   }

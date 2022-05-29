@@ -70,7 +70,7 @@ export class Block {
     return block;
   }
 
-  async notifyAll(pattern, indexes, fromBlock) {
+  notifyAll(pattern, indexes, fromBlock) {
     const context = this.#context;
     const notifier = context.notifier;
     const viewModel = context.viewModel;
@@ -78,18 +78,41 @@ export class Block {
     const view = context.view;
     const promises = [];
     for(const block of this.#blocks) {
-      promises.push(block.notifyAll(pattern, indexes, fromBlock));
+      block.notifyAll(pattern, indexes, fromBlock);
     }
-    await Promise.all(promises);
-    (fromBlock !== this) && view.updateProcess(
-      context,
-      async () => {
-        const asyncResult = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
-        const result = (asyncResult instanceof Promise) ? await asyncResult : asyncResult;
-        await notifier.notify(pattern, indexes);
-        return result;
-      }
-    );
+    (fromBlock !== this) && notifier.notify(new Promise(async (resolve, reject) => {
+      const asyncResult = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
+      (asyncResult instanceof Promise) && await asyncResult;
+      resolve({name:pattern, indexes});
+    }));
+  }
+
+  prepareUpdate() {
+    const results = [];
+    for(const block of this.#blocks) {
+      results.push(block.prepareUpdate());
+    }
+    this.context.copyUpdateQueue();
+    results.push(this.context.updateQueue.length > 0);
+    return !results.every(result => result === false);
+  }
+
+  async updateDom() {
+    const promises = [];
+    for(const block of this.#blocks) {
+      promises.push(block.updateDom());
+    }
+    promises.push(this.context.view.updateDom(this.context));
+    return Promise.all(promises);
+  }
+
+  async postProcess() {
+    const promises = [];
+    for(const block of this.#blocks) {
+      promises.push(block.postProcess());
+    }
+    promises.push(this.context.view.postProcess(this.context));
+    return Promise.all(promises);
   }
 
   async inquiryAll(message, param1, param2, fromBlock) {
