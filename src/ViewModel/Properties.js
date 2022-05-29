@@ -23,7 +23,7 @@ export default class Properties {
 
     // "aaa", "aaa.bbb", "aaa.*.bbb"
     const toPrivateDesc = desc => ({configurable: true, enumerable: false, writable: true, value: desc?.value});
-    const isPropertyName = name => /^\@\@?([a-zA-Z0-9_\.\*])+(#(get|set|init))?$/.test(name);
+    const isPropertyName = name => /^\@\@?([a-zA-Z0-9_\.\*])+(#(get|set|init)?)?$/.test(name);
     const isEventName = name => /^#(event[a-zA-Z0-9_]+)$/.test(name);
     const isPrivateName = name => /^__([a-zA-Z0-9_])+$/.test(name);
 
@@ -38,6 +38,7 @@ export default class Properties {
       requireSet: false,
       privateValue: undefined,
     });
+    
     const infoByBaseName = new Map();
     [viewModel].forEach(o => {
       Object.entries(Object.getOwnPropertyDescriptors(o)).forEach(([name, desc]) => {
@@ -52,9 +53,17 @@ export default class Properties {
           info.baseName = info.baseName ?? baseName;
           info.originalName = info.originalName ?? originalName;
           info.privateName = info.privateName ?? `${PREFIX_PRIVATE}${baseName}`;
-          info.get = method === "get" ? desc.value : info.get;
-          info.set = method === "set" ? desc.value : info.set;
-          info.init = method === "init" ? desc.value : info.init;
+          const checkGetFunc = get => (typeof get === "function" && get.length === 0) ? get : console.error(`${baseName}.getter is not function() {}`);
+          const checkSetFunc = set => (typeof set === "function" && set.length === 1) ? set : console.error(`${baseName}.setter is not function(value) {}`);
+          if (method === "") {
+            info.get = desc?.value?.get ? checkGetFunc(desc.value.get) : info.get;
+            info.set = desc?.value?.set ? checkSetFunc(desc.value.set) : info.set;
+            info.init = desc?.value?.init ? desc.value.init : info.init;
+          } else {
+            info.get = method === "get" ? checkGetFunc(desc.value) : info.get;
+            info.set = method === "set" ? checkSetFunc(desc.value) : info.set;
+            info.init = method === "init" ? desc.value : info.init;
+          }
           info.requireGet = (method == null) ? true : info.requireGet;
           info.requireSet = requireSet;
           info.privateValue = (method == null) ? desc.value : info.privateValue;

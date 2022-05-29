@@ -8,11 +8,15 @@ const lints = [
 
 class AppViewModel {
   "@@price" = 100;
-  "@@priceWithTax#get" = () => this.price * 1.1;
-  "@@priceWithTax#set" = value => this.price = value / 1.1;
+  "@@priceWithTax#" = {
+    get: () => this.price * 1.1,
+    set: value => this.price = value / 1.1,
+  };
 
-  "@@all#get" = () => this.lints.every(lint => lint.state);
-  "@@all#set" = value => this.lints.forEach((lint, i) => this[`lints.${i}.state`] = value);
+  "@@all#" = {
+    get: () => this.lints.every(lint => lint.state),
+    set: value => this.lints.forEach((lint, i) => this[`lints.${i}.state`] = value),
+  };
 
   "@lints" = lints;
   "@lints.*.name";
