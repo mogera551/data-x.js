@@ -45,7 +45,7 @@ export default class App {
     const rootBlock = new ModuleRoot(data, handler);
     const useModule = true;
     const blockData = { useModule, rootBlock };
-    if ((typeof nameOrModuleData) === "object") {
+    if ((typeof nameOrModuleData) === "object" && nameOrModuleData !== null) {
       blockData.moduleData = nameOrModuleData;
       blockData.name = alias ?? "__blockModule";
     } else if (nameOrModuleData[0] === "." || nameOrModuleData[0] === "/") {
