@@ -1,10 +1,7 @@
 const URL_API = "https://api.zipaddress.net/";
 const context = {};
 class AppViewModel {
-  "@members#init" = data => { 
-    data.members.load();
-    return context.notifiable(data.members); 
-  };
+  "@members#init" = data => context.notifiable(data.members.load());
 
   "@@members.*.name";
   "@@members.*.age";
@@ -26,21 +23,10 @@ class AppViewModel {
   "@@members.*.address.address";
   "@@members.*.phone";
 
-  "#eventClickDelete" = ([, $1]) => {
-    if (!confirm("削除しますか？")) return;
-    this.members.splice($1, 1);
-  };
-  "#eventClickAdd" = () => { 
-    this.members.push(this.members.createMember()); 
-  };
-  "#eventClickSave" = () => {
-    if (!confirm("保存しますか？")) return;
-    this.members.save();
-  }; 
-  "#eventClickClear" = () => {
-    if (!confirm("クリアしますか？")) return;
-    this.members.clear();
-  };
+  "#eventClickDelete" = ([, $1]) => confirm("削除しますか？") && this.members.splice($1, 1);
+  "#eventClickAdd" = () => this.members.push(this.members.createMember()); 
+  "#eventClickSave" = () => confirm("保存しますか？") && this.members.save();
+  "#eventClickClear" = () => confirm("クリアしますか？") && this.members.clear();
 }
 
 export default { AppViewModel, context }

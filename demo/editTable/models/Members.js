@@ -12,13 +12,16 @@ export class Members extends Array {
     const list = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
     this.splice(0);
     this.push(...list);
+    return this;
   }
   save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this));
+    return this;
   }
   clear() {
     localStorage.removeItem(STORAGE_KEY);
     this.splice(0);
+    return this;
   }
   createMember() {
     return new Member();
