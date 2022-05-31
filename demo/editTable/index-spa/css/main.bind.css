@@ -1,3 +1,25 @@
 template#members {
   --loop: members;
 }
+
+tr.member [data-col='name'] {
+  --bind-textContent: members.*.name;
+}
+tr.member [data-col='age'] {
+  --bind-textContent: members.*.age|number-value;
+}
+tr.member [data-col='postalcode'] {
+  --bind-textContent: members.*.address.postalcode;
+}
+tr.member [data-col='prefecture'] {
+  --bind-textContent: members.*.address.prefecture;
+}
+tr.member [data-col='city'] {
+  --bind-textContent: members.*.address.city;
+}
+tr.member [data-col='address'] {
+  --bind-textContent: members.*.address.address;
+}
+tr.member [data-col='phone'] {
+  --bind-textContent: members.*.phone;
+}

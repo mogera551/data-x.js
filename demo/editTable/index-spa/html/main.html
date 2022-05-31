@@ -15,14 +15,14 @@
   <tbody>
     <template id="members">
       <tr class="member">
-        <td class="center"><input type="text" class="w100" name="members.*.name"></td>
-        <td class="center"><input type="number" class="w50" name="members.*.age|number-value"></td>
-        <td class="center"><input type="text" class="w100" name="members.*.address.postalcode"></td>
-        <td class="center"><input type="text" class="w100" name="members.*.address.prefecture"></td>
-        <td class="center"><input type="text" class="w150" name="members.*.address.city"></td>
-        <td class="center"><input type="text" class="w150" name="members.*.address.address"></td>
-        <td class="center"><input type="text" class="w100" name="members.*.phone"></td>
-        <td class="center"><button type="button" class="w80" name="delete">削除</button></td>
+        <td class="left" data-col="name" contenteditable></td>
+        <td class="right" data-col="age" contenteditable></td>
+        <td class="center" data-col="postalcode" contenteditable></td>
+        <td class="center" data-col="prefecture" contenteditable></td>
+        <td class="left" data-col="city" contenteditable></td>
+        <td class="left" data-col="address" contenteditable></td>
+        <td class="center" data-col="phone" contenteditable></td>
+        <td class="center" contenteditable="no"><button type="button" class="w80" name="delete">削除</button></td>
       </tr>
     </template>
   </tbody>
