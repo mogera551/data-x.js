@@ -21,7 +21,7 @@ const SELECTOR_IMPLICIT
 
 export default class Collect {
   static inputable(element) {
-    return (element.tagName === "INPUT" && element.type !== "button") || element.tagName === "TEXTAREA" || element.tagName === "SELECT";
+    return (element.tagName === "INPUT" && element.type !== "button") || element.tagName === "TEXTAREA" || element.tagName === "SELECT" || element?.isContentEditable === true;
   }
 
   static testRadio(element) {
@@ -54,11 +54,11 @@ export default class Collect {
         rule.dom.property = domProperty;
         rule.viewModel.property = property;
         rule.filters = filters;
-        const setOfDefaultProperties = new Set(isInputable ? (isRadio ? ["radio"] : isCheckbox ? ["checked", "checkbox"] : ["value"]) : []);
+        const setOfDefaultProperties = new Set(isInputable ? (isRadio ? ["radio"] : isCheckbox ? ["checked", "checkbox"] : (element.isContentEditable ? ["textContent"] : ["value"])) : []);
         rule.inputable = setOfDefaultProperties.has(domProperty);
       } else {
         const { property, filters } = this.parsePropertyName(value);
-        rule.dom.property = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : "value") : "textContent";
+        rule.dom.property = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : (element.isContentEditable ? "textContent" : "value")) : "textContent";
         rule.viewModel.property = property;
         rule.filters = filters;
         rule.inputable = isInputable;
