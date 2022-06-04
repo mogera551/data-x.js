@@ -77,41 +77,41 @@ export class Block {
     const eventHandler = context.eventHandler;
     const view = context.view;
     const promises = [];
-    for(const block of this.#blocks) {
-      block.notifyAll(pattern, indexes, fromBlock);
-    }
     (fromBlock !== this) && notifier.notify(new Promise(async (resolve, reject) => {
       const asyncResult = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
       (asyncResult instanceof Promise) && await asyncResult;
       resolve({name:pattern, indexes});
     }));
+    for(const block of this.#blocks) {
+      block.notifyAll(pattern, indexes, fromBlock);
+    }
   }
 
   prepareUpdate() {
     const results = [];
+    this.context.copyUpdateQueue();
+    results.push(this.context.updateQueue.length > 0);
     for(const block of this.#blocks) {
       results.push(block.prepareUpdate());
     }
-    this.context.copyUpdateQueue();
-    results.push(this.context.updateQueue.length > 0);
     return !results.every(result => result === false);
   }
 
   async updateDom() {
     const promises = [];
+    promises.push(this.context.view.updateDom(this.context));
     for(const block of this.#blocks) {
       promises.push(block.updateDom());
     }
-    promises.push(this.context.view.updateDom(this.context));
     return Promise.all(promises);
   }
 
   async postProcess() {
     const promises = [];
+    promises.push(this.context.view.postProcess(this.context));
     for(const block of this.#blocks) {
       promises.push(block.postProcess());
     }
-    promises.push(this.context.view.postProcess(this.context));
     return Promise.all(promises);
   }
 
@@ -120,15 +120,15 @@ export class Block {
     const viewModel = context.viewModel;
     const eventHandler = context.eventHandler;
     const view = context.view;
+    (fromBlock !== this) && view.updateProcess(
+      context,
+      async () => eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock)
+    );
     const promises = [];
     for(const block of this.#blocks) {
       promises.push(block.inquiryAll(message, param1, param2, fromBlock));
     }
     await Promise.all(promises);
-    (fromBlock !== this) && view.updateProcess(
-      context,
-      async () => eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock)
-    );
   }
 
   attachTo(element, context = this.#context, view = context.view) {
