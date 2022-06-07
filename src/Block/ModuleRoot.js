@@ -15,6 +15,9 @@ export default class ModuleRoot {
   get callback() {
     return this.#callback;
   }
+  get blocks() {
+    return this.#root.blocks;
+  }
   get block() {
     return this.#block;
   }

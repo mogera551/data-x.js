@@ -3,6 +3,9 @@ import Data from "../Data.js";
 
 export default class Root {
   #blocks = [];
+  get blocks() {
+    return this.#blocks;
+  }
   get data() {
     return Data.data;
   }

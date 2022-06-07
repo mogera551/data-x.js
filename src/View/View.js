@@ -49,11 +49,17 @@ export default class View {
 
     await Promise.all(Array.from(setOfUpdatePaths).map(path => Reflect.get(viewModel, path)));
 
-    const updateLoop = loop => loop.update();
-    await Promise.all(allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).map(updateLoop));
+    for(const loop of allLoops.filter(loop => setOfUpdatePaths.has(loop.path))) {
+      await loop.update();
+    }
+//    const updateLoop = loop => loop.update();
+//    await Promise.all(allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).map(updateLoop));
 
-    const updateBind = bind => bind.updateDom();
-    await Promise.all(allBinds.filter(bind => setOfUpdatePaths.has(bind.path)).map(updateBind));
+    for(const bind of allBinds.filter(bind => setOfUpdatePaths.has(bind.path))) {
+      await bind.updateDom();
+    }
+//    const updateBind = bind => bind.updateDom();
+//    await Promise.all(allBinds.filter(bind => setOfUpdatePaths.has(bind.path)).map(updateBind));
 
     properties.isUpdate && context.buildBinds();
 //    console.log("updateDom complete", context?.block?.name);

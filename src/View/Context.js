@@ -118,19 +118,24 @@ export default class Context {
 
   pushIndexes(indexes, callback) {
     this.#indexesStack.push(indexes);
-    try {
-      return callback();
-    } finally {
+    const result = callback();
+    if (result instanceof Promise) {
+      result.finally(() => this.#indexesStack.pop());
+    } else {
       this.#indexesStack.pop();
     }
+    return result;
   }
+
   pushLoop({loop, key}, callback) {
     this.#loopStack.push({loop, key});
-    try {
-      return callback();
-    } finally {
+    const result = callback();
+    if (result instanceof Promise) {
+      result.finally(() => this.#loopStack.pop());
+    } else {
       this.#loopStack.pop();
     }
+    return result;
   }
   
   getPathInfo(

@@ -1,17 +1,48 @@
 import Filter from "./Filter.js";
+
+class FileReaderEx extends FileReader{
+  constructor(){
+    super();
+  }
+
+  #readAs(blob, ctx){
+    return new Promise((resolve, reject)=>{
+      super.addEventListener("load", ({target}) => resolve(target.result));
+      super.addEventListener("error", ({target}) => reject(target.error));
+      super[ctx](blob);
+    });
+  }
+
+  readAsArrayBuffer(blob){
+    return this.#readAs(blob, "readAsArrayBuffer");
+  }
+
+  readAsDataURL(blob){
+    return this.#readAs(blob, "readAsDataURL");
+  }
+
+  readAsText(blob){
+    return this.#readAs(blob, "readAsText");
+  }
+  
+}
+
 class DomPropertyType {
   static VALUE = 1;
   static CLASS = 2;
   static RADIO = 3;
   static CHECKBOX = 4;
+  static FILE = 5;
 
   static matchClass = "class.";
+  static matchFile = "file";
   static matchRadio = "radio";
   static matchCheckbox = "checkbox";
 
   static getType(property) {
     return (
-      (property === this.matchRadio) ? this.RADIO
+      (property === this.matchFile) ? this.FILE
+      : (property === this.matchRadio) ? this.RADIO
       : (property === this.matchCheckbox) ? this.CHECKBOX
       : (property.startsWith(this.matchClass)) ? this.CLASS
       : this.VALUE
@@ -22,6 +53,7 @@ class DomPropertyType {
     const desc = Object.getOwnPropertyDescriptor(viewModel, path);
     return desc?.get ? await Reflect.apply(desc.get, viewModel, []) : viewModel[path];
   }
+
   static async updateDomByValueType(bind) {
     const properties = bind.domProperty.split(".");
     const value = await this.getValue(bind.viewModel, bind.path);
@@ -50,9 +82,12 @@ class DomPropertyType {
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
+  static async updateDomByFileType(bind) {
+  }
+
   static async setValue(viewModel, path, value) {
     const desc = Object.getOwnPropertyDescriptor(viewModel, path);
-    desc?.set ? await Reflect.apply(desc.set, viewModel, [value]) : (bind.viewModel[path] = value);
+    desc?.set ? await Reflect.apply(desc.set, viewModel, [value]) : (viewModel[path] = value);
   }
 
   static async updateViewModelByValueType(bind) {
@@ -86,6 +121,14 @@ class DomPropertyType {
     await this.setValue(bind.viewModel, bind.path, value);
   }
 
+  static async updateViewModelByFileType(bind) {
+    if (bind.dom.files.length == 0) return;
+    const reader = new FileReaderEx();
+    const data = await reader.readAsText(bind.dom.files[0]);
+    const value = bind.filter.backward(bind.backwardFilters, data);
+    await this.setValue(bind.viewModel, bind.path, value);
+  }
+
   static #updateDomProcs = {};
   static #updateViewModelProcs = {};
 
@@ -94,11 +137,13 @@ class DomPropertyType {
     this.#updateDomProcs[this.CLASS] = this.updateDomByClassType;
     this.#updateDomProcs[this.RADIO] = this.updateDomByRadioType;
     this.#updateDomProcs[this.CHECKBOX] = this.updateDomByCheckboxType;
+    this.#updateDomProcs[this.FILE] = this.updateDomByFileType;
 
     this.#updateViewModelProcs[this.VALUE] = this.updateViewModelByValueType;
     this.#updateViewModelProcs[this.CLASS] = this.updateViewModelByClassType;
     this.#updateViewModelProcs[this.RADIO] = this.updateViewModelByRadioType;
     this.#updateViewModelProcs[this.CHECKBOX] = this.updateViewModelByCheckboxType;
+    this.#updateViewModelProcs[this.FILE] = this.updateViewModelByFileType;
   }
 
   static async updateDom(bind, type = bind.domPropertyType) {

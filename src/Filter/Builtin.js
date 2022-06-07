@@ -68,3 +68,12 @@ Filters.regist("number-value", {
     return (value !== "") ? Number(value) : null;
   },
 });
+
+Filters.regist("b64", {
+  forward(value, options = []) {
+    return atob(value);
+  },
+  backward(value, options = []) {
+    return btoa(value);
+  },
+});

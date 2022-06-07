@@ -119,12 +119,8 @@ export class Block {
     const context = this.#context;
     const viewModel = context.viewModel;
     const eventHandler = context.eventHandler;
-    const view = context.view;
-    (fromBlock !== this) && view.updateProcess(
-      context,
-      async () => eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock)
-    );
     const promises = [];
+    (fromBlock !== this) && promises.push(eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock));
     for(const block of this.#blocks) {
       promises.push(block.inquiryAll(message, param1, param2, fromBlock));
     }

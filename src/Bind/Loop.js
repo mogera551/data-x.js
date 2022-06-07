@@ -53,8 +53,13 @@ export default class Loop {
     children = this.#children,
     dom = this.#dom) {
     const values = await viewModel[path];
-    for(const key of Object.keys(values)) {
-      children.push(await this.#createChild(key));
+    try {
+      for(const key of Object.keys(values)) {
+        children.push(await this.#createChild(key));
+      }
+    } catch(e) {
+      console.log(e, path, values);
+      throw e;
     }
 
     const fragment = document.createDocumentFragment();
@@ -64,14 +69,14 @@ export default class Loop {
     dom.after(fragment);
   }
 
-  #restoreStack(callback) {
+  #restoreStack(callback, context = this.#context) {
     const loopStack = this.#loopStack.slice();
     const walk = (stack) => {
       if (stack.length === 0) {
         return callback();
       }
       const loop = stack.pop();
-      return context.pushLoop(loop, walk);
+      return context.pushLoop(loop, () => walk(stack));
     };
     return walk(loopStack);
   }

@@ -163,7 +163,7 @@ export default class Properties {
       for(const key of keys) {
         const patternIndexes = indexes.concat(key);
         const path = PropertyName.expand(pattern, patternIndexes);
-        if (!path.includes("*")) {
+        if (path != null && !path.includes("*")) {
           const expandedProperty = Property.create(context, {patternProperty, patternIndexes, requireSetter:patternProperty.hasSetter });
           this.setProperty(expandedProperty);
           updatePaths.add(this.#updatePathInfo(expandedProperty));

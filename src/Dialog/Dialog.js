@@ -1,4 +1,5 @@
 import { Block } from "../Block/Block.js";
+import ModuleRoot from "../Block/ModuleRoot.js";
 
 const DATA_DIALOG = "x:dialog"
 
@@ -55,17 +56,21 @@ export default class Dialog {
   async build(name = this.#name, data = this.#data, withBindCss = false) {
     const { root, bg, fg } = this.createBackLayer(name);
 
-    const block = await Block.create({name, parentElement:fg, withBindCss, data, dialog:this});
+    const rootBlock = new ModuleRoot(data);
+    const block = await Block.create({name, parentElement:fg, withBindCss, rootBlock, dialog:this});
+    rootBlock.blocks.push(block);
 
     document.body.appendChild(root);
 
     this.#block = block;
     this.#root = root;
+
+    return this;
   }
 
   static async create(name = this.#name, data = this.#data, withBindCss = false) {
     const dialog = new Dialog(name, data);
-    return dialog.build();
+    return dialog.build(name, data, withBindCss);
   }
 
   cancelDialog() {

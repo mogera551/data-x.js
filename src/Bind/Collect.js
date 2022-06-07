@@ -24,6 +24,10 @@ export default class Collect {
     return (element.tagName === "INPUT" && element.type !== "button") || element.tagName === "TEXTAREA" || element.tagName === "SELECT" || element?.isContentEditable === true;
   }
 
+  static testFile(element) {
+    return (element.tagName === "INPUT" && element.type === "file");
+  }
+
   static testRadio(element) {
     return (element.tagName === "INPUT" && element.type === "radio");
   }
@@ -44,6 +48,7 @@ export default class Collect {
     element, 
     value, 
     isInputable = this.inputable(element), 
+    isFile = this.testFile(element), 
     isRadio = this.testRadio(element), 
     isCheckbox = this.testCheckbox(element)
   ) {
@@ -54,11 +59,11 @@ export default class Collect {
         rule.dom.property = domProperty;
         rule.viewModel.property = property;
         rule.filters = filters;
-        const setOfDefaultProperties = new Set(isInputable ? (isRadio ? ["radio"] : isCheckbox ? ["checked", "checkbox"] : (element.isContentEditable ? ["textContent"] : ["value"])) : []);
+        const setOfDefaultProperties = new Set(isInputable ? (isFile ? ["file"] : isRadio ? ["radio"] : isCheckbox ? ["checked", "checkbox"] : (element.isContentEditable ? ["textContent"] : ["value"])) : []);
         rule.inputable = setOfDefaultProperties.has(domProperty);
       } else {
         const { property, filters } = this.parsePropertyName(value);
-        rule.dom.property = isInputable ? (isRadio ? "radio" : isCheckbox ? "checkbox" : (element.isContentEditable ? "textContent" : "value")) : "textContent";
+        rule.dom.property = isInputable ? (isFile ? "file" : isRadio ? "radio" : isCheckbox ? "checkbox" : (element.isContentEditable ? "textContent" : "value")) : "textContent";
         rule.viewModel.property = property;
         rule.filters = filters;
         rule.inputable = isInputable;
@@ -117,6 +122,7 @@ export default class Collect {
     Array.from(rootElement.querySelectorAll(SELECTOR_IMPLICIT)).forEach(element => {
       if (DATA_IGNORE in element.dataset) return;
       const processings = element.dataset[DATA_PROCESSING]?.split(",") ?? [];
+      const isFile = this.testFile(element);
       const isRadio = this.testRadio(element);
       const isCheckbox = this.testCheckbox(element);
       const rule = {dom:{}, viewModel:{}, filters:[]};
@@ -128,7 +134,7 @@ export default class Collect {
       } else {
         if (processings.includes("bind")) return;
         const { property, filters } = this.parsePropertyName(element.name);
-        rule.dom.property = isRadio ? "radio" : isCheckbox ? "checkbox" : "value";
+        rule.dom.property = isFile ? "file" : isRadio ? "radio" : isCheckbox ? "checkbox" : "value";
         rule.viewModel.property = property;
         rule.filters = filters;
         rule.inputable = true;
