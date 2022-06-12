@@ -30,5 +30,7 @@ export default class Cache {
   delete(name) {
 //    console.log("cache.delete = ", name);
     this.#cache.delete(name);
+    const match = `${name}.`;
+    Array.from(this.#cache.keys()).filter(key => key.startsWith(match)).forEach(key => this.#cache.delete(key));
   }
 }

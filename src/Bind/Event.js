@@ -30,14 +30,14 @@ export default class Event {
 
   async #eventHandler(
     event, 
-    viewModel = this.#context.viewModel, 
+    proxyViewModel = this.#context.proxyViewModel, 
     eventHandler = this.#context.eventHandler,
     handlerName = this.#handlerName, 
     indexes = this.#indexes,
     context = this.#context
   ) {
     return context.pushIndexes(indexes, () => {
-      return eventHandler.exec(viewModel, handlerName, event, ...indexes);
+      return eventHandler.exec(proxyViewModel, handlerName, event, ...indexes);
     });
   }
 

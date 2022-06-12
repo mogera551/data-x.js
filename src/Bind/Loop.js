@@ -48,11 +48,11 @@ export default class Loop {
   }
 
   async expand(
-    viewModel = this.#context.viewModel, 
+    proxyViewModel = this.#context.proxyViewModel, 
     path = this.#path,
     children = this.#children,
     dom = this.#dom) {
-    const values = await viewModel[path];
+    const values = await proxyViewModel[path];
     try {
       for(const key of Object.keys(values)) {
         children.push(await this.#createChild(key));

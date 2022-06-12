@@ -42,12 +42,12 @@ export class Block {
   }
 
   async build({data, useModule, rootBlock, context = this.#context}) {
-    context.properties.build();
+    context.properties = context.props.build(context);
     context.dependencies.build();
-    context.dataReflecter.reflect(context, data, context.viewModel);
+    context.dataReflecter.reflect(context, data, context.proxyViewModel);
 
     await context.initializer.init(context, data);
-    await context.properties.expandAll();
+//    await context.properties.expandAll();
     await context.view.build(context);
     this.#blocks.push(...await BlockBuilder.build(context.rootElement, useModule, rootBlock));
     (!context.isBlockModule || context.parentElement != null) && context.view.appear(context);
@@ -73,12 +73,12 @@ export class Block {
   notifyAll(pattern, indexes, fromBlock) {
     const context = this.#context;
     const notifier = context.notifier;
-    const viewModel = context.viewModel;
+    const proxyViewModel = context.proxyViewModel;
     const eventHandler = context.eventHandler;
     const view = context.view;
     const promises = [];
     (fromBlock !== this) && notifier.notify(new Promise(async (resolve, reject) => {
-      const asyncResult = eventHandler.exec(viewModel, "notifyAll", pattern, indexes, fromBlock);
+      const asyncResult = eventHandler.exec(proxyViewModel, "notifyAll", pattern, indexes, fromBlock);
       (asyncResult instanceof Promise) && await asyncResult;
       resolve({name:pattern, indexes});
     }));
@@ -117,10 +117,10 @@ export class Block {
 
   async inquiryAll(message, param1, param2, fromBlock) {
     const context = this.#context;
-    const viewModel = context.viewModel;
+    const proxyViewModel = context.proxyViewModel;
     const eventHandler = context.eventHandler;
     const promises = [];
-    (fromBlock !== this) && promises.push(eventHandler.exec(viewModel, "inquiryAll", message, param1, param2, fromBlock));
+    (fromBlock !== this) && promises.push(eventHandler.exec(proxyViewModel, "inquiryAll", message, param1, param2, fromBlock));
     for(const block of this.#blocks) {
       promises.push(block.inquiryAll(message, param1, param2, fromBlock));
     }

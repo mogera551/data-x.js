@@ -6,12 +6,13 @@ import Initializer from "../ViewModel/Initializer.js"
 import Reflecter from "../Shared/Reflecter.js"
 import View from "./View.js";
 import Dependencies from "../ViewModel/Dependency.js";
-import Properties from "../ViewModel/Properties.js";
 import Notifier from "./Notifier.js";
 import Cache from "../ViewModel/Cache.js";
 import PostProcess from "./PostProcess.js";
 import sym from "../Symbols.js";
 import Notifiable from "../Notifiable/Notifiable.js";
+import Props from "../ViewModel/Props.js";
+import Handler from "../ViewModel/Handler.js";
 
 export default class Context {
   #parentElement;
@@ -29,14 +30,11 @@ export default class Context {
   #properties;
   #notifier;
   #cache;
-  #filter;
   #rootBlock;
   #block;
-  #eventHandler;
-  #initializer;
-  #dataReflecter;
   #module;
   #updateQueue = [];
+  #proxyViewModel;
 
   constructor(block, parentElement, rootBlock) { 
     this.#block = block;
@@ -48,13 +46,8 @@ export default class Context {
     this.#view = View;
     this.#postProcess = new PostProcess(this);
     this.#dependencies = new Dependencies(this);
-    this.#properties = new Properties(this);
     this.#notifier = new Notifier(this);
     this.#cache = new Cache(this);
-    this.#filter = Filters;
-    this.#eventHandler = EventHandler;
-    this.#initializer = Initializer;
-    this.#dataReflecter = Reflecter;
   }
 
   get parentElement() { return this.#parentElement; }
@@ -83,13 +76,9 @@ export default class Context {
   get notifier() { return this.#notifier; }
   get cache() { return this.#cache; }
   get context() { return this; }
-  get filter() { return this.#filter; }
   get rootBlock() { return this.#rootBlock; }
   get block() { return this.#block; }
-  get eventHandler() { return this.#eventHandler; }
-  get initializer() { return this.#initializer; }
   get data() { return this.#rootBlock.data; }
-  get dataReflecter() { return this.#dataReflecter; }
   get template() { return this.#module.template; }
   get module() { return this.#module; }
   get moduleDatas() { return this.#module.moduleDatas; }
@@ -99,6 +88,14 @@ export default class Context {
   get symbols() { return sym; }
   get updateQueue() { return this.#updateQueue; }
   get notifiable() { return Notifiable; }
+  get props() { return Props; }
+  get filter() { return Filters; }
+  get eventHandler() { return EventHandler; }
+  get initializer() { return Initializer; }
+  get dataReflecter() { return Reflecter; }
+  get proxyHandler() { return Handler; }
+  get proxyViewModel() { return this.#proxyViewModel; }
+  
 
   set module(module) {
     this.#module = module;
@@ -108,9 +105,11 @@ export default class Context {
     this.#fragment = module.template.content.cloneNode(true);
     const reflectContext = module?.context ?? module?._;
     (reflectContext != null) && this.reflect(reflectContext, module.dialog);
+    this.#proxyViewModel = new Proxy(this.#viewModel, Reflect.construct(this.proxyHandler, [this]));
   }
   set rootElement(value) { this.#rootElement = value; }
   set parentElement(value) { this.#parentElement = value; }
+  set properties(value) { this.#properties = value; }
 
   copyUpdateQueue() {
     this.#updateQueue = this.#notifier.dequeue();

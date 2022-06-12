@@ -33,21 +33,28 @@ export default class View {
     allBinds = context.allBinds, 
     allLoops = context.allLoops, 
     properties = context.properties,
-    viewModel = context.viewModel
+    dependencies = context.dependencies,
+    proxyViewModel = context.proxyViewModel,
+    cache = context.cache
   ) {
 //    console.log("updateDom start", context?.block?.name);
     const queue = await Promise.all(updateQueue);
     const updatePaths = [];
     for(const { name, indexes = [] } of queue.filter(q => q != null)) {
-      const paths = await properties.updateByPatternIndexes({name, indexes})
+      updatePaths.push(PropertyName.expand(name, indexes));
+      for(const info of dependencies.getReferedProperties(name, indexes)) {
+        updatePaths.push(info.name);
+      }
 //      console.log("paths = ", paths, {name, indexes});
-      updatePaths.push(...Array.from(paths));
+//      updatePaths.push(...Array.from(paths));
     }
-  
-    const setOfUpdatePaths = new Set((updatePaths).map(info => info.name));
+    const setOfUpdatePaths = new Set(updatePaths);
 //    console.log("setOfUpdatePaths", setOfUpdatePaths);
 
-    await Promise.all(Array.from(setOfUpdatePaths).map(path => Reflect.get(viewModel, path)));
+    await Promise.all(Array.from(setOfUpdatePaths).map(path => {
+      cache.delete(path);
+      Reflect.get(proxyViewModel, path);
+    }));
 
     for(const loop of allLoops.filter(loop => setOfUpdatePaths.has(loop.path))) {
       await loop.update();
@@ -61,7 +68,8 @@ export default class View {
 //    const updateBind = bind => bind.updateDom();
 //    await Promise.all(allBinds.filter(bind => setOfUpdatePaths.has(bind.path)).map(updateBind));
 
-    properties.isUpdate && context.buildBinds();
+//    properties.isUpdate && context.buildBinds();
+    context.buildBinds();
 //    console.log("updateDom complete", context?.block?.name);
   }
 

@@ -23,20 +23,20 @@ export default class Dependencies {
   build(map = this.#map, dependencyRules = this.#context.dependencyRules) {
     map.clear();
     this.#dependencyRules = this.#context.dependencyRules.slice();
-    dependencyRules.forEach(([ property, refProperties, func ]) => this.add(property, refProperties, func));
+    dependencyRules.forEach(([ propName, refProperties, func ]) => this.add(propName, refProperties, func));
     this.implicitDependency();
   }
 
-  implicitDependency(properties = this.#context.properties) {
+  implicitDependency(props = this.#context.props, properties = this.#context.properties) {
     // implicit dependency
-    for(const name of properties.names) {
-      properties.getDependencyNames(name).forEach(depName => this.add(depName, [name]));
+    for(const property of properties) {
+      props.getDependencyNames(properties, property.name).forEach(depName => this.add(depName, [property.name]));
     }
   }
 
-  add(property, refProperties, func, map = this.#map) {
-    map.has(property) || map.set(property, new DepNode(property));
-    const node = map.get(property);
+  add(propName, refProperties, func, map = this.#map) {
+    map.has(propName) || map.set(propName, new DepNode(propName));
+    const node = map.get(propName);
     node.func = func;
     refProperties.forEach(refProperty => {
       map.has(refProperty) || map.set(refProperty, new DepNode(refProperty));
@@ -46,9 +46,9 @@ export default class Dependencies {
     });
   }
 
-  getReferedProperties(property, indexes, map = this.#map, viewModel = this.#context.viewModel) {
-//    console.log("getReferedProperties start ", property, indexes);
-    const node = map.get(property);
+  getReferedProperties(propName, indexes, map = this.#map, proxyViewModel = this.#context.proxyViewModel) {
+//    console.log("getReferedProperties start ", propName, indexes);
+    const node = map.get(propName);
     const trace = new Set();
     const curIndex = indexes ?? [];
     const walk = (node, list) => {
@@ -57,7 +57,7 @@ export default class Dependencies {
       if (name !== null) {
         if (trace.has(name)) return list;
         trace.add(name);
-        const resultIndexes = node.func ? Reflect.apply(node.func, viewModel, [curIndex]) : curIndex;
+        const resultIndexes = node.func ? Reflect.apply(node.func, proxyViewModel, [curIndex]) : curIndex;
         if (resultIndexes === false) return list;
         const resultInfo = { name, pattern: node.name, indexes: resultIndexes };
         list.push(resultInfo);

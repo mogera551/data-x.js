@@ -17,17 +17,6 @@ export default class Notifier {
     return resultQueue;
   }
 
-  async updatePaths(properties = this.#context.properties) {
-    const queue = await Promise.all(this.#queue);
-    const updatePaths = [];
-    for(const { name, indexes = [] } of queue.filter(q => q != null)) {
-      const paths = await properties.updateByPatternIndexes({name, indexes})
-      console.log("paths = ", paths, {name, indexes});
-      updatePaths.push(...Array.from(paths));
-    }
-    return updatePaths;
-  }
-
   clear(queue = this.#queue) {
     queue.splice(0);
   }
