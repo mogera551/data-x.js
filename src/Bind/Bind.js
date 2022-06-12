@@ -91,7 +91,7 @@ class DomPropertyType {
     const value = await this.getValue(bind.proxyViewModel, bind.path);
     const assignValue = value => {
       const values = (bind.filter.forward(bind.forwardFilters, value) ?? []);
-      Array.from(bind.dom.options).forEach(o => o.selected = (o.value in values));
+      Array.from(bind.dom.options).forEach(o => o.selected = (values.includes(o.value)));
     }
     (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
