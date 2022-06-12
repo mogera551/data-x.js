@@ -42,15 +42,14 @@ export default class Handler {
       return cache.get(prop);
     }
     if (prop in target) {
-      const desc = Object.getOwnPropertyDescriptor(target, prop);
-      const value = desc?.get ? Reflect.apply(desc.get, receiver, []) : target[prop];
+      const value = Reflect.get(target, prop, receiver);
       return (prop.includes("*")) ? value : cache.set(prop, value);
     } else {
       const names = this.getExpandName(target, prop);
       if (names != null) {
         return context.pushIndexes(names.indexes, () => {
-          const desc = Object.getOwnPropertyDescriptor(target, names.pattern);
-          return cache.set(prop, desc?.get ? Reflect.apply(desc.get, receiver, []) : target[names.pattern]);
+          const value = Reflect.get(target, names.pattern, receiver);
+          return cache.set(prop, value);
         });
       }
     }
@@ -70,7 +69,7 @@ export default class Handler {
     }
     if (prop in target) {
       const desc = Object.getOwnPropertyDescriptor(target, prop);
-      const result = desc?.set ? Reflect.apply(desc.set, receiver, [value]) : (target[prop] = value);
+      const result = desc?.set ? Reflect.apply(desc.set, receiver, [value]) : Reflect.set(target, prop, value, receiver);
       desc?.set && notify(result, { name:prop });
       return true;
     } else {
@@ -78,7 +77,7 @@ export default class Handler {
       if (names != null) {
         context.pushIndexes(names.indexes, () => {
           const desc = Object.getOwnPropertyDescriptor(target, names.pattern);
-          const result = desc?.set ? Reflect.apply(desc.set, receiver, [value]) : (target[prop] = value);
+          const result = desc?.set ? Reflect.apply(desc.set, receiver, [value]) : Reflect.set(target, names.pattern, value, receiver);
           notify(result, { name:names.pattern, indexes:names.indexes });
         });
         return true;
