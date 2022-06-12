@@ -1,12 +1,16 @@
 class AppViewModel {
-  "@show#get" = () => this.$content === "users";
+  "@show#get"() {
+    return this.$content === "users";
+  }
   
-  "@users#get" = () => this.$userList.getUsers();
+  "@users#get"() {
+    return this.$userList.getUsers();
+  }
   "@users.*.id";
   "@users.*.name";
   "@users.*.email";
 
-  "#eventClickTd" = ([,$1]) => {
+  "#eventClickTd"([,$1]) {
     this.$user = this.$userList.getUser(this.users[$1].id);
     this.$content = "edit";
   }

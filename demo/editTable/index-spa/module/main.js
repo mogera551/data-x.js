@@ -1,12 +1,13 @@
 const URL_API = "https://api.zipaddress.net/";
 const context = {};
 class AppViewModel {
-  "@members#init" = data => context.notifiable(data.members.load());
+  "@members#init"(data) {
+    return context.notifiable(data.members.load());
+  }
 
   "@@members.*.name";
   "@@members.*.age";
-  "@@members.*.address.postalcode#set" = async value => {
-    const { $1 } = context;
+  async "@@members.*.address.postalcode#set"(value, $1) {
     this[`members.${$1}.address`]["postalcode"] = value;
     if (value == "" || !/^[0-9]{7}$/.test(value)) return;
     const params = new URLSearchParams({ zipcode: value });
@@ -23,10 +24,18 @@ class AppViewModel {
   "@@members.*.address.address";
   "@@members.*.phone";
 
-  "#eventClickDelete" = ([, $1]) => confirm("削除しますか？") && this.members.splice($1, 1);
-  "#eventClickAdd" = () => this.members.push(this.members.createMember()); 
-  "#eventClickSave" = () => confirm("保存しますか？") && this.members.save();
-  "#eventClickClear" = () => confirm("クリアしますか？") && this.members.clear();
+  "#eventClickDelete"([, $1]) {
+    confirm("削除しますか？") && this.members.splice($1, 1);
+  }
+  "#eventClickAdd"() {
+    this.members.push(this.members.createMember());
+  }
+  "#eventClickSave"() {
+    confirm("保存しますか？") && this.members.save();
+  }
+  "#eventClickClear"() {
+    confirm("クリアしますか？") && this.members.clear();
+  }
 }
 
 export default { AppViewModel, context }

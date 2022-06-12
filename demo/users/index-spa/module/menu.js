@@ -1,7 +1,11 @@
 
 class AppViewModel {
-  "#eventClickDashboard" = () => this.$content = "dashboard";
-  "#eventClickUsers" = () => this.$content = "users";
+  "#eventClickDashboard"() {
+    return this.$content = "dashboard";
+  }
+  "#eventClickUsers"() {
+    return this.$content = "users";
+  }
 }
 
 export default { AppViewModel };

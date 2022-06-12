@@ -1,5 +1,7 @@
 class AppViewModel {
-  "@show#get" = () => this.$content === "content3";
+  "@show#get"() {
+    return this.$content === "content3";
+  }
 }
 
 const dependencyRules = [

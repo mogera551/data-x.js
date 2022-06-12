@@ -1,17 +1,23 @@
 class AppViewModel {
-  "@show#get" = () => this.$content === "edit";
+  "@show#get"() {
+    return this.$content === "edit";
+  }
 
-  "@user#get" = () => Object.assign({}, this.$user);
+  "@user#get"() {
+    return Object.assign({}, this.$user);
+  }
   "@user.id";
   "@@user.name";
   "@@user.email";
 
-  "#eventClickOk" = () => {
+  "#eventClickOk"() {
     this.$userList.setUser(this.user);
     this.$content = "users";
   };
 
-  "#eventClickCancel" = () => this.$content = "users";
+  "#eventClickCancel"() {
+    return this.$content = "users";
+  }
 }
 
 const dependencyRules = [

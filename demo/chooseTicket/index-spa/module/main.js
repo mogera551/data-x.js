@@ -5,16 +5,22 @@ const tickets = [
 ];
 
 class AppViewModel {
-  "@tickets#get" = () => tickets;
+  "@tickets#get"() {
+    return tickets;
+  }
   "@tickets.*.id";
   "@tickets.*.name";
 
   "@@ticketId" = null;
-  "@ticket#get" = () => tickets.find(ticket => ticket.id === this.ticketId);
+  "@ticket#get"() {
+    return tickets.find(ticket => ticket.id === this.ticketId);
+  } 
   "@ticket.name";
   "@ticket.price";
 
-  "#eventClickClear" = () => this.ticketId = null;
+  "#eventClickClear"() {
+    this.ticketId = null;
+  }
 }
 
 const dependencyRules = [
