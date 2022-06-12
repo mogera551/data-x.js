@@ -33,17 +33,20 @@ class DomPropertyType {
   static RADIO = 3;
   static CHECKBOX = 4;
   static FILE = 5;
+  static MULTI = 6;
 
   static matchClass = "class.";
   static matchFile = "file";
   static matchRadio = "radio";
   static matchCheckbox = "checkbox";
+  static matchMulti = "multi";
 
   static getType(property) {
     return (
       (property === this.matchFile) ? this.FILE
       : (property === this.matchRadio) ? this.RADIO
       : (property === this.matchCheckbox) ? this.CHECKBOX
+      : (property === this.matchMulti) ? this.MULTI
       : (property.startsWith(this.matchClass)) ? this.CLASS
       : this.VALUE
     );
@@ -82,6 +85,15 @@ class DomPropertyType {
   }
 
   static async updateDomByFileType(bind) {
+  }
+
+  static async updateDomByMultiType(bind) {
+    const value = await this.getValue(bind.proxyViewModel, bind.path);
+    const assignValue = value => {
+      const values = (bind.filter.forward(bind.forwardFilters, value) ?? []);
+      Array.from(bind.dom.options).forEach(o => o.selected = (o.value in values));
+    }
+    (value instanceof Promise) ? value.then(value => assignValue(value)) : assignValue(value);
   }
 
   static async setValue(proxyViewModel, path, value) {
@@ -127,6 +139,11 @@ class DomPropertyType {
     await this.setValue(bind.proxyViewModel, bind.path, value);
   }
 
+  static async updateViewModelByMultiType(bind) {
+    const values = Array.from(bind.dom.selectedOptions).map(o => o.value);
+    await this.setValue(bind.proxyViewModel, bind.path, values);
+  }
+
   static #updateDomProcs = {};
   static #updateViewModelProcs = {};
 
@@ -136,12 +153,14 @@ class DomPropertyType {
     this.#updateDomProcs[this.RADIO] = this.updateDomByRadioType;
     this.#updateDomProcs[this.CHECKBOX] = this.updateDomByCheckboxType;
     this.#updateDomProcs[this.FILE] = this.updateDomByFileType;
+    this.#updateDomProcs[this.MULTI] = this.updateDomByMultiType;
 
     this.#updateViewModelProcs[this.VALUE] = this.updateViewModelByValueType;
     this.#updateViewModelProcs[this.CLASS] = this.updateViewModelByClassType;
     this.#updateViewModelProcs[this.RADIO] = this.updateViewModelByRadioType;
     this.#updateViewModelProcs[this.CHECKBOX] = this.updateViewModelByCheckboxType;
     this.#updateViewModelProcs[this.FILE] = this.updateViewModelByFileType;
+    this.#updateViewModelProcs[this.MULTI] = this.updateViewModelByMultiType;
   }
 
   static async updateDom(bind, type = bind.domPropertyType) {
