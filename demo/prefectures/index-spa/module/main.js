@@ -1,4 +1,3 @@
-const context = {};
 class AppViewModel {
   "@regions#get"() {
     return Array.from(new Set(this.$prefectures.map(pref => pref.region)));
@@ -10,8 +9,8 @@ class AppViewModel {
   "@prefectures#get"() {
     return this.$prefectures.filter((pref) => this.region ? this.region === pref.region : true);
   }
-  "@prefectures.*.no#get"() {
-    return Number(context.$1) + 1;
+  "@prefectures.*.no#get"($1) {
+    return Number($1) + 1;
   }
   "@prefectures.*.name";
   "@prefectures.*.capital";
@@ -34,4 +33,4 @@ const dependencyRules = [
   [ "sumPopulation", [ "prefectures" ] ],
 ];
 
-export default { AppViewModel, dependencyRules, context }
+export default { AppViewModel, dependencyRules }
