@@ -17,31 +17,30 @@ class AppViewModel {
   }
   "@values#init"() {
     return context.notifiable([33, 55, 11]);
-
   }
   "@datas#get"() {
     return Array(this.labels.length).fill(undefined);
   }
-  "@datas.*.label#get"() {
-    return this.labels[context.$1];
+  "@datas.*.label#get"($1) {
+    return this.labels[$1];
   }
-  "@datas.*.value#get"() {
-    return this.values[context.$1];
+  "@datas.*.value#get"($1) {
+    return this.values[$1];
   } 
 
   "@@label" = "";
-  "#eventClickAddItem"() {
+  "#clickAddItem"() {
     this.labels.push(this.label);
     this.values.push(Math.floor(Math.random() * 100));
     this.label = "";
     this.chart.update();
   }
-  "#eventClickDeleteItem"([, $1]) {
+  "#clickDeleteItem"(e, $1) {
     this.labels.splice($1, 1);
     this.values.splice($1, 1);
     this.chart.update();
   }
-  "#eventInit"() {
+  "#init"() {
     context.postProcess(() => this.initChart());
   }
 }

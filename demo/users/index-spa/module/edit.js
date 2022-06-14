@@ -10,12 +10,12 @@ class AppViewModel {
   "@@user.name";
   "@@user.email";
 
-  "#eventClickOk"() {
+  "#clickOk"() {
     this.$userList.setUser(this.user);
     this.$content = "users";
   };
 
-  "#eventClickCancel"() {
+  "#clickCancel"() {
     return this.$content = "users";
   }
 }

@@ -24,16 +24,16 @@ class AppViewModel {
   "@@members.*.address.address";
   "@@members.*.phone";
 
-  "#eventClickDelete"([, $1]) {
+  "#clickDelete"(event, $1) {
     confirm("削除しますか？") && this.members.splice($1, 1);
   }
-  "#eventClickAdd"() {
+  "#clickAdd"() {
     this.members.push(this.members.createMember());
   }
-  "#eventClickSave"() {
+  "#clickSave"() {
     confirm("保存しますか？") && this.members.save();
   }
-  "#eventClickClear"() {
+  "#clickClear"() {
     confirm("クリアしますか？") && this.members.clear();
   }
 }

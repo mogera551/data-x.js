@@ -13,7 +13,7 @@ class AppViewModel {
   "@animes.*.anime";
   "@animes.*.character";
   "@animes.*.quote";
-  "#eventClickSearch"() {
+  "#clickSearch"() {
     context.notify("animes");
   }
 }

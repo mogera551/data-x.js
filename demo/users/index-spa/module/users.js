@@ -10,7 +10,7 @@ class AppViewModel {
   "@users.*.name";
   "@users.*.email";
 
-  "#eventClickTd"([,$1]) {
+  "#clickTd"(event, $1) {
     this.$user = this.$userList.getUser(this.users[$1].id);
     this.$content = "edit";
   }

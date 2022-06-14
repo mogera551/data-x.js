@@ -1,9 +1,9 @@
 
 class AppViewModel {
-  "#eventClickDashboard"() {
+  "#clickDashboard"() {
     return this.$content = "dashboard";
   }
-  "#eventClickUsers"() {
+  "#clickUsers"() {
     return this.$content = "users";
   }
 }

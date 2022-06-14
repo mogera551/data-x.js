@@ -18,7 +18,7 @@ class AppViewModel {
   "@ticket.name";
   "@ticket.price";
 
-  "#eventClickClear"() {
+  "#clickClear"() {
     this.ticketId = null;
   }
 }
