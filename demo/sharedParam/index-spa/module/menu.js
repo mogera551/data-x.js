@@ -5,7 +5,7 @@ class AppViewModel {
     return this["contents.*"] === this.$content;
   } 
 
-  "#eventClickMenuItem"([, $1]) {
+  "#clickMenuItem"(event, $1) {
     this.$content = this.contents[$1];
   }
 }
