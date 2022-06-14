@@ -4,7 +4,7 @@ import PropGetterSetter from "./PropGetterSetter.js"
 // プロパティの変換
 //
 const RegExpShortHandProperty = new RegExp(/^(\@\@?)([a-zA-Z0-9_\.\*]+)(#(get|set|init)?)?$/);
-const RegExpEventProperty = new RegExp(/^(#)(event[a-zA-Z0-9_]+)$/);
+const RegExpEventProperty = new RegExp(/^(#)([a-zA-Z0-9_]+)$/);
 const RegExpPrivateProperty = new RegExp(/^__([a-zA-Z0-9_])+$/);
 
 const walkPrototype = (object, callback) => {
@@ -141,6 +141,8 @@ export default class Props {
       Object.defineProperty(viewModel, name, desc);
       properties.push(Object.assign(new Property(), { name, nameInfo }));
     });
+
+    Object.defineProperty(viewModel, "$$context", {configurable: true, enumerable: false, writable: false, value: context});
 
     return properties;
   }

@@ -37,7 +37,7 @@ export default class Event {
     context = this.#context
   ) {
     return context.pushIndexes(indexes, () => {
-      return eventHandler.exec(proxyViewModel, handlerName, event, ...indexes);
+      return eventHandler.exec(proxyViewModel, handlerName, event);
     });
   }
 
