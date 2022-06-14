@@ -5,10 +5,10 @@ class AppViewModel {
   "@@member.address.postalcode";
   "@@member.address.prefecture";
   "@@member.address.city";
-  async onInit(data) {
+  async "#init"(data) {
     const response = await fetch(data.url);
     const json = await response.json();
-    this["member"] = json;
+    this.member = json;
   }
 }
 

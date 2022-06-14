@@ -1,11 +1,11 @@
 
 class AppViewModel {
   "@@name" = "";
-  get "isEmpty"() {
+  "@isEmpty#get"() {
     return !this["name"];
   };
 
-  onClickRegist() {
+  "#clickRegist"() {
     alert("regist !!!");
   }
 }

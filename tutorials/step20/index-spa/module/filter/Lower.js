@@ -1,7 +1,8 @@
-import Filters from "../../../../../src/Filter/Filters.js"
-
-Filters.regist("@lower", {
-  forward(value, options = []) {
-    return value?.toLowerCase() ?? "";
+export default {
+  name: "@lower",
+  filter: {
+    forward(value, options = []) {
+      return value?.toLowerCase() ?? "";
+    }
   }
-});
+}

@@ -1,5 +1,7 @@
 class AppViewModel {
-  "@member#init" = async data => fetch(data.url).then(response => response.json());
+  async "@member#init"(data) {
+    return fetch(data.url).then(response => response.json());
+  }
   "@@member.name";
   "@@member.age";
   "@@member.address.postalcode";

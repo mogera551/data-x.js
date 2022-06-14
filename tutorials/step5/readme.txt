@@ -15,30 +15,22 @@ data-x:name属性もしくは、name属性に識別名を入れる
 ViewModelクラスにイベントハンドラもしくはイベントプロパティを作成する
 
 イベントハンドラの名前は、
-on + イベント名 + 識別名
-※イベント名は、最初が大文字
+"#" + イベント名 + 識別名
 ※識別名は、最初が大文字
 　data-x:name属性もしくは、name属性の値をとる。ない場合、tagName
 
-イベントプロパティは、アクセサ(set)プロパティとして作成する
-イベントプロパティの名前は、
-event + イベント名 + 識別名
-※イベント名、識別名はイベントハンドラの命名に従う
-
 class AppViewModel {
     // イベントハンドラ
-    onClickRegist() {
+    "#clickRegist"() {
         alert("click regist button");
     }
-    onDblclickDiv() {
+    "#dblclickDiv"() {
         alert("double click div");
     }
-    onDblclickHere() {
+    "#dblclickHere"() {
         alert("double click here");
     }
-    
-    // イベントプロパティ
-    set "eventClickCancel"(event) {
+    "#clickCancel"(event) {
         alert("click cancel button");
     }
 

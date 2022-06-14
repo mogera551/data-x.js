@@ -11,10 +11,10 @@ class AppViewModel {
   "@fruits" = fruits;
   "@fruits.*";
   "@@newFruits" = "";
-  get "isEmpty"() {
+  "@isEmpty#get"() {
     return !this["newFruits"];
   }
-  onClickAdd(event) {
+  "#clickAdd"(event) {
     this["fruits"].push(this["newFruits"]);
     this["newFruits"] = "";
     context.notify("fruits");

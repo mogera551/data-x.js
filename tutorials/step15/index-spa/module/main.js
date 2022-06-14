@@ -11,7 +11,7 @@ class AppViewModel {
     return !this["name"];
   };
 
-  onClickRegist() {
+  "#clickRegist"() {
     alert("regist !!!");
   }
 }

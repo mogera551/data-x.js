@@ -5,8 +5,8 @@ class AppViewModel {
   "@@member.address.postalcode";
   "@@member.address.prefecture";
   "@@member.address.city";
-  onInit(data) {
-    this["member"] = data.member;
+  "#init"(data) {
+    this.member = data.member;
   }
 }
 

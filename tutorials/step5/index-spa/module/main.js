@@ -1,16 +1,14 @@
 class AppViewModel {
-  // event handler
-  onClickRegist() {
+  "#clickRegist"(event) {
     alert("click regist button");
   }
-  onDblclickDiv() {
+  "#dblclickDiv"(event) {
     alert("double click div");
   }
-  onDblclickHere() {
+  "#dblclickHere"(event) {
     alert("double click div");
   }
-  // event property
-  set "eventClickCancel"(event) {
+  "#clickCancel"(event) {
     alert("click cancel button");
   }
 }

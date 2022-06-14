@@ -1,4 +1,3 @@
-
 const fruits = [
   "apple",
   "banana",
@@ -6,14 +5,17 @@ const fruits = [
   "strawberry",
 ];
 
+const context = {};
 class AppViewModel {
-  "@fruits" = fruits;
+  "@fruits#init"() {
+    return context.notifiable(fruits);
+  };
   "@fruits.*";
   "@@newFruits" = "";
-  get "isEmpty"() {
+  "@isEmpty#get"() {
     return !this["newFruits"];
   }
-  set "eventClickAdd"(event) {
+  "#clickAdd"(event) {
     this["fruits"].push(this["newFruits"]);
     this["newFruits"] = "";
   }
@@ -21,7 +23,7 @@ class AppViewModel {
 
 const dependencyRules = [
   ["isEmpty", ["newFruits"]],
-  ["fruits", ["eventClickAdd"]],
+//  ["fruits", ["eventClickAdd"]],
 ];
 
-export default { AppViewModel, dependencyRules }
+export default { AppViewModel, dependencyRules, context }
