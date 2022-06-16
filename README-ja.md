@@ -58,7 +58,9 @@ class AppViewModel {
   "@@region" = "四国"; // 選択した地方
 
   // 選択した地方（region）に一致する都道府県の一覧を取得
-  "@prefs#get" = () => prefectures.find(pref => pref.region === this.region);
+  "@prefs#get"() {
+    return prefectures.find(pref => pref.region === this.region);
+  }
   
   // 都道府県一覧（配列）の名前プロパティをアスタリスクを含むドット記法で表現
   "@prefs.*.name";
