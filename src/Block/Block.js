@@ -2,6 +2,7 @@ import Data from "../Data.js"
 import Root from "../Root.js"
 import Context from "../View/Context.js";
 import Module from "./Module.js"
+import Modules from "../Modules.js"
 
 export class Block {
   #name;
@@ -58,7 +59,7 @@ export class Block {
     name, 
     parentElement = null, 
     useModule = false, 
-    moduleData = null,
+    moduleData = Modules.get(name),
     withBindCss = false, 
     rootBlock = Root.root,
     data = rootBlock.data, 

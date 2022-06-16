@@ -6,16 +6,21 @@ import Filter from "./Filter/Filter.js";
 import saveRoot from "./Root.js"
 import { Block } from "./Block/Block.js"
 import sym from "./Symbols.js"
+import Modules from "./Modules.js"
 
 export default class App {
   static root;
   static booting = false;
   static booted = false;
-  static async boot({ data = {}, options = {} } = {}) {
+  static _data = {};
+  static _options = {};
+  static _modules = {};
+  static async boot({ data = this._data, options = this._options, modules = this._modules } = {}) {
     this.booting = true;
     try {
       Data.setData(data);
       Options.setOptions(this.getBaseName(), options);
+      Modules.setModules(modules);
       await Filter.registLocalFilter();
   
       this.root = new Root();
@@ -60,6 +65,21 @@ export default class App {
 
   static getSymbol(name) {
     return sym[name];
+  }
+
+  static data(data) {
+    Object.assign(this._data, data);
+    return this;
+  }
+
+  static options(options) {
+    Object.assign(this._options, options);
+    return this;
+  }
+
+  static modules(modules) {
+    Object.assign(this._modules, modules);
+    return this;
   }
 }
 
