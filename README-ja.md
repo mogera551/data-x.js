@@ -13,11 +13,11 @@
 * ES2012/2022の積極採用
 
 ### 直感的に使えるよう、覚えることを極力少なく
-* importを極力減らす。
+* フレームワークの制約・ルールを極力減らす。
+* そのルールも、直感的にわかりやすくする。
 * ショートハンドで簡単に。
-* フレームワークのルールをわかりやすくする。
 
-トップのhtmlは、data-x.jsを読み込み、ブロック（main）を表示するhtmlを作成する。
+トップのhtmlは、data-x.jsの読み込み、表示するブロック（main）を定義するだけ。
 ```html:index.html
 <script src="/path/to/data-x.js"></script>
 
@@ -25,7 +25,7 @@
 ```
 
 ブロック（main）の定義は、ViewModelクラスとテンプレートとなるhtmlを定義し、exportするだけ。
-importは必要なし。
+複雑なimportは必要なし。
 ```JS:main.js
 class AppViewModel {
   "@message" = "welcome to data-x.js";
@@ -82,7 +82,7 @@ const html = `
 ```
 
 バインドルールを宣言的に記述でき、分離して管理できる。
-html要素のデザイン上不要となる属性の肥大を抑え、デザイナーとの協業をやりやすくする。
+htmlをデザインする上で不要となるバインド情報のための属性の記述を減らし、デザイナーとの協業をやりやすくする。
 
 ```html
 <style data-x:rules="bind">
@@ -96,7 +96,7 @@ html要素のデザイン上不要となる属性の肥大を抑え、デザイ�
 
 ### MVVMを採用し、双方向バインディングを行える
 ViewModelクラスのプロパティに書き込み可（プロパティを@@で始める）にし、
-入力要素に、バインドするプロパティを割り当てる
+htmlの入力要素にバインドするプロパティを割り当てるだけで、簡単に双方向バインドを実現
 
 ```JS:main.js
 class AppViewModel {
@@ -105,7 +105,6 @@ class AppViewModel {
 
 const html = `
 <input type="text" name="value">
-<div data-x:bind="value"></div>
 `;
 
 export default { AppViewModel, html, css:"" }
