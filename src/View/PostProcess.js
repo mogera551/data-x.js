@@ -4,6 +4,7 @@ export default class PostProcess {
   constructor(context) {
     this.#context = context;
   }
+  get queue() { return this.#queue; }
 
   regist(callback, queue = this.#queue) {
     queue.push(callback);

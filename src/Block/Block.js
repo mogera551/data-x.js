@@ -79,7 +79,7 @@ export class Block {
     const view = context.view;
     const promises = [];
     (fromBlock !== this) && notifier.notify(new Promise(async (resolve, reject) => {
-      const asyncResult = eventHandler.exec(proxyViewModel, "notifyAll", pattern, indexes, fromBlock);
+      const asyncResult = eventHandler.exec(proxyViewModel, "notifyAll", [pattern, indexes, fromBlock]);
       (asyncResult instanceof Promise) && await asyncResult;
       resolve({name:pattern, indexes});
     }));
@@ -116,12 +116,19 @@ export class Block {
     return Promise.all(promises);
   }
 
+  hasRemainProcess(results) {
+    results.push(this.context.notifier.queue.length > 0 || this.context.postProcess.queue.length > 0) ;
+    for(const block of this.#blocks) {
+      block.hasRemainProcess(results);
+    }
+  }
+
   async inquiryAll(message, param1, param2, fromBlock) {
     const context = this.#context;
     const proxyViewModel = context.proxyViewModel;
     const eventHandler = context.eventHandler;
     const promises = [];
-    (fromBlock !== this) && promises.push(eventHandler.exec(proxyViewModel, "inquiryAll", message, param1, param2, fromBlock));
+    (fromBlock !== this) && promises.push(eventHandler.exec(proxyViewModel, "inquiryAll", [message, param1, param2, fromBlock]));
     for(const block of this.#blocks) {
       promises.push(block.inquiryAll(message, param1, param2, fromBlock));
     }

@@ -36,9 +36,18 @@ export default class Root {
       }
       return Promise.all(promises);
     };
+    const hasRemainProcess = () => {
+      const results = [];
+      for(const block of this.#blocks) {
+        block.hasRemainProcess(results);
+      }
+      return !results.every(result => result === false);
+    };
+
     await callback();
     do {
-      if (!prepare()) break;
+      if (!hasRemainProcess()) break;
+      prepare();
       await updateDom();
       await postProcess();
     } while(true);

@@ -6,7 +6,7 @@ export default class Initializer {
     await eventHandler.exec(proxyViewModel, "init", data);
     for(const property of properties) {
       if (property?.init == null) continue;
-      const asyncResult = property.init(data);
+      const asyncResult = Reflect.apply(property.init, proxyViewModel, [data]);
       const result = (asyncResult instanceof Promise) ? await asyncResult : asyncResult;
       property.nameInfo.isPrimitive ? (proxyViewModel[property.nameInfo.privateName] = result) : (proxyViewModel[property.name] = result);
     }

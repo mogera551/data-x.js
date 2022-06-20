@@ -140,6 +140,10 @@ export default class Props {
       desc.get = defaultDesc.get;
       Object.defineProperty(viewModel, name, desc);
       properties.push(Object.assign(new Property(), { name, nameInfo }));
+      // create private property
+      if (!(nameInfo.privateName in viewModel) && nameInfo.isPrimitive) {
+        Reflect.defineProperty(viewModel, nameInfo.privateName, toPrivateDesc({}));
+      }
     });
 
     Object.defineProperty(viewModel, "$$context", {configurable: true, enumerable: false, writable: false, value: context});
