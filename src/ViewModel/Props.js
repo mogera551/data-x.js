@@ -80,11 +80,11 @@ export default class Props {
         } else if (resultPropertyName !== null) {
           setPropertyInfo(resultPropertyName, desc);
           // remove property
-          Reflect.deleteProperty(object, name);
+          (viewModel === object) && Reflect.deleteProperty(object, name);
         } else if (resultEventName !== null) {
           setEventInfo(resultEventName, desc);
           // remove property
-          Reflect.deleteProperty(object, name);
+          (viewModel === object) && Reflect.deleteProperty(object, name);
         }
       });
     })

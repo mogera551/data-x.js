@@ -51,10 +51,16 @@ export default class View {
     const setOfUpdatePaths = new Set(updatePaths);
 //    console.log("setOfUpdatePaths", setOfUpdatePaths);
 
+/*
     await Promise.all(Array.from(setOfUpdatePaths).map(path => {
       cache.delete(path);
       Reflect.get(proxyViewModel, path);
     }));
+*/
+    for(const path of Array.from(setOfUpdatePaths)) {
+      cache.delete(path);
+      await Reflect.get(proxyViewModel, path);
+    }
 
     for(const loop of allLoops.filter(loop => setOfUpdatePaths.has(loop.path))) {
       await loop.update();

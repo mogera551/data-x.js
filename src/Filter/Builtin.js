@@ -36,6 +36,12 @@ Filters.regist("fixed", {
   }
 });
 
+Filters.regist("eq", {
+  forward(value, options = []) {
+    return Number(value) === Number(options[0] ?? 0);
+  }
+});
+
 Filters.regist("ge", {
   forward(value, options = []) {
     return Number(value) >= Number(options[0] ?? 0);
