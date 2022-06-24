@@ -37,10 +37,7 @@ export default class View {
     proxyViewModel = context.proxyViewModel,
     cache = context.cache
   ) {
-    (context.block.name === "job/invites/main") && console.log("updateDom ");
-    (context.block.name === "job/invites/main") && console.log(updateQueue);
     const queue = await Promise.all(updateQueue);
-    (context.block.name === "job/invites/main") && console.log(queue);
     const updatePaths = [];
     for(const { name, indexes = [] } of queue.filter(q => q != null)) {
       updatePaths.push(PropertyName.expand(name, indexes));
@@ -49,11 +46,9 @@ export default class View {
       }
     }
     const setOfUpdatePaths = new Set(updatePaths);
-    (context.block.name === "job/invites/main") && console.log(setOfUpdatePaths);
     for(const path of Array.from(setOfUpdatePaths)) {
       cache.delete(path);
       const value = await Reflect.get(proxyViewModel, path);
-      (context.block.name === "job/invites/main") && console.log(path, value);
     }
 
     for(const loop of allLoops.filter(loop => setOfUpdatePaths.has(loop.path))) {
