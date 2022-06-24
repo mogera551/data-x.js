@@ -14,59 +14,22 @@ export default class Root {
     this.#blocks.push(...await BlockBuilder.build(document.body));
   }
 
-  async updateProcess(callback) {
-    const prepare = () => {
-      const results = [];
-      for(const block of this.#blocks) {
-        results.push(block.prepareUpdate());
-      }
-      return !results.every(result => result === false);
-    };
-    const updateDom = () => {
-      const promises = [];
-      for(const block of this.#blocks) {
-        promises.push(block.updateDom());
-      }
-      return Promise.all(promises);
-    };
-    const postProcess = () => {
-      const promises = [];
-      for(const block of this.#blocks) {
-        promises.push(block.postProcess());
-      }
-      return Promise.all(promises);
-    };
-    const hasRemainProcess = () => {
-      const results = [];
-      for(const block of this.#blocks) {
-        block.hasRemainProcess(results);
-      }
-      return !results.every(result => result === false);
-    };
-
-    await callback();
-    do {
-      if (!hasRemainProcess()) break;
-      prepare();
-      await updateDom();
-      await postProcess();
-    } while(true);
+  start() {
+    for(const block of this.#blocks) {
+      block.start();
+    }
   }
 
   notifyAll(pattern, indexes, fromBlock) {
-//    console.log("notifyAll start ", pattern, indexes);
     for(const block of this.#blocks) {
       block.notifyAll(pattern, indexes, fromBlock);
     }
-//    console.log("notifyAll terminate ", pattern, indexes);
   }
 
   inquiryAll(message, param1, param2, fromBlock) {
-    const promises = [];
     for(const block of this.#blocks) {
-      promises.push(block.inquiryAll(message, param1, param2, fromBlock));
+      block.inquiryAll(message, param1, param2, fromBlock);
     }
-    return Promise.all(promises);
   }
 
 }

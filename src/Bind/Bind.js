@@ -233,7 +233,7 @@ export default class Bind {
   attachEvent(dom = this.#dom, context = this.#context, view = context.view) {
     const handler = async e => {
 //      console.log("attachEvent start", context?.block?.name);
-      await context.$updateProcess(() => this.#updateViewModel())
+      await context.$registProcess(() => this.#updateViewModel())
 //      console.log("attachEvent complete", context?.block?.name);
     };
     dom.addEventListener("input", handler);

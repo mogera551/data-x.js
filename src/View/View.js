@@ -29,7 +29,7 @@ export default class View {
 
   static async updateDom(
     context,
-    updateQueue = context.updateQueue, 
+    updateQueue = context.notifier.dequeue(), 
     allBinds = context.allBinds, 
     allLoops = context.allLoops, 
     properties = context.properties,
@@ -37,69 +37,37 @@ export default class View {
     proxyViewModel = context.proxyViewModel,
     cache = context.cache
   ) {
-//    console.log("updateDom start", context?.block?.name);
+    (context.block.name === "job/invites/main") && console.log("updateDom ");
+    (context.block.name === "job/invites/main") && console.log(updateQueue);
     const queue = await Promise.all(updateQueue);
+    (context.block.name === "job/invites/main") && console.log(queue);
     const updatePaths = [];
     for(const { name, indexes = [] } of queue.filter(q => q != null)) {
       updatePaths.push(PropertyName.expand(name, indexes));
       for(const info of dependencies.getReferedProperties(name, indexes)) {
         updatePaths.push(info.name);
       }
-//      console.log("paths = ", paths, {name, indexes});
-//      updatePaths.push(...Array.from(paths));
     }
     const setOfUpdatePaths = new Set(updatePaths);
-//    console.log("setOfUpdatePaths", setOfUpdatePaths);
-
-/*
-    await Promise.all(Array.from(setOfUpdatePaths).map(path => {
-      cache.delete(path);
-      Reflect.get(proxyViewModel, path);
-    }));
-*/
+    (context.block.name === "job/invites/main") && console.log(setOfUpdatePaths);
     for(const path of Array.from(setOfUpdatePaths)) {
       cache.delete(path);
-      await Reflect.get(proxyViewModel, path);
+      const value = await Reflect.get(proxyViewModel, path);
+      (context.block.name === "job/invites/main") && console.log(path, value);
     }
 
     for(const loop of allLoops.filter(loop => setOfUpdatePaths.has(loop.path))) {
       await loop.update();
     }
-//    const updateLoop = loop => loop.update();
-//    await Promise.all(allLoops.filter(loop => setOfUpdatePaths.has(loop.path)).map(updateLoop));
 
     for(const bind of allBinds.filter(bind => setOfUpdatePaths.has(bind.path))) {
       await bind.updateDom();
     }
-//    const updateBind = bind => bind.updateDom();
-//    await Promise.all(allBinds.filter(bind => setOfUpdatePaths.has(bind.path)).map(updateBind));
-
-//    properties.isUpdate && context.buildBinds();
     context.buildBinds();
-//    console.log("updateDom complete", context?.block?.name);
   }
 
-  static async postProcess(context, postProcess = context.postProcess) {
-    postProcess.exec();
-  }
-
-  static async updateProcess(
-    context, 
-    updateCallback, 
-    notifier = context.notifier, 
-    properties = context.properties,
-    postProcess = context.postProcess,
-  ) {
-    postProcess.clear();
-    notifier.clear();
-    properties.clearStatus();
-
-    await updateCallback();
-
-    await this.updateDom(context);
-    properties.isUpdate && context.buildBinds();
-
-    await postProcess.exec();
+  static async execProcess(context, processor = context.processor) {
+    processor.exec();
   }
 
 }

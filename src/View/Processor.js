@@ -1,4 +1,4 @@
-export default class PostProcess {
+export default class Processor {
   #context;
   #queue = [];
   constructor(context) {
@@ -6,8 +6,9 @@ export default class PostProcess {
   }
   get queue() { return this.#queue; }
 
-  regist(callback, queue = this.#queue) {
+  regist(callback, queue = this.#queue, context = this.#context) {
     queue.push(callback);
+    context.eventLoop.wakeup();
   }
 
   exec(context = this.#context, queue = this.#queue, view = context.view) {

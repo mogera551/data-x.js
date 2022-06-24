@@ -27,6 +27,10 @@ export default class Props {
     const matchEventName = name => RegExpEventProperty.exec(name);
     const matchPrivateName = name => RegExpPrivateProperty.exec(name);
     const toPrivateDesc = desc => ({configurable: true, enumerable: false, writable: true, value: desc?.value});
+    const setOfThruEvents = new Set(["init", "inquiryAll", "notifyAll"]);
+    const isThruEvents = name => setOfThruEvents.has(name);
+    const propGetter = (name, get) => isThruEvents(name) ? PropGetterSetter.thruGetter(context, get) : PropGetterSetter.wrapGetter(context, get)
+    const propSetter = (name, set) => isThruEvents(name) ? PropGetterSetter.thruSetter(context, set) : PropGetterSetter.wrapSetter(context, set)
     const infoByName= new Map;
     //
     const createInfo = () => ({
@@ -100,9 +104,12 @@ export default class Props {
       const definedDesc = findDesc(viewModel, name); // get prop(), set prop(value)
       const defaultDesc = PropGetterSetter.createDefault(context, nameInfo);
       const desc = { configurable: true, enumerable: true };
-      desc.get = (info.get ? PropGetterSetter.wrapGetter(context, info.get) : null) ?? definedDesc.get ?? defaultDesc.get;
+      propGetter
+      desc.get = (info.get ? propGetter(name, info.get) : null) ?? definedDesc.get ?? defaultDesc.get;
+//      desc.get = (info.get ? PropGetterSetter.wrapGetter(context, info.get) : null) ?? definedDesc.get ?? defaultDesc.get;
       if (info.requireSet) {
-        desc.set = (info.set ? PropGetterSetter.wrapSetter(context, info.set) : null) ?? definedDesc.set ?? defaultDesc.set;
+        desc.set = (info.set ? propSetter(name, info.set) : null) ?? definedDesc.set ?? defaultDesc.set;
+//        desc.set = (info.set ? PropGetterSetter.wrapSetter(context, info.set) : null) ?? definedDesc.set ?? defaultDesc.set;
       }
       Object.defineProperty(viewModel, name, desc);
       properties.push(Object.assign(new Property(), { name, nameInfo, init: info?.init }));

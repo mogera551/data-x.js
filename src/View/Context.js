@@ -8,11 +8,12 @@ import View from "./View.js";
 import Dependencies from "../ViewModel/Dependency.js";
 import Notifier from "./Notifier.js";
 import Cache from "../ViewModel/Cache.js";
-import PostProcess from "./PostProcess.js";
+import Processor from "./Processor.js";
 import sym from "../Symbols.js";
 import Notifiable from "../Notifiable/Notifiable.js";
 import Props from "../ViewModel/Props.js";
 import Handler from "../ViewModel/Handler.js";
+import EventLoop from "./EventLoop.js";
 
 export default class Context {
   #parentElement;
@@ -20,7 +21,7 @@ export default class Context {
   #rootElement;
   #view;
   #viewModel;
-  #postProcess;
+  #processor;
   #dependencies;
   #bindTree = { binds:[], loops:[] }
   #allBinds = [];
@@ -35,6 +36,7 @@ export default class Context {
   #module;
   #updateQueue = [];
   #proxyViewModel;
+  #eventLoop;
 
   constructor(block, parentElement, rootBlock) { 
     this.#block = block;
@@ -44,10 +46,11 @@ export default class Context {
 
   build() {
     this.#view = View;
-    this.#postProcess = new PostProcess(this);
+    this.#processor = new Processor(this);
     this.#dependencies = new Dependencies(this);
     this.#notifier = new Notifier(this);
     this.#cache = new Cache(this);
+    this.#eventLoop = new EventLoop(this);
   }
 
   get parentElement() { return this.#parentElement; }
@@ -55,7 +58,7 @@ export default class Context {
   get rootElement() { return this.#rootElement ?? this.#fragment; }
   get view() { return this.#view; }
   get viewModel() { return this.#viewModel; }
-  get postProcess() { return this.#postProcess; }
+  get processor() { return this.#processor; }
   get dependencies() { return this.#dependencies; }
   get bindTree() { return this.#bindTree; }
   get allBinds() { return this.#allBinds; }
@@ -95,7 +98,7 @@ export default class Context {
   get dataReflecter() { return Reflecter; }
   get proxyHandler() { return Handler; }
   get proxyViewModel() { return this.#proxyViewModel; }
-  
+  get eventLoop() { return this.#eventLoop; }
 
   set module(module) {
     this.#module = module;
@@ -198,8 +201,7 @@ export default class Context {
       ["$notifyAll", "notifyAll"],
       ["$inquiryAll", "inquiryAll"],
       ["$openDialog", "openDialog"],
-      ["$postProcess", "postProcess"],
-      ["$updateProcess", "updateProcess"],
+      ["$registProcess", "registProcess"],
       ["$notifiable", "notifiable"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
@@ -240,8 +242,8 @@ export default class Context {
     this.notifier.notify({name, indexes});
   }
 
-  $postProcess(callback) {
-    this.postProcess.regist(callback);
+  $registProcess(callback) {
+    this.processor.regist(callback);
   }
 
   $notifyAll(pattern, indexes = []) {
@@ -252,12 +254,8 @@ export default class Context {
     return this.notifiable.notifiable(this, object);
   }
 
-  async $updateProcess(callback) {
-    this.rootBlock.updateProcess(callback);
-  }
-
   $inquiryAll(message, param1, param2) {
-    return this.$postProcess(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
+    return this.$registProcess(() => this.rootBlock.inquiryAll(message, param1, param2, this.block));    
   }
 
   async $openDialog(name, data = {}) {

@@ -26,6 +26,7 @@ export default class App {
       this.root = new Root();
       saveRoot.setRoot(this.root);
       await this.root.build();
+      this.root.start();
     } finally {
       this.booting = false;
       this.booted = true;

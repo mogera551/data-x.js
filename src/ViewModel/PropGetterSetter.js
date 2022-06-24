@@ -19,6 +19,16 @@ export default class PropGetterSetter {
       return Reflect.apply(set, proxyViewModel, [value, ...indexes]);
     };
   }
+  static thruGetter(context, get) {
+    return function (...args) {
+      return Reflect.apply(get, context.proxyViewModel, args);
+    };
+  }
+  static thruSetter(context, set) {
+    return function (...args) {
+      return Reflect.apply(set, context.proxyViewModel, args);
+    };
+  }
 }
 
 class PrimitivePropGetterSetter {

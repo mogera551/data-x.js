@@ -82,11 +82,13 @@ export default class Dialog {
   }
 
   async main() {
+    this.#block.start();
     return new Promise((resolve, reject) => {
       this.#resolve = resolve;
       this.#reject = reject;
     }).finally(() => {
       this.#root.parentNode.removeChild(this.#root);
+      this.#block.terminate();
     });
   }
 

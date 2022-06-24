@@ -52,7 +52,7 @@ export class Block {
     await context.view.build(context);
     this.#blocks.push(...await BlockBuilder.build(context.rootElement, useModule, rootBlock));
     (!context.isBlockModule || context.parentElement != null) && context.view.appear(context);
-    await context.postProcess.exec();
+    await context.processor.exec();
   }
 
   static async create({ 
@@ -73,70 +73,49 @@ export class Block {
 
   notifyAll(pattern, indexes, fromBlock) {
     const context = this.#context;
+    const cache = context.cache;
     const notifier = context.notifier;
     const proxyViewModel = context.proxyViewModel;
     const eventHandler = context.eventHandler;
-    const view = context.view;
-    const promises = [];
-    (fromBlock !== this) && notifier.notify(new Promise(async (resolve, reject) => {
-      const asyncResult = eventHandler.exec(proxyViewModel, "notifyAll", [pattern, indexes, fromBlock]);
-      (asyncResult instanceof Promise) && await asyncResult;
-      resolve({name:pattern, indexes});
-    }));
+    (fromBlock !== this) && context.processor.regist(() => 
+      notifier.notify(new Promise(async (resolve, reject) => {
+        cache.delete(pattern);
+        const asyncResult = eventHandler.exec(proxyViewModel, "notifyAll", pattern, indexes, fromBlock);
+        (asyncResult instanceof Promise) && await asyncResult;
+        resolve({name:pattern, indexes});
+      }))
+    );
     for(const block of this.#blocks) {
       block.notifyAll(pattern, indexes, fromBlock);
     }
   }
 
-  prepareUpdate() {
-    const results = [];
-    this.context.copyUpdateQueue();
-    results.push(this.context.updateQueue.length > 0);
-    for(const block of this.#blocks) {
-      results.push(block.prepareUpdate());
-    }
-    return !results.every(result => result === false);
-  }
-
-  async updateDom() {
-    const promises = [];
-    promises.push(this.context.view.updateDom(this.context));
-    for(const block of this.#blocks) {
-      promises.push(block.updateDom());
-    }
-    return Promise.all(promises);
-  }
-
-  async postProcess() {
-    const promises = [];
-    promises.push(this.context.view.postProcess(this.context));
-    for(const block of this.#blocks) {
-      promises.push(block.postProcess());
-    }
-    return Promise.all(promises);
-  }
-
-  hasRemainProcess(results) {
-    results.push(this.context.notifier.queue.length > 0 || this.context.postProcess.queue.length > 0) ;
-    for(const block of this.#blocks) {
-      block.hasRemainProcess(results);
-    }
-  }
-
-  async inquiryAll(message, param1, param2, fromBlock) {
+  inquiryAll(message, param1, param2, fromBlock) {
     const context = this.#context;
     const proxyViewModel = context.proxyViewModel;
     const eventHandler = context.eventHandler;
-    const promises = [];
-    (fromBlock !== this) && promises.push(eventHandler.exec(proxyViewModel, "inquiryAll", [message, param1, param2, fromBlock]));
+    (fromBlock !== this) && context.processor.regist(() => eventHandler.exec(proxyViewModel, "inquiryAll", message, param1, param2, fromBlock));
     for(const block of this.#blocks) {
-      promises.push(block.inquiryAll(message, param1, param2, fromBlock));
+      block.inquiryAll(message, param1, param2, fromBlock);
     }
-    await Promise.all(promises);
   }
 
   attachTo(element, context = this.#context, view = context.view) {
     view.attachTo(context, element);
+  }
+
+  start(context = this.#context, eventLoop = context.eventLoop) {
+    eventLoop.start();
+    for(const block of this.#blocks) {
+      block.start();
+    }
+  }
+
+  terminate(context = this.#context, eventLoop = context.eventLoop) {
+    eventLoop.terminate();
+    for(const block of this.#blocks) {
+      block.terminate();
+    }
   }
 }
 

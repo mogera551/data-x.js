@@ -44,7 +44,7 @@ export default class Event {
   #attachEvent(dom = this.#dom, event = this.#event, context = this.#context, view = context.view) {
     const handler = async e => {
 //      console.log("attachEvent start", context?.block?.name);
-      await context.$updateProcess(() => this.#eventHandler(e));
+      await context.$registProcess(() => this.#eventHandler(e));
 //      console.log("attachEvent complete", context?.block?.name);
     }
     dom.addEventListener(event, handler);

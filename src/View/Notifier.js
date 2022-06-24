@@ -6,9 +6,10 @@ export default class Notifier {
   }
   get queue() { return this.#queue; }
   
-  notify(promise, queue = this.#queue) {
+  notify(promise, queue = this.#queue, context = this.#context) {
     // { name, indexes }
     queue.push(promise);
+    context.eventLoop.wakeup();
   }
 
   dequeue(queue = this.#queue) {

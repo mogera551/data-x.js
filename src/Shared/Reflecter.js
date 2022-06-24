@@ -10,7 +10,9 @@ export default class Reflecter {
         enumerable: true,
         get: () => Reflect.get(data, name),
         set: value => {
+          console.log(`data.${name} = `, value);
           Reflect.set(data, name, value);
+          console.log(data);
           notifier.notify(new Promise((resolve, reject) => {
             context.$notifyAll(sharedName);
             resolve({ name: sharedName });
