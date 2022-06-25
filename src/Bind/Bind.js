@@ -230,6 +230,10 @@ export default class Bind {
     await DomPropertyType.updateViewModel(this);
   }
   
+  eventHandler(context = this.#context) {
+    context.$registProcess(() => this.#updateViewModel());
+  }
+  
   attachEvent(dom = this.#dom, context = this.#context, view = context.view) {
     const handler = async e => {
 //      console.log("attachEvent start", context?.block?.name);

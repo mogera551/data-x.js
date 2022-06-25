@@ -41,7 +41,9 @@ export default class EventLoop {
 
   async main(context = this.context) {
     while(true) {
+      context.observer.observe();
       const terminate = ! await this.wait();
+      context.observer.disconnect();
       if (terminate) break;
       await context.view.execProcess(context);
       await context.view.updateDom(context);

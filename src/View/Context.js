@@ -14,6 +14,7 @@ import Notifiable from "../Notifiable/Notifiable.js";
 import Props from "../ViewModel/Props.js";
 import Handler from "../ViewModel/Handler.js";
 import EventLoop from "./EventLoop.js";
+import Observe from "./Observe.js";
 
 export default class Context {
   #parentElement;
@@ -37,6 +38,7 @@ export default class Context {
   #updateQueue = [];
   #proxyViewModel;
   #eventLoop;
+  #observer;
 
   constructor(block, parentElement, rootBlock) { 
     this.#block = block;
@@ -51,6 +53,7 @@ export default class Context {
     this.#notifier = new Notifier(this);
     this.#cache = new Cache(this);
     this.#eventLoop = new EventLoop(this);
+    this.#observer = new Observe(this);
   }
 
   get parentElement() { return this.#parentElement; }
@@ -99,6 +102,7 @@ export default class Context {
   get proxyHandler() { return Handler; }
   get proxyViewModel() { return this.#proxyViewModel; }
   get eventLoop() { return this.#eventLoop; }
+  get observer() { return this.#observer; }
 
   set module(module) {
     this.#module = module;
