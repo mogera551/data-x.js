@@ -207,6 +207,7 @@ export default class Context {
       ["$openDialog", "openDialog"],
       ["$registProcess", "registProcess"],
       ["$notifiable", "notifiable"],
+      ["$findDom", "findDom"],
     ].forEach(([orgFunc, func]) => {
       const isAsync = orgFunc.constructor.name === "AsyncFunction";
       const value = isAsync 
@@ -264,5 +265,11 @@ export default class Context {
 
   async $openDialog(name, data = {}) {
     return Dialog.open(name, data);
+  }
+
+  $findDom(propName, callback) {
+    const match = bind => bind.viewModelProperty === propName;
+    const exec = bind => callback(bind.dom, bind.domProperty, bind.viewModelProperty)
+    this.allBinds.filter(match).forEach(exec);
   }
 }
