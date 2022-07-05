@@ -12,6 +12,10 @@ Filters.regist("null", {
   forward: value => value == null,
 });
 
+Filters.regist("nullable", {
+  forward: value => value ?? "",
+});
+
 Filters.regist("style-display", {
   forward: value => value ? "" : "none",
 });
