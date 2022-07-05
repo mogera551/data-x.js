@@ -83,12 +83,13 @@ export default class Loop {
 
   #removeChild(child) {
     const loopContractor = loop => loop.contract();
-    const nodeRemover = node => node.parentNode.removeChild(node);
+    const nodeRemover = node => node.parentNode?.removeChild(node);
     child.loops.forEach(loopContractor);
     child.nodes.forEach(nodeRemover);
   }
 
   contract(children = this.#children) {
+//    console.log(`contract ${this.#viewModelProperty}`)
     children.forEach(child => this.#removeChild(child));
     children.splice(0);
   }
