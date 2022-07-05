@@ -41,7 +41,7 @@ class AppViewModel {
     this.chart.update();
   }
   "#init"() {
-    context.postProcess(() => this.initChart());
+    context.registProcess(() => this.initChart());
   }
 }
 
