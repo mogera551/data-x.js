@@ -208,12 +208,14 @@ export default class Bind {
   get dom() { return this.#dom; }
   get domProperty() { return this.#domProperty }
   get proxyViewModel() { return this.#proxyViewModel; }
+  get viewModelProperty() { return this.#viewModelProperty }
   get path() { return this.#path; }
   get pattern() { return this.#pattern; }
   get domPropertyType() { return this.#domPropertyType; } 
   get forwardFilters() { return this.#forwardFilters; }
   get backwardFilters() { return this.#backwardFilters; }
   get filter() { return this.#context.filter; }
+  get inputable() { return this.#inputable; }
 
   async init(inputable = this.#inputable) {
     if (inputable) {
